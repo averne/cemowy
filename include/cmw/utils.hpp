@@ -1,13 +1,19 @@
 #pragma once
 
+#include <cstdint>
+#include <cstdlib>
+#include <functional>
 #include <utility>
 
 #include "platform.h"
+#include "log.hpp"
 
 #define CMW_STRING_IMPL(x)   #x
 #define CMW_STRING(x)        CMW_STRING_IMPL(x)
 #define CMW_CAT_IMPL(x1, x2) x1##x2
 #define CMW_CAT(x1, x2)      CMW_CAT_IMPL(x1, x2)
+
+#define CMW_ANONYMOUS_VAR CMW_CAT(var_, __LINE__)
 
 #define CMW_MAX(x, y) (((x) > (y)) ? (x) :  (y))
 #define CMW_MIN(x, y) (((x) < (y)) ? (x) :  (y))
@@ -19,21 +25,21 @@
 
 #define CMW_TRY_IMPL(x, cb) ({                                                                      \
     if (!(x)) {                                                                                     \
-        ::cmw::Logger::enqueue(::cmw::Logger::Level::Error, CMW_STRING(x) " failed\n");             \
+        CMW_ERROR(CMW_STRING(x) " failed\n");                                                       \
         ({cb;});                                                                                    \
     }                                                                                               \
 })
 
 #define CMW_TRY_RC_IMPL(x, cb) ({                                                                   \
-    if (cmw::Result rc = (cmw::Result)(x); rc.failed()) {                                                          \
-        ::cmw::Logger::enqueue(::cmw::Logger::Level::Error, CMW_STRING(x) " failed: %#x\n", rc);    \
+    if (::cmw::Result rc = (::cmw::Result)(x); rc.failed()) {                                       \
+        CMW_ERROR(CMW_STRING(x) " failed: %#x\n", rc);                                              \
         ({cb;});                                                                                    \
     }                                                                                               \
 })
 
 #define CMW_TRY(x)           CMW_TRY_IMPL(x, )
-#define CMW_ASSERT(x)        CMW_TRY_IMPL(x, )
 #define CMW_TRY_GOTO(x, l)   CMW_TRY_IMPL(x, goto l)
+#define CMW_TRY_THROW(x, e)  CMW_TRY_IMPL(x, throw e)
 #define CMW_TRY_RETURN(x, v) CMW_TRY_IMPL(x, return v)
 #define CMW_TRY_FATAL(x, v)  CMW_TRY_IMPL(x, CMW_FATAL(v))
 #define CMW_TRY_RC(x)        CMW_TRY_RC_IMPL(x, )
@@ -54,26 +60,60 @@
 
 #define CMW_NON_COPYABLE(T)                 \
     public:                                 \
-        T(const T &) = delete;              \
+        T(const T &)            = delete;   \
         T &operator=(const T &) = delete
 
 #define CMW_NON_MOVEABLE(T)                 \
     public:                                 \
-        T(T &&) = delete;                   \
+        T(T &&)            = delete;        \
         T &operator=(T &&) = delete
 
 namespace cmw {
 
+class ScopeGuard {
+    CMW_NON_COPYABLE(ScopeGuard);
+    CMW_NON_MOVEABLE(ScopeGuard);
+
+    public:
+        template<class T>
+        [[nodiscard]] static ScopeGuard create(T &&f) {
+            return ScopeGuard(std::forward<T>(f));
+        }
+
+        ~ScopeGuard() {
+            if (f)
+                f();
+        }
+
+        void run() {
+            f();
+            f = nullptr;
+        }
+
+        void dismiss() {
+            f = nullptr;
+        }
+
+    private:
+        template<class T>
+        ScopeGuard(T &&f): f(std::forward<T>(f)) { }
+
+    private:
+        std::function<void()> f;
+};
+
+#define CMW_SCOPE_GUARD(x) auto CMW_ANONYMOUS_VAR = ::cmw::ScopeGuard::create(x)
+
 class Result {
     public:
         constexpr Result() = default;
-        constexpr Result(uint32_t res):                   res(res)                           { }
-        constexpr Result(uint32_t module, uint32_t desc): res((module - 2000) | (desc << 9)) { }
+        constexpr Result(uint32_t code): res(code) { }
+        constexpr Result(uint32_t module, uint32_t desc): res((module & 0x1ff) | ((desc & 0x1fff) << 9)) { }
 
         explicit operator uint32_t() const { return this->res; }
 
         inline uint32_t code()   const { return  this->res;}
-        inline uint32_t module() const { return  this->res & 0x1ff; }
+        inline uint32_t module() const { return  (this->res & 0x1ff) | 2000; }
         inline uint32_t desc()   const { return (this->res >> 9) & 0x3fff; }
 
         inline bool operator==(const Result &rhs) const {
@@ -139,6 +179,18 @@ static inline void bind_all(Args &&...args) {
 template <typename ...Args>
 static inline void unbind_all(Args &&...args) {
     (args.unbind(), ...);
+}
+
+FILE *open_asset(const std::string &path, const std::string &mode = "r") {
+#ifdef CMW_SWITCH
+    std::string asset_path = "romfs:/" + path;
+#else
+    std::string asset_path = "res/"    + path;
+#endif
+    FILE *fp = fopen(asset_path.c_str(), mode.c_str());
+    if (!fp)
+        CMW_ASSERT(fp, "Failed to open %s\n", asset_path.c_str());
+    return fp;
 }
 
 } // namespace cmw

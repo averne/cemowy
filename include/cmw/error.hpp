@@ -7,10 +7,10 @@
 
 namespace cmw::err {
 
-constexpr uint32_t Module = 0xf00;
+constexpr uint32_t Module = 420;
 
-constexpr Result FailedFopen        {Module, 0};
-constexpr Result AlreadyActive      {Module, 1};
-constexpr Result AlreadyInactive    {Module, 1};
+inline constexpr Result FailedFopen        {Module, 0};
+inline constexpr Result AlreadyActive      {Module, 1};
+inline constexpr Result AlreadyInactive    {Module, 2};
 
 } // namespace cmw::err

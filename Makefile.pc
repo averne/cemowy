@@ -13,7 +13,7 @@ CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie
-LINKS             =    -lglad-pc -lstbi-pc
+LINKS             =    -lglfw -lglad-pc -lstbi-pc
 
 RELEASE_DEFINES   =    NDEBUG=1
 RELEASE_FLAGS     =    $(FLAGS) -O2 -ffunction-sections -fdata-sections -flto

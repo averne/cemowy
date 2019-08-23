@@ -12,6 +12,12 @@ extern "C" {
 #   define CMW_PC // TODO: Complete with other os-dependent stuff
 #endif
 
+#ifdef DEBUG
+#	define CMW_DEBUG  = 1
+#else
+#	define CMW_NDEBUG = 1
+#endif
+
 #ifdef __cplusplus
 }
 #endif // extern "C"
