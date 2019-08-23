@@ -1,31 +1,33 @@
-TARGET            =    $(notdir $(CURDIR))
+TARGET            =    Cemowy
 EXTENSION         =    elf
 OUT               =    out
-RELEASE           =    release
-DEBUG             =    debug
+BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-LIBS              =
+CUSTOM_LIBS       =    lib/glad lib/stb_image
 
+DEFINES           =
 ARCH              =    -march=native -fpie
 FLAGS             =    -Wall -pipe
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie
-LINKS             =
+LINKS             =    -lglad-pc -lstbi-pc
 
-RELEASE_FLAGS     =    $(FLAGS) -O2 -DNDEBUG=1 -ffunction-sections -fdata-sections -flto
+RELEASE_DEFINES   =    NDEBUG=1
+RELEASE_FLAGS     =    $(FLAGS) -O2 -ffunction-sections -fdata-sections -flto
 RELEASE_CFLAGS    =    $(CFLAGS)
 RELEASE_CXXFLAGS  =    $(CXXFLAGS)
 RELEASE_ASFLAGS   =    $(ASFLAGS)
 RELEASE_LDFLAGS   =    $(LDFLAGS) -Wl,--gc-sections -flto -s
 
-DEBUG_FLAGS       =    $(FLAGS) -g -Og -DDEBUG
+DEBUG_DEFINES     =    DEBUG=1
+DEBUG_FLAGS       =    $(FLAGS) -g -Og
 DEBUG_CFLAGS      =    $(CFLAGS)
 DEBUG_CXXFLAGS    =    $(CXXFLAGS)
 DEBUG_ASFLAGS     =    $(ASFLAGS) -g
-DEBUG_LDFLAGS     =    $(LDFLAGS) -g -Wl,-Map,$(DEBUG)/$(TARGET).map
+DEBUG_LDFLAGS     =    $(LDFLAGS) -g -Wl,-Map,$(BUILD)/$(TARGET).pc-dbg.map
 
 PREFIX            =
 CC                =    $(PREFIX)gcc
@@ -35,14 +37,21 @@ LD                =    $(PREFIX)g++
 
 # -----------------------------------------------
 
+LIBS              =    $(CUSTOM_LIBS)
+
 CFILES            =    $(shell find $(SOURCES) -name *.c)
 CPPFILES          =    $(shell find $(SOURCES) -name *.cpp)
 SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
-OFILES            =    $(CFILES:%=$(BUILD)/%.o) $(CPPFILES:%=$(BUILD)/%.o) $(SFILES:%=$(BUILD)/%.o)
-DFILES            =    $(OFILES:.o=.d)
 
-RELEASE_TARGET    =    $(if $(OUT:=), $(OUT)/$(TARGET).$(EXTENSION), .$(OUT)/$(TARGET).$(EXTENSION))
-DEBUG_TARGET      =    $(if $(OUT:=), $(OUT)/$(TARGET)-debug.$(EXTENSION), .$(OUT)/$(TARGET)-debug.$(EXTENSION))
+RELEASE_OFILES    =    $(CFILES:%=$(BUILD)/%.pc-rel.o) $(CPPFILES:%=$(BUILD)/%.pc-rel.o) $(SFILES:%=$(BUILD)/%.pc-rel.o)
+DEBUG_OFILES      =    $(CFILES:%=$(BUILD)/%.pc-dbg.o) $(CPPFILES:%=$(BUILD)/%.pc-dbg.o) $(SFILES:%=$(BUILD)/%.pc-dbg.o)
+DFILES            =    $(RELEASE_OFILES:.o=.d) $(DEBUG_OFILES:.o=.d)
+
+RELEASE_TARGET    =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
+DEBUG_TARGET      =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc-dbg.$(EXTENSION), .$(OUT)/$(TARGET)-pc-dbg.$(EXTENSION))
+
+REL_DEFINES_FLAGS =    $(addprefix -D,$(RELEASE_DEFINES))
+DBG_DEFINES_FLAGS =    $(addprefix -D,$(DEBUG_DEFINES))
 
 INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
 LIB_FLAGS         =    $(foreach dir,$(LIBS),-L$(dir)/lib)
@@ -56,7 +65,7 @@ LIB_FLAGS         =    $(foreach dir,$(LIBS),-L$(dir)/lib)
 all: release debug
 
 libs:
-	@for dir in $(LIBS); do $(MAKE) --no-print-directory -C $$dir; done
+	@for dir in $(CUSTOM_LIBS); do $(MAKE) --no-print-directory -C $$dir -f Makefile.pc; done
 
 release: libs $(RELEASE_TARGET)
 
@@ -66,53 +75,56 @@ run: debug
 	@echo "Running" $(DEBUG_TARGET)
 	@$(DEBUG_TARGET)
 
-$(RELEASE_TARGET): $(addprefix $(RELEASE),$(OFILES))
+$(RELEASE_TARGET): $(RELEASE_OFILES)
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
 	@$(LD) $(ARCH) $(RELEASE_LDFLAGS) $(LIB_FLAGS) $^ -o $@ $(LINKS)
 	@echo "Built" $(notdir $@)
 
-$(DEBUG_TARGET): $(addprefix $(DEBUG),$(OFILES))
+$(DEBUG_TARGET): $(DEBUG_OFILES)
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
 	@$(LD) $(ARCH) $(DEBUG_LDFLAGS) $(LIB_FLAGS) $^ -o $@ $(LINKS)
 	@echo "Built" $(notdir $@)
 
-$(RELEASE)/%.c.o: %.c
+$(BUILD)/%.c.pc-rel.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
-	@$(CC) -MMD -MP $(ARCH) $(RELEASE_FLAGS) $(RELEASE_CFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CC) -MMD -MP $(ARCH) $(RELEASE_FLAGS) $(RELEASE_CFLAGS) $(REL_DEFINES_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(DEBUG)/%.c.o: %.c
+$(BUILD)/%.c.pc-dbg.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
-	@$(CC) -MMD -MP $(ARCH) $(DEBUG_FLAGS) $(DEBUG_CFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CC) -MMD -MP $(ARCH) $(DEBUG_FLAGS) $(DEBUG_CFLAGS) $(DBG_DEFINES_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(RELEASE)/%.cpp.o: %.cpp
+$(BUILD)/%.cpp.pc-rel.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
-	@$(CXX) -MMD -MP $(ARCH) $(RELEASE_FLAGS) $(RELEASE_CXXFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CXX) -MMD -MP $(ARCH) $(RELEASE_FLAGS) $(RELEASE_CXXFLAGS) $(REL_DEFINES_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(DEBUG)/%.cpp.o: %.cpp
+$(BUILD)/%.cpp.pc-dbg.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
-	@$(CXX) -MMD -MP $(ARCH) $(DEBUG_FLAGS) $(DEBUG_CXXFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CXX) -MMD -MP $(ARCH) $(DEBUG_FLAGS) $(DEBUG_CXXFLAGS) $(DBG_DEFINES_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(RELEASE)/%.s.o: %.s %.S
+$(BUILD)/%.s.pc-rel.o: %.s %.S
 	@echo " AS  " $@
 	@mkdir -p $(dir $@)
 	@$(AS) -MMD -MP -x assembler-with-cpp $(ARCH) $(RELEASE_FLAGS) $(RELEASE_ASFLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(DEBUG)/%.s.o: %.s %.S
+$(BUILD)/%.s.pc-dbg.o: %.s %.S
 	@echo " AS  " $@
 	@mkdir -p $(dir $@)
 	@$(AS) -MMD -MP -x assembler-with-cpp $(ARCH) $(DEBUG_FLAGS) $(DEBUG_ASFLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 clean:
 	@echo Cleaning...
-	@rm -rf $(DEBUG) $(RELEASE) $(RELEASE_TARGET) $(DEBUG_TARGET) $(OUT)
+	@rm -rf $(shell find $(BUILD) $(OUT) -name "*pc*")
 
 mrproper: clean
-	@for dir in $(LIBS); do $(MAKE) clean --no-print-directory -C $$dir; done
+	@for dir in $(CUSTOM_LIBS); do $(MAKE) clean --no-print-directory -C $$dir -f Makefile.pc; done
 
--include $(addprefix $(RELEASE),$(DFILES)) $(addprefix $(DEBUG),$(DFILES))
+nx:
+	@:
+
+-include $(DFILES)

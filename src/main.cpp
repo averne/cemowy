@@ -1,10 +1,13 @@
-#include "cmw.hpp"
+#include <cmw.hpp>
+
+#include "test/test.h"
 
 int main() {
-    cmw::Logger::initialize();
-    CMW_TRACE("Started\n");
-    CMW_FATAL("Yeet\n");
+    CMW_TRY_RC_RETURN(cmw::Logger::initialize());
+    CMW_TRACE("wow\n");
+    CMW_FATAL("yeet\n");
     CMW_ERROR("oof\n");
-    cmw::Logger::finalize();
+    test();
+    CMW_TRY_RC_RETURN(cmw::Logger::finalize());
     return 0;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "platform.h"
 
 #define CMW_STRING_IMPL(x)   #x
@@ -11,6 +13,8 @@
 #define CMW_MIN(x, y) (((x) < (y)) ? (x) :  (y))
 #define CMW_ABS(x)    (((x) > 0) ?   (x) : -(x))
 
+#define CMW_BIT(n) (1 << (n))
+
 #define CMW_VEC_SIZE(x) (sizeof((x)) / sizeof(*(x)))
 
 #define CMW_TRY_IMPL(x, cb) ({                                                                      \
@@ -21,7 +25,7 @@
 })
 
 #define CMW_TRY_RC_IMPL(x, cb) ({                                                                   \
-    if (Result rc = (x); R_FAILED(rc)) {                                                            \
+    if (cmw::Result rc = (cmw::Result)(x); rc.failed()) {                                                          \
         ::cmw::Logger::enqueue(::cmw::Logger::Level::Error, CMW_STRING(x) " failed: %#x\n", rc);    \
         ({cb;});                                                                                    \
     }                                                                                               \
@@ -33,7 +37,7 @@
 #define CMW_TRY_RETURN(x, v) CMW_TRY_IMPL(x, return v)
 #define CMW_TRY_FATAL(x, v)  CMW_TRY_IMPL(x, CMW_FATAL(v))
 #define CMW_TRY_RC(x)        CMW_TRY_RC_IMPL(x, )
-#define CMW_TRY_RC_RETURN(x) CMW_TRY_RC_IMPL(x, return rc)
+#define CMW_TRY_RC_RETURN(x) CMW_TRY_RC_IMPL(x, return (uint32_t)rc)
 #define CMW_TRY_RC_FATAL(x)  CMW_TRY_RC_IMPL(x, CMW_FATAL(rc))
 
 #define CMW_ASSERT_SIZE(x, sz)        static_assert(sizeof(x) == (sz), "Wrong size in " CMW_STRING(x))
@@ -77,11 +81,64 @@ class Result {
         }
 
         inline bool operator!=(const Result &rhs) const {
-            return (*this == rhs);
+            return !(*this == rhs);
+        }
+
+        inline bool operator==(const uint32_t &rhs) const {
+            return this->res == rhs;
+        }
+
+        inline bool operator!=(const uint32_t &rhs) const {
+            return !(*this == rhs);
+        }
+
+        inline bool succeeded() const {
+            return this->res == 0;
+        }
+
+        inline bool failed() const {
+            return this->res != 0;
         }
 
     protected:
         uint32_t res = 0;
 };
+
+
+template <typename T>
+struct Position {
+    constexpr Position() = default;
+    constexpr Position(T x, T y): x(x), y(y) { }
+
+    inline T get_x() const { return this->x; }
+    inline T get_y() const { return this->y; }
+    inline std::pair<T, T> get_pos() const { return {this->x, this->y}; }
+
+    protected:
+        T x = 0, y = 0;
+};
+
+template <typename T>
+struct Area {
+    constexpr Area() = default;
+    constexpr Area(T w, T h): w(w), h(h) { }
+
+    inline T get_w() const { return this->w; }
+    inline T get_h() const { return this->h; }
+    inline std::pair<T, T> get_dims() const { return {this->w, this->h}; }
+
+    protected:
+        T w = 0, h = 0;
+};
+
+template <typename ...Args>
+static inline void bind_all(Args &&...args) {
+    (args.bind(), ...);
+}
+
+template <typename ...Args>
+static inline void unbind_all(Args &&...args) {
+    (args.unbind(), ...);
+}
 
 } // namespace cmw
