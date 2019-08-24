@@ -40,6 +40,25 @@ int main() {
     window->set_vsync(true);
     window->set_viewport(window_w, window_h);
 
+    window->get_input_manager()->register_callback<cmw::KeyPressedEvent>([&window](auto &e) {
+        CMW_TRACE("Key pressed: %d\n", e.get_key());
+#ifdef CMW_SWITCH
+        if (e.get_key() == CMW_SWITCH_KEY_PLUS)
+#else
+        if (e.get_key() == CMW_KEY_ENTER)
+#endif
+            window->set_should_close(true);
+    });
+
+    window->get_input_manager()->register_callback<cmw::MouseMovedEvent>([](auto &e) {
+        CMW_TRACE("Mouse moved: %.2f, %.2f\n", e.get_x(), e.get_y());
+    });
+
+    window->get_input_manager()->register_callback<cmw::MouseScrolledEvent>([](auto &e) {
+        CMW_TRACE("Mouse scrolled: %.2f, %.2f\n", e.get_x(), e.get_y());
+    });
+
+
     cmw::ShaderProgram program = {
         cmw::VertexShader  {"shaders/triangle.vert"},
         cmw::FragmentShader{"shaders/triangle.frag"}

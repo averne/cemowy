@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <stdexcept>
 #include <utility>
+#include <memory>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "input.hpp"
 
 namespace cmw {
 
@@ -25,6 +28,7 @@ class Window {
             make_ctx_current();
             set_pos(x, y);
             set_vsync(true);
+            this->input_manager = std::make_unique<InputManager>(get_window());
         }
 
         ~Window() {
@@ -76,17 +80,6 @@ class Window {
         inline void set_should_close(bool val) const { glfwSetWindowShouldClose(get_window(), val); }
         inline bool get_should_close()         const { return glfwWindowShouldClose(get_window()); }
 
-        inline void set_pos_cb(GLFWwindowposfun cb)           const { glfwSetWindowPosCallback(get_window(), cb); }
-        inline void set_size_cb(GLFWwindowsizefun cb)         const { glfwSetWindowSizeCallback(get_window(), cb); }
-        inline void set_close_cb(GLFWwindowclosefun cb)       const { glfwSetWindowCloseCallback(get_window(), cb); }
-        inline void set_focus_cb(GLFWwindowfocusfun cb)       const { glfwSetWindowFocusCallback(get_window(), cb); }
-        inline void set_refresh_cb(GLFWwindowrefreshfun cb)   const { glfwSetWindowRefreshCallback(get_window(), cb); }
-        inline void set_maximize_cb(GLFWwindowmaximizefun cb) const { glfwSetWindowMaximizeCallback(get_window(), cb); }
-        inline void set_keys_cb(GLFWkeyfun cb)                const { glfwSetKeyCallback(get_window(), cb); }
-        inline void set_cursor_cb(GLFWcursorposfun cb)        const { glfwSetCursorPosCallback(get_window(), cb); }
-        inline void set_scroll_cb(GLFWscrollfun cb)           const { glfwSetScrollCallback(get_window(), cb); }
-        inline void set_click_cb(GLFWmousebuttonfun cb)       const { glfwSetMouseButtonCallback(get_window(), cb); }
-
         inline void set_name(const char *name) const { glfwSetWindowTitle(get_window(), name); }
         inline void set_pos(int x, int y)      const { glfwSetWindowPos(get_window(), x, y); }
         inline std::pair<int, int> get_pos()   const { int x, y; glfwGetWindowPos(get_window(), &x, &y); return {x, y}; }
@@ -94,9 +87,11 @@ class Window {
         inline std::pair<int, int> get_size()  const { int w, h; glfwGetWindowSize(get_window(), &w, &h); return {w, h}; }
 
         inline GLFWwindow *get_window() const { return this->window; }
+        inline InputManager *get_input_manager() const { return this->input_manager.get(); }
 
     protected:
         GLFWwindow *window;
+        std::unique_ptr<InputManager> input_manager;
 };
 
 } // namespace cmw
