@@ -75,19 +75,19 @@ class ScopeGuard {
     CMW_NON_MOVEABLE(ScopeGuard);
 
     public:
-        template<class T>
+        template <typename T>
         [[nodiscard]] static ScopeGuard create(T &&f) {
             return ScopeGuard(std::forward<T>(f));
         }
 
         ~ScopeGuard() {
             if (f)
-                f();
+                run();
         }
 
         void run() {
             f();
-            f = nullptr;
+            dismiss();
         }
 
         void dismiss() {
@@ -189,7 +189,7 @@ FILE *open_asset(const std::string &path, const std::string &mode = "r") {
 #endif
     FILE *fp = fopen(asset_path.c_str(), mode.c_str());
     if (!fp)
-        CMW_ASSERT(fp, "Failed to open %s\n", asset_path.c_str());
+        CMW_ERROR("Failed to open %s\n", asset_path.c_str());
     return fp;
 }
 

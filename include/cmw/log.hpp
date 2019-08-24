@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <unistd.h>
 #include <string>
 #include <chrono>
 
@@ -9,7 +10,12 @@
 
 namespace cmw {
 
-// TODO: Implement other backends (stdout, file, imgui) according to compile-time defines
+// TODO: Implement imgui backends
+// TODO: Log to files asynchronously
+
+#define BACKEND_IS_STDOUT (CMW_LOG_BACKEND == CMW_LOG_BACKEND_STDOUT)
+#define BACKEND_IS_FILE   (CMW_LOG_BACKEND == CMW_LOG_BACKEND_FILE)
+#define BACKEND_IS_IMGUI  (CMW_LOG_BACKEND == CMW_LOG_BACKEND_IMGUI)
 
 class Logger {
     public:
@@ -30,7 +36,7 @@ class Logger {
         Logger(Logger &&)                 = delete;
         Logger &operator=(Logger &&)      = delete;
 
-#ifdef CMW_SWITCH
+#if defined(CMW_DEBUG) && defined(CMW_SWITCH) && BACKEND_IS_FILE
         static void set_filepath(const std::string &path) {
             filepath = path;
         }
@@ -41,12 +47,18 @@ class Logger {
             if (is_running())
                 return 0x224; // err::AlreadyActve
             start_time = std::chrono::system_clock::now();
-#ifdef CMW_SWITCH
+#   if BACKEND_IS_STDOUT
+#       ifdef CMW_SWITCH
+            socketInitializeDefault();
+            nxlinkStdio();
+        #endif // CMW_SWITCH
+#   endif // BACKED_IS_STDOUT
+#   if BACKEND_IS_FILE
             if (!(fp = fopen(filepath.c_str(), "w")))
                 return 0x1a4; // err::FailedFopen
             dup2(fileno(fp), 1);             // Redirect stdout to file
             setvbuf(fp, NULL, _IOLBF, 0x50); // Flush on newline
-#endif // CMW_SWITCH
+#   endif // BACKEND_IS_FILE
             running = true;
 #endif // CMW_DEBUG
             return 0;
@@ -57,9 +69,14 @@ class Logger {
             if (!is_running())
                 return 0x2a4; // err::AlreadyInactive
             running = false;
-#ifdef CMW_SWITCH
+#   if BACKEND_IS_STDOUT
+#       ifdef CMW_SWITCH
+            socketExit();
+        #endif // CMW_SWITCH
+#   endif // BACKED_IS_STDOUT
+#   if BACKEND_IS_FILE
             fclose(fp);
-#endif // CMW_SWITCH
+#   endif // BACKEND_IS_FILE
 #endif // CMW_DEBUG
             return 0;
         }
@@ -93,13 +110,21 @@ class Logger {
         static inline bool running = false;
         static inline Level level = Level::Trace;
         static inline std::chrono::time_point<std::chrono::system_clock> start_time;
-#ifdef CMW_SWITCH
-        static inline std::string filepath = "sdmc:/cmw.log";
+#   if BACKEND_IS_FILE
         static inline FILE *fp;
-#endif // CMW_SWITCH
+#       ifdef CMW_SWITCH
+        static inline std::string filepath = "sdmc:/cmw.log";
+#       else
+        static inline std::string filepath = "./cmw.log";
+#       endif // CMW_SWITCH
+#   endif // BACKEND_IS_FILE
         static inline const char * lvl_strings[] = {"[TRACE]:", "[INFO]: ", "[WARN]: ", "[ERROR]:", "[FATAL]:"};
 #endif // CMW_DEBUG
 };
+
+#undef BACKEND_IS_STDOUT
+#undef BACKEND_IS_FILE
+#undef BACKEND_IS_IMGUI
 
 #ifdef CMW_DEBUG
 #   define CMW_TRACE(fmt, ...) ::cmw::Logger::enqueue(::cmw::Logger::Level::Trace, fmt, ##__VA_ARGS__)

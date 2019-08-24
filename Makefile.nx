@@ -1,5 +1,5 @@
 ifeq ($(strip $(DEVKITPRO)),)
-$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
+	$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
 endif
 
 # -----------------------------------------------
@@ -16,17 +16,17 @@ OUT               =    out
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-CUSTOM_LIBS       =    lib/stb_image
+CUSTOM_LIBS       =    lib/stb_image lib/glad
 ROMFS             =    res
 
-DEFINES           =    __SWITCH__ DEBUG
+DEFINES           =    __SWITCH__ DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_STDOUT
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
 FLAGS             =    -Wall -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17 -fno-rtti
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie -specs=$(DEVKITPRO)/libnx/switch.specs -g
-LINKS             =    -lglad -lglfw3 -lEGL -lglapi -ldrm_nouveau -lnx -lm -lstbi-nx
+LINKS             =    -lglad-nx -lglfw3 -lEGL -lglapi -ldrm_nouveau -lnx -lm -lstbi-nx
 
 PREFIX            =    aarch64-none-elf-
 CC                =    $(PREFIX)gcc
@@ -90,9 +90,13 @@ endif
 
 .SUFFIXES:
 
-.PHONY: all libs clean mrproper
+.PHONY: all libs run clean mrproper
 
 all: libs $(NX_TARGET)
+
+run: all
+	@echo "Running" $(NX_TARGET)
+	@nxlink -s $(NX_TARGET)
 
 libs:
 	@for dir in $(CUSTOM_LIBS); do $(MAKE) --no-print-directory -C $$dir -f Makefile.nx; done

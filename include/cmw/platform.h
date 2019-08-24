@@ -18,6 +18,14 @@ extern "C" {
 #	define CMW_NDEBUG = 1
 #endif
 
+#define CMW_LOG_BACKEND_STDOUT 1
+#define CMW_LOG_BACKEND_FILE   2
+#define CMW_LOG_BACKEND_IMGUI  3
+
+#ifndef CMW_LOG_BACKEND
+#	define CMW_LOG_BACKEND CMW_LOG_BACKEND_STDOUT
+#endif
+
 #ifdef __cplusplus
 }
 #endif // extern "C"

@@ -12,6 +12,9 @@
 *.nacp
 *.npdm
 
+*.log
+*.txt
+
 **/build/
 **/release/
 **/debug/
