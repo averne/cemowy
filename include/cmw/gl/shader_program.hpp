@@ -14,6 +14,7 @@
 
 #include "shader.hpp"
 #include "object.hpp"
+#include "../platform.h"
 
 namespace cmw {
 

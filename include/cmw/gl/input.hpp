@@ -9,9 +9,11 @@
 #include <GLFW/glfw3.h>
 
 #include "../utils.hpp"
+#include "../platform.h"
 
 // From glfw3.hpp
 #define CMW_KEY_UNKNOWN            -1
+
 #define CMW_KEY_SPACE              32
 #define CMW_KEY_APOSTROPHE         39  /* ' */
 #define CMW_KEY_COMMA              44  /* , */
@@ -132,19 +134,29 @@
 #define CMW_KEY_RIGHT_ALT          346
 #define CMW_KEY_RIGHT_SUPER        347
 #define CMW_KEY_MENU               348
-#define CMW_KEY_LAST               CMW_KEY_MENU
 
-// Switch-specific codes
-#define CMW_SWITCH_KEY_A           CMW_KEY_X
-#define CMW_SWITCH_KEY_B           CMW_KEY_Z
-#define CMW_SWITCH_KEY_X           CMW_KEY_S
-#define CMW_SWITCH_KEY_Y           CMW_KEY_A
-#define CMW_SWITCH_KEY_RIGHT       CMW_SWITCH_KEY_RIGHT
-#define CMW_SWITCH_KEY_LEFT        CMW_SWITCH_KEY_LEFT
-#define CMW_SWITCH_KEY_DOWN        CMW_SWITCH_KEY_DOWN
-#define CMW_SWITCH_KEY_UP          CMW_SWITCH_KEY_UP
-#define CMW_SWITCH_KEY_MINUS       CMW_KEY_ESCAPE
-#define CMW_SWITCH_KEY_PLUS        CMW_KEY_ENTER
+
+// Switch-specific codes (important -- same order as libnx)
+#define CMW_SWITCH_KEY_A           400
+#define CMW_SWITCH_KEY_B           401
+#define CMW_SWITCH_KEY_X           402
+#define CMW_SWITCH_KEY_Y           403
+#define CMW_SWITCH_KEY_LSTICK      404
+#define CMW_SWITCH_KEY_RSTICK      405
+#define CMW_SWITCH_KEY_L           406
+#define CMW_SWITCH_KEY_R           407
+#define CMW_SWITCH_KEY_ZL          408
+#define CMW_SWITCH_KEY_ZR          409
+#define CMW_SWITCH_KEY_PLUS        410
+#define CMW_SWITCH_KEY_MINUS       411
+#define CMW_SWITCH_KEY_DLEFT       412
+#define CMW_SWITCH_KEY_DUP         413
+#define CMW_SWITCH_KEY_DRIGHT      414
+#define CMW_SWITCH_KEY_DDOWN       415
+
+#define CMW_KEY_LAST               CMW_SWITCH_KEY_DDOWN
+#define CMW_SWITCH_KEY_FIRST       CMW_SWITCH_KEY_A
+#define CMW_SWITCH_KEY_LAST        CMW_SWITCH_KEY_DDOWN
 
 namespace cmw {
 
@@ -154,6 +166,8 @@ enum class EventType: uint8_t {
     MouseMoved,
     MouseScrolled,
     WindowResized, WindowMoved, WindowFocused, WindowDefocused, WindowClosed,
+    ScreenTouched,
+    JoystickMoved,
     Max,
 };
 
@@ -277,6 +291,32 @@ struct WindowClosedEvent: public Event {
     static inline constexpr EventType get_type() { return EventType::WindowClosed; }
 };
 
+struct JoystickMovedEvent: public Event, public Position<int32_t> {
+    inline JoystickMovedEvent(int32_t x, int32_t y, bool is_left): Position(x, y), id(is_left) { }
+
+    inline bool is_left()  const { return  this->id; }
+    inline bool is_right() const { return !this->id; }
+
+    static inline constexpr EventType get_type() { return EventType::JoystickMoved; }
+
+    protected:
+        bool id;
+};
+
+struct ScreenTouchedEvent: public Event, public Position<uint32_t> {
+    inline ScreenTouchedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
+            Position(x, y), dx(dx), dy(dy), angle(angle) { }
+
+    inline uint32_t get_dx()    const { return this->dx; }
+    inline uint32_t get_dy()    const { return this->dy; }
+    inline uint32_t get_angle() const { return this->angle; }
+
+    static inline constexpr EventType get_type() { return EventType::ScreenTouched; }
+
+    protected:
+        uint32_t dx, dy, angle;
+};
+
 class InputManager {
     public:
         template <typename T = Event>
@@ -285,6 +325,15 @@ class InputManager {
         InputManager(GLFWwindow *window) {
             s_this = this;
             set_window(window);
+#ifdef CMW_SWITCH
+            hidInitialize();
+#endif
+        }
+
+        ~InputManager() {
+#ifdef CMW_SWITCH
+            hidExit();
+#endif
         }
 
         template <typename T>
@@ -315,14 +364,58 @@ class InputManager {
             glfwSetWindowCloseCallback(window, window_close_cb);
         }
 
+#ifdef CMW_SWITCH
+        void process_nx_events(GLFWwindow *window) {
+            static std::array<float, CMW_SWITCH_KEY_LAST - CMW_SWITCH_KEY_FIRST + 1> nx_keys_time; // The rest are supported by glfw
+            float time = glfwGetTime();
+            u64 keys_down = hidKeysDown(CONTROLLER_P1_AUTO) | hidKeysHeld(CONTROLLER_P1_AUTO); // glfw internally calls hidScanInput
+
+            // Buttons
+            for (uint32_t key = CMW_SWITCH_KEY_FIRST; key <= CMW_SWITCH_KEY_LAST; ++key) {
+                const uint32_t idx       = key - CMW_SWITCH_KEY_FIRST;
+                const uint32_t libnx_key = CMW_BIT(idx);
+
+                if ((keys_down & libnx_key) && (nx_keys_time[idx] == 0.0f)) {
+                    this->process(KeyPressedEvent(key, 0));       // Key pressed for the first time
+                    nx_keys_time[idx] = time;
+                } else if ((keys_down & libnx_key) && (time - nx_keys_time[idx] >= min_held_time)) {
+                    this->process(KeyHeldEvent(key, 0));          // Key held for over min_held_time seconds
+                } else if (!(keys_down & libnx_key) && (nx_keys_time[idx] > 0.0f)) {
+                    this->process(KeyReleasedEvent(key, 0));      // Key released
+                    nx_keys_time[idx] = 0.0f;
+                }
+            }
+
+            // Touchscreen
+            if (keys_down & KEY_TOUCH) {
+                touchPosition pos;
+                hidTouchRead(&pos, 0); // TODO: support multiple touch points
+                this->process(ScreenTouchedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
+            }
+
+            // Joysticks
+            {
+                JoystickPosition pos;
+                hidJoystickRead(&pos, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
+                if ((pos.dx + pos.dy) != 0)
+                    this->process(JoystickMovedEvent(pos.dx, pos.dy, 1));
+                hidJoystickRead(&pos, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
+                if ((pos.dx + pos.dy) != 0)
+                    this->process(JoystickMovedEvent(pos.dx, pos.dy, 0));
+            }
+        }
+#endif
+
     private:
         static void keys_cb(GLFWwindow *window, int key, int scancode, int action, int modifiers) {
+#ifndef CMW_SWITCH // Keys are manually handled on switch (key held functionality doesn't work)
             if (action == GLFW_PRESS)
                 s_this->process(KeyPressedEvent(key, modifiers));
             else if (action == GLFW_RELEASE)
                 s_this->process(KeyReleasedEvent(key, modifiers));
             else
                 s_this->process(KeyHeldEvent(key, modifiers));
+#endif
         }
 
         static void cursor_cb(GLFWwindow *window, double x, double y) {
@@ -365,6 +458,9 @@ class InputManager {
         static inline InputManager *s_this;
         std::size_t cur_handle = 0;
         std::array<std::map<std::size_t, Callback<>>, (std::size_t)EventType::Max> callbacks;
+#ifdef CMW_SWITCH
+        static inline constexpr float min_held_time = 0.5f; // Time (s) a key to to be held to begin firing KeyHeldEvents
+#endif
 };
 
 } // namespace cmw

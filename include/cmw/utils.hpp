@@ -5,8 +5,8 @@
 #include <functional>
 #include <utility>
 
-#include "platform.h"
 #include "log.hpp"
+#include "platform.h"
 
 #define CMW_STRING_IMPL(x)   #x
 #define CMW_STRING(x)        CMW_STRING_IMPL(x)

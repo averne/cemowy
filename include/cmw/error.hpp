@@ -2,8 +2,8 @@
 
 #include <cstdint>
 
-#include "platform.h"
 #include "utils.hpp"
+#include "platform.h"
 
 namespace cmw::err {
 

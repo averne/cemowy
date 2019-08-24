@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include "../platform.h"
+
 namespace cmw {
 
 class GlObject {

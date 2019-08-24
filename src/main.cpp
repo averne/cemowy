@@ -50,6 +50,23 @@ int main() {
             window->set_should_close(true);
     });
 
+    window->get_input_manager()->register_callback<cmw::KeyHeldEvent>([&window](auto &e) {
+        CMW_TRACE("Key held: %d\n", e.get_key());
+    });
+
+    window->get_input_manager()->register_callback<cmw::KeyReleasedEvent>([&window](auto &e) {
+        CMW_TRACE("Key released: %d\n", e.get_key());
+    });
+
+#ifdef CMW_SWITCH
+    window->get_input_manager()->register_callback<cmw::ScreenTouchedEvent>([](auto &e) {
+        CMW_TRACE("Screen touched: %u, %u\n", e.get_x(), e.get_y());
+    });
+
+    window->get_input_manager()->register_callback<cmw::JoystickMovedEvent>([](auto &e) {
+        CMW_TRACE("Joystick moved: %d, %d (%s)\n", e.get_x(), e.get_y(), e.is_left() ? "left" : "right");
+    });
+#else
     window->get_input_manager()->register_callback<cmw::MouseMovedEvent>([](auto &e) {
         CMW_TRACE("Mouse moved: %.2f, %.2f\n", e.get_x(), e.get_y());
     });
@@ -57,7 +74,7 @@ int main() {
     window->get_input_manager()->register_callback<cmw::MouseScrolledEvent>([](auto &e) {
         CMW_TRACE("Mouse scrolled: %.2f, %.2f\n", e.get_x(), e.get_y());
     });
-
+#endif
 
     cmw::ShaderProgram program = {
         cmw::VertexShader  {"shaders/triangle.vert"},

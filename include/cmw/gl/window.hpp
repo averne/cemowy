@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include "input.hpp"
+#include "../platform.h"
 
 namespace cmw {
 
@@ -64,6 +65,9 @@ class Window {
 
         void update() const {
             poll_events();
+#ifdef CMW_SWITCH
+            this->input_manager->process_nx_events(get_window());
+#endif
             swap_buffers();
         }
 

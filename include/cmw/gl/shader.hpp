@@ -9,6 +9,7 @@
 #include "object.hpp"
 #include "../log.hpp"
 #include "../utils.hpp"
+#include "../platform.h"
 
 namespace cmw {
 
