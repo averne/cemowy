@@ -1,97 +1,130 @@
 #pragma once
 
+#include <vector>
 #include <memory>
 #include <imgui.hpp>
 #include <imgui_impl_opengl3.h>
 
 #include "gl/window.hpp"
 #include "gl/input.hpp"
+#include "log.hpp"
 #include "platform.h"
 
 namespace cmw::imgui {
 
 namespace {
-    float g_last_time = 0.0f;
-    std::shared_ptr<Window> window = nullptr;
+
+float g_last_time = 0.0f;
+std::shared_ptr<Window> window = nullptr;
 
 #ifdef CMW_SWITCH
 
-    void touchscreen_press_cb(ScreenPressedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MousePos = ImVec2(e.get_x(), e.get_y());
-        io.MouseDown[0] = true;
-    }
+void touchscreen_press_cb(ScreenPressedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.MousePos = ImVec2(e.get_x(), e.get_y());
+    io.MouseDown[0] = true;
+}
 
-    void touchscreen_touch_cb(ScreenTouchedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MousePos = ImVec2(e.get_x(), e.get_y());
-        io.MouseDown[0] = true;
-    }
+void touchscreen_touch_cb(ScreenTouchedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.MousePos = ImVec2(e.get_x(), e.get_y());
+    io.MouseDown[0] = true;
+}
 
-    void touchscreen_release_cb(ScreenReleasedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MousePos = ImVec2(e.get_x(), e.get_y());
-        io.MouseDown[0] = false;
-    }
+void touchscreen_release_cb(ScreenReleasedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.MousePos = ImVec2(e.get_x(), e.get_y());
+    io.MouseDown[0] = false;
+}
 
-    void key_press_cb(KeyPressedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.KeysDown[e.get_key()] = true;
-        if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = true;
-        else if (e.get_key() == CMW_SWITCH_KEY_ZL) io.KeyShift = true;
-        else if (e.get_key() == CMW_SWITCH_KEY_R)  io.KeyAlt   = true;
-    }
+void key_press_cb(KeyPressedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.KeysDown[e.get_key()] = true;
+    if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = true;
+    else if (e.get_key() == CMW_SWITCH_KEY_ZL) io.KeyShift = true;
+    else if (e.get_key() == CMW_SWITCH_KEY_R)  io.KeyAlt   = true;
+}
 
-    void key_release_cb(KeyReleasedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.KeysDown[e.get_key()] = false;
-        if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = false;
-        else if (e.get_key() == CMW_SWITCH_KEY_ZL) io.KeyShift = false;
-        else if (e.get_key() == CMW_SWITCH_KEY_R)  io.KeyAlt   = false;
-    }
+void key_release_cb(KeyReleasedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.KeysDown[e.get_key()] = false;
+    if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = false;
+    else if (e.get_key() == CMW_SWITCH_KEY_ZL) io.KeyShift = false;
+    else if (e.get_key() == CMW_SWITCH_KEY_R)  io.KeyAlt   = false;
+}
 
 #else // CMW_SWITCH
 
-    void mouse_pos_cb(MouseMovedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MousePos = ImVec2(e.get_x(), e.get_y());
-    }
+void mouse_pos_cb(MouseMovedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.MousePos = ImVec2(e.get_x(), e.get_y());
+}
 
-    void mouse_scroll_cb(MouseScrolledEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MouseWheelH += e.get_x();
-        io.MouseWheel  += e.get_y();
-    }
+void mouse_scroll_cb(MouseScrolledEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.MouseWheelH += e.get_x();
+    io.MouseWheel  += e.get_y();
+}
 
-    void mouse_button_press_cb(MouseButtonPressedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
-            io.MouseDown[key] = true;
-    }
+void mouse_button_press_cb(MouseButtonPressedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
+        io.MouseDown[key] = true;
+}
 
-    void mouse_button_release_cb(MouseButtonReleasedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
-            io.MouseDown[key] = false;
-    }
+void mouse_button_release_cb(MouseButtonReleasedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
+        io.MouseDown[key] = false;
+}
 
-    void keyboard_key_press_cb(KeyPressedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.KeysDown[e.get_key()] = true;
-    }
+void keyboard_key_press_cb(KeyPressedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.KeysDown[e.get_key()] = true;
+}
 
-    void keyboard_key_release_cb(KeyReleasedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.KeysDown[e.get_key()] = false;
-    }
+void keyboard_key_release_cb(KeyReleasedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.KeysDown[e.get_key()] = false;
+}
 
-    void keyboard_char_cb(CharTypedEvent &e) {
-        ImGuiIO& io = ImGui::GetIO();
-        io.AddInputCharacter(e.get_codepoint());
-    }
+void keyboard_char_cb(CharTypedEvent &e) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddInputCharacter(e.get_codepoint());
+}
 
 #endif // CMW_SWITCH
+
+#if defined(CMW_DEBUG) && CMW_LOG_BACKEND_IS_IMGUI
+
+void draw_log_window(std::vector<char> &logs) {
+    if (!ImGui::Begin("Logs", nullptr)) {
+        ImGui::End();
+        return;
+    }
+
+    ImGui::SetWindowPos(ImVec2(10, 10), ImGuiCond_Once);
+    ImGui::SetWindowSize(ImVec2(400, 200), ImGuiCond_Once);
+
+    ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+    if (logs.size())
+        ImGui::TextUnformatted(&*logs.begin(), &*logs.end());
+
+    ImGui::PopStyleVar();
+
+    if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+        ImGui::SetScrollHereY(1.0f);
+
+    ImGui::EndChild();
+    ImGui::End();
 }
+
+#endif // defined(CMW_DEBUG) && CMW_LOG_BACKEND_IS_IMGUI
+
+} // namespace
 
 void initialize(std::shared_ptr<Window> win) {
     window = win;
@@ -120,6 +153,7 @@ void initialize(std::shared_ptr<Window> win) {
 
     ImGuiIO& io = ImGui::GetIO();
 
+    io.IniFilename = nullptr;
     io.BackendPlatformName = "cmw";
     io.DisplaySize = ImVec2(w, h);
     io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
@@ -179,12 +213,15 @@ void begin_frame() {
     io.KeyAlt   = io.KeysDown[CMW_KEY_LEFT_ALT]     || io.KeysDown[CMW_KEY_RIGHT_ALT];
     io.KeySuper = io.KeysDown[CMW_KEY_LEFT_SUPER]   || io.KeysDown[CMW_KEY_RIGHT_SUPER];
 #endif
+
+#if defined(CMW_DEBUG) && CMW_LOG_BACKEND_IS_IMGUI
+    draw_log_window(log::get_logs());
+#endif
 }
 
 void end_frame() {
     ImGui::Render();
-    ImDrawData *dat = ImGui::GetDrawData();
-    ImGui_ImplOpenGL3_RenderDrawData(dat);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 }

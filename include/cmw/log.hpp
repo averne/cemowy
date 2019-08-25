@@ -8,153 +8,163 @@
 
 #include "platform.h"
 
-namespace cmw {
-
-// TODO: Implement imgui backends
 // TODO: Log to files asynchronously
 
-#define BACKEND_IS_STDOUT (CMW_LOG_BACKEND == CMW_LOG_BACKEND_STDOUT)
-#define BACKEND_IS_FILE   (CMW_LOG_BACKEND == CMW_LOG_BACKEND_FILE)
-#define BACKEND_IS_IMGUI  (CMW_LOG_BACKEND == CMW_LOG_BACKEND_IMGUI)
+#define CMW_LOG_BACKEND_IS_STDOUT (CMW_LOG_BACKEND == CMW_LOG_BACKEND_STDOUT)
+#define CMW_LOG_BACKEND_IS_FILE   (CMW_LOG_BACKEND == CMW_LOG_BACKEND_FILE)
+#define CMW_LOG_BACKEND_IS_IMGUI  (CMW_LOG_BACKEND == CMW_LOG_BACKEND_IMGUI)
 
-class Logger {
-    public:
-        enum class Level: uint8_t { // Aliases used in the macro below
-            Trace, trace = Trace,
-            Info,  info  = Info,
-            Warn,  warn  = Warn,
-            Error, error = Error,
-            Fatal, fatal = Fatal,
-        };
+namespace cmw::log {
 
-        Logger()  = delete;
-        ~Logger() = delete;
-
-        // Can't use macros here
-        Logger(const Logger &)            = delete;
-        Logger &operator=(const Logger &) = delete;
-        Logger(Logger &&)                 = delete;
-        Logger &operator=(Logger &&)      = delete;
-
-#if defined(CMW_DEBUG) && defined(CMW_SWITCH) && BACKEND_IS_FILE
-        static void set_filepath(const std::string &path) {
-            filepath = path;
-        }
-#endif
-
-        static uint32_t initialize() {
-#ifdef CMW_DEBUG
-            if (is_running())
-                return 0x224; // err::AlreadyActve
-            start_time = std::chrono::system_clock::now();
-#   if BACKEND_IS_STDOUT
-#       ifdef CMW_SWITCH
-            socketInitializeDefault();
-            nxlinkStdio();
-        #endif // CMW_SWITCH
-#   endif // BACKED_IS_STDOUT
-#   if BACKEND_IS_FILE
-            if (!(fp = fopen(filepath.c_str(), "w")))
-                return 0x1a4; // err::FailedFopen
-            dup2(fileno(fp), 1);             // Redirect stdout to file
-            setvbuf(fp, NULL, _IOLBF, 0x50); // Flush on newline
-#   endif // BACKEND_IS_FILE
-            running = true;
-#endif // CMW_DEBUG
-            return 0;
-        }
-
-        static uint32_t finalize() {
-#ifdef CMW_DEBUG
-            if (!is_running())
-                return 0x2a4; // err::AlreadyInactive
-            running = false;
-#   if BACKEND_IS_STDOUT
-#       ifdef CMW_SWITCH
-            socketExit();
-        #endif // CMW_SWITCH
-#   endif // BACKED_IS_STDOUT
-#   if BACKEND_IS_FILE
-            fclose(fp);
-#   endif // BACKEND_IS_FILE
-#endif // CMW_DEBUG
-            return 0;
-        }
-
-        static inline bool is_running() {
-#ifdef CMW_DEBUG
-            return running;
-#else
-            return false;
-#endif
-        }
-
-        static inline void set_log_level(Level lvl) {
-#ifdef CMW_DEBUG
-            level = lvl;
-#endif
-        }
-        static inline Level get_log_lvl() {
-#ifdef CMW_DEBUG
-            return level;
-#else
-            return Level::Fatal;
-#endif
-        }
-
-        template<typename ...Args>
-        static inline void enqueue(Level lvl, const char *fmt, Args &&...args) {
-#ifdef CMW_DEBUG
-            if (lvl < level || !is_running())
-                return;
-            std::string fmted(snprintf(nullptr, 0, fmt, args...) + 1, 0);
-            snprintf((char *)fmted.data(), fmted.size(), fmt, args...);
-            printf("[%#.3fs] %s %s",
-                std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1, 1000>>>(std::chrono::system_clock::now() - start_time).count() / 1000.0f,
-                lvl_strings[(int)lvl],
-                fmted.c_str()
-            );
-#endif
-        }
-
-        template<typename ...Args>
-        static inline void enqueue(Level lvl, const std::string &fmt, Args &&...args) {
-            enqueue(lvl, fmt.c_str(), std::forward<Args>(args)...);
-        }
-
-    protected:
-#ifdef DEBUG
-        static inline bool running = false;
-        static inline Level level = Level::Trace;
-        static inline std::chrono::time_point<std::chrono::system_clock> start_time;
-#   if BACKEND_IS_FILE
-        static inline FILE *fp;
-#       ifdef CMW_SWITCH
-        static inline std::string filepath = "sdmc:/cmw.log";
-#       else
-        static inline std::string filepath = "./cmw.log";
-#       endif // CMW_SWITCH
-#   endif // BACKEND_IS_FILE
-        static inline const char * lvl_strings[] = {"[TRACE]:", "[INFO]: ", "[WARN]: ", "[ERROR]:", "[FATAL]:"};
-#endif // CMW_DEBUG
+enum class Level: uint8_t {
+    Trace,
+    Info,
+    Warn,
+    Error,
+    Fatal,
 };
 
-#undef BACKEND_IS_STDOUT
-#undef BACKEND_IS_FILE
-#undef BACKEND_IS_IMGUI
-
 #ifdef CMW_DEBUG
-#   define CMW_TRACE(fmt, ...) ::cmw::Logger::enqueue(::cmw::Logger::Level::Trace, fmt, ##__VA_ARGS__)
-#   define CMW_INFO(fmt,  ...) ::cmw::Logger::enqueue(::cmw::Logger::Level::Info,  fmt, ##__VA_ARGS__)
-#   define CMW_WARN(fmt,  ...) ::cmw::Logger::enqueue(::cmw::Logger::Level::Warn,  fmt, ##__VA_ARGS__)
-#   define CMW_ERROR(fmt, ...) ::cmw::Logger::enqueue(::cmw::Logger::Level::Error, fmt, ##__VA_ARGS__)
-#   define CMW_FATAL(fmt, ...) ::cmw::Logger::enqueue(::cmw::Logger::Level::Fatal, fmt, ##__VA_ARGS__)
-#else
-#   define CMW_TRACE(fmt, ...) ({})
-#   define CMW_INFO(fmt,  ...) ({})
-#   define CMW_WARN(fmt,  ...) ({})
-#   define CMW_ERROR(fmt, ...) ({})
-#   define CMW_FATAL(fmt, ...) ({})
+
+namespace {
+
+bool running = false;
+Level level = Level::Trace;
+std::chrono::time_point<std::chrono::system_clock> start_time;
+const char * lvl_strings[] = {"[TRACE]:", "[INFO]: ", "[WARN]: ", "[ERROR]:", "[FATAL]:"};
+
+#if CMW_LOG_BACKEND_IS_FILE
+        FILE *fp;
+#   ifdef CMW_SWITCH
+        std::string filepath = "sdmc:/cmw.log";
+#   else
+        std::string filepath = "./cmw.log";
+#   endif
 #endif
 
-} // namespawe cmw
+#if CMW_LOG_BACKEND_IS_IMGUI
+constexpr int logs_max_size = 1000;
+std::vector<char> logs;
+
+void add_log(const std::string &str) {
+    logs.reserve(logs.size() + str.size() - 1); // Ignore null terminator
+    std::copy(&*str.begin(), &*str.end() - 1, std::back_inserter(logs));
+}
+#endif
+
+} // namespace
+
+#if defined(CMW_SWITCH) && CMW_LOG_BACKEND_IS_FILE
+static inline void set_filepath(const std::string &path) {
+    filepath = path;
+}
+#endif
+
+static inline bool is_running() {
+    return running;
+}
+
+static inline void set_log_level(Level lvl) {
+    level = lvl;
+}
+
+static inline Level get_log_lvl() {
+    return level;
+}
+
+#if CMW_LOG_BACKEND_IS_IMGUI
+std::vector<char> &get_logs() {
+    return logs;
+}
+#endif
+
+static uint32_t initialize() {
+    if (is_running())
+        return 0x224; // err::AlreadyActve
+    start_time = std::chrono::system_clock::now();
+
+#if defined(CMW_SWITCH) && CMW_LOG_BACKEND_IS_STDOUT
+    socketInitializeDefault();
+    nxlinkStdio();
+#endif
+
+#if CMW_LOG_BACKEND_IS_FILE
+    if (!(fp = fopen(filepath.c_str(), "w")))
+        return 0x1a4; // err::FailedFopen
+    dup2(fileno(fp), 1);             // Redirect stdout to file
+    setvbuf(fp, NULL, _IOLBF, 0x50); // Flush on newline
+#endif
+
+    running = true;
+    return 0;
+}
+
+static uint32_t finalize() {
+    if (!is_running())
+        return 0x2a4; // err::AlreadyInactive
+    running = false;
+
+#if defined(CMW_SWITCH) && CMW_LOG_BACKEND_IS_STDOUT
+    socketExit();
+#endif
+
+#if CMW_LOG_BACKEND_IS_FILE
+    fclose(fp);
+#endif
+
+    return 0;
+}
+
+template<typename ...Args>
+static inline void enqueue(Level lvl, const std::string &fmt, Args &&...args) {
+    if (lvl < level || !is_running())
+        return;
+    std::string format = "[%#.3fs] %s " + fmt;
+
+#if CMW_LOG_BACKEND_IS_STDOUT || CMW_LOG_BACKEND_IS_FILE
+    printf(format.c_str(),
+        std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1, 1000>>>(std::chrono::system_clock::now() - start_time).count() / 1000.0f,
+        lvl_strings[(int)lvl],
+        std::forward<Args>(args)...
+    );
+#endif
+
+#if CMW_LOG_BACKEND_IS_IMGUI
+    std::string str(snprintf(NULL, 0, format.c_str(),
+        std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1, 1000>>>(std::chrono::system_clock::now() - start_time).count() / 1000.0f,
+        lvl_strings[(int)lvl],
+        std::forward<Args>(args)...) + 1, 0);
+    snprintf(str.data(), str.size(), format.c_str(),
+        std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1, 1000>>>(std::chrono::system_clock::now() - start_time).count() / 1000.0f,
+        lvl_strings[(int)lvl],
+        std::forward<Args>(args)...);
+    add_log(str);
+#endif
+}
+
+#else // CMW_DEBUG
+
+static inline bool is_running() { return false; }
+static inline void set_log_level(Level lvl) { }
+static inline Level get_log_lvl() { return Level::Fatal; }
+
+static uint32_t initialize() {
+    return 0;
+}
+
+static uint32_t finalize() {
+    return 0;
+}
+
+template<typename ...Args>
+static inline void enqueue(Level level, const std::string &fmt, Args &&...args) { }
+
+#endif // CMW_DEBUG
+
+} // namespawe cmw::log
+
+#define CMW_TRACE(fmt, ...) ::cmw::log::enqueue(::cmw::log::Level::Trace, fmt, ##__VA_ARGS__)
+#define CMW_INFO(fmt,  ...) ::cmw::log::enqueue(::cmw::log::Level::Info,  fmt, ##__VA_ARGS__)
+#define CMW_WARN(fmt,  ...) ::cmw::log::enqueue(::cmw::log::Level::Warn,  fmt, ##__VA_ARGS__)
+#define CMW_ERROR(fmt, ...) ::cmw::log::enqueue(::cmw::log::Level::Error, fmt, ##__VA_ARGS__)
+#define CMW_FATAL(fmt, ...) ::cmw::log::enqueue(::cmw::log::Level::Fatal, fmt, ##__VA_ARGS__)
