@@ -81,9 +81,26 @@ class Logger {
             return 0;
         }
 
-        static inline bool is_running() { return running; }
-        static inline void set_log_level(Level lvl) { level = lvl; }
-        static inline Level get_log_lvl() { return level; }
+        static inline bool is_running() {
+#ifdef CMW_DEBUG
+            return running;
+#else
+            return false;
+#endif
+        }
+
+        static inline void set_log_level(Level lvl) {
+#ifdef CMW_DEBUG
+            level = lvl;
+#endif
+        }
+        static inline Level get_log_lvl() {
+#ifdef CMW_DEBUG
+            return level;
+#else
+            return Level::Fatal;
+#endif
+        }
 
         template<typename ...Args>
         static inline void enqueue(Level lvl, const char *fmt, Args &&...args) {

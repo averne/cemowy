@@ -45,7 +45,7 @@ int main() {
 #ifdef CMW_SWITCH
         if (e.get_key() == CMW_SWITCH_KEY_PLUS)
 #else
-        if (e.get_key() == CMW_KEY_ENTER)
+        if (e.get_key() == CMW_KEY_A)
 #endif
             window->set_should_close(true);
     });
@@ -59,12 +59,24 @@ int main() {
     });
 
 #ifdef CMW_SWITCH
+    window->get_input_manager()->register_callback<cmw::ScreenPressedEvent>([](auto &e) {
+        CMW_TRACE("Screen pressed: %u, %u, %u, %u, %u\n",
+            e.get_x(), e.get_y(), e.get_dx(), e.get_dy(), e.get_angle());
+    });
+
     window->get_input_manager()->register_callback<cmw::ScreenTouchedEvent>([](auto &e) {
-        CMW_TRACE("Screen touched: %u, %u\n", e.get_x(), e.get_y());
+        CMW_TRACE("Screen touched: %u, %u, %u, %u, %u\n",
+            e.get_x(), e.get_y(), e.get_dx(), e.get_dy(), e.get_angle());
+    });
+
+    window->get_input_manager()->register_callback<cmw::ScreenReleasedEvent>([](auto &e) {
+        CMW_TRACE("Screen released: %u, %u, %u, %u, %u\n",
+            e.get_x(), e.get_y(), e.get_dx(), e.get_dy(), e.get_angle());
     });
 
     window->get_input_manager()->register_callback<cmw::JoystickMovedEvent>([](auto &e) {
-        CMW_TRACE("Joystick moved: %d, %d (%s)\n", e.get_x(), e.get_y(), e.is_left() ? "left" : "right");
+        CMW_TRACE("Joystick moved: %d, %d, (%s)\n",
+            e.get_x(), e.get_y(), e.is_left() ? "left" : "right");
     });
 #else
     window->get_input_manager()->register_callback<cmw::MouseMovedEvent>([](auto &e) {
@@ -75,6 +87,8 @@ int main() {
         CMW_TRACE("Mouse scrolled: %.2f, %.2f\n", e.get_x(), e.get_y());
     });
 #endif
+
+    cmw::imgui::initialize(window);
 
     cmw::ShaderProgram program = {
         cmw::VertexShader  {"shaders/triangle.vert"},
@@ -98,8 +112,15 @@ int main() {
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        cmw::imgui::begin_frame();
+        static bool show = true;
+        ImGui::ShowDemoWindow(&show);
+        cmw::imgui::end_frame();
         window->update();
     }
+
+
+    cmw::imgui::finalize();
 
     CMW_INFO("Exiting\n");
 

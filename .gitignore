@@ -12,6 +12,7 @@
 *.nacp
 *.npdm
 
+*.ini
 *.log
 *.txt
 

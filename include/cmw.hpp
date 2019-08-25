@@ -3,6 +3,7 @@
 #include "cmw/platform.h"
 #include "cmw/color.hpp"
 #include "cmw/error.hpp"
+#include "cmw/imgui.hpp"
 #include "cmw/log.hpp"
 #include "cmw/utils.hpp"
 

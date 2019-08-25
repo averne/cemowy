@@ -162,11 +162,12 @@ namespace cmw {
 
 enum class EventType: uint8_t {
     KeyPressed, KeyHeld, KeyReleased,
+    CharTyped,
     MouseButtonPressed, MouseButtonHeld, MouseButtonReleased,
     MouseMoved,
     MouseScrolled,
     WindowResized, WindowMoved, WindowFocused, WindowDefocused, WindowClosed,
-    ScreenTouched,
+    ScreenPressed, ScreenTouched, ScreenReleased,
     JoystickMoved,
     Max,
 };
@@ -213,6 +214,17 @@ struct KeyReleasedEvent: public KeyEvent {
     }
 
     static inline constexpr EventType get_type() { return EventType::KeyReleased; };
+};
+
+struct CharTypedEvent: public Event {
+    inline CharTypedEvent(unsigned int codepoint): codepoint(codepoint) { }
+
+    inline unsigned int get_codepoint() const { return this->codepoint; }
+
+    static inline constexpr EventType get_type() { return EventType::CharTyped; };
+
+    protected:
+        unsigned int codepoint;
 };
 
 struct MouseEvent: public Event, Position<float> {
@@ -303,18 +315,37 @@ struct JoystickMovedEvent: public Event, public Position<int32_t> {
         bool id;
 };
 
-struct ScreenTouchedEvent: public Event, public Position<uint32_t> {
-    inline ScreenTouchedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
+struct TouchscreenEvent: public Event, public Position<uint32_t> {
+    inline TouchscreenEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
             Position(x, y), dx(dx), dy(dy), angle(angle) { }
 
     inline uint32_t get_dx()    const { return this->dx; }
     inline uint32_t get_dy()    const { return this->dy; }
     inline uint32_t get_angle() const { return this->angle; }
 
-    static inline constexpr EventType get_type() { return EventType::ScreenTouched; }
-
     protected:
         uint32_t dx, dy, angle;
+};
+
+struct ScreenPressedEvent: public TouchscreenEvent {
+    inline ScreenPressedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
+            TouchscreenEvent(x, y, dx, dy, angle) { }
+
+    static inline constexpr EventType get_type() { return EventType::ScreenPressed; }
+};
+
+struct ScreenTouchedEvent: public TouchscreenEvent {
+    inline ScreenTouchedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
+            TouchscreenEvent(x, y, dx, dy, angle) { }
+
+    static inline constexpr EventType get_type() { return EventType::ScreenTouched; }
+};
+
+struct ScreenReleasedEvent: public TouchscreenEvent {
+    inline ScreenReleasedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
+            TouchscreenEvent(x, y, dx, dy, angle) { }
+
+    static inline constexpr EventType get_type() { return EventType::ScreenReleased; }
 };
 
 class InputManager {
@@ -354,7 +385,9 @@ class InputManager {
         }
 
         void set_window(GLFWwindow *window) const {
+#ifndef CMW_SWITCH
             glfwSetKeyCallback(window, keys_cb);
+            glfwSetCharCallback(window, char_cb);
             glfwSetCursorPosCallback(window, cursor_cb);
             glfwSetScrollCallback(window, scroll_cb);
             glfwSetMouseButtonCallback(window, click_cb);
@@ -362,6 +395,7 @@ class InputManager {
             glfwSetWindowSizeCallback(window, window_size_cb);
             glfwSetWindowFocusCallback(window, window_focus_cb);
             glfwSetWindowCloseCallback(window, window_close_cb);
+#endif
         }
 
 #ifdef CMW_SWITCH
@@ -378,7 +412,7 @@ class InputManager {
                 if ((keys_down & libnx_key) && (nx_keys_time[idx] == 0.0f)) {
                     this->process(KeyPressedEvent(key, 0));       // Key pressed for the first time
                     nx_keys_time[idx] = time;
-                } else if ((keys_down & libnx_key) && (time - nx_keys_time[idx] >= min_held_time)) {
+                } else if ((keys_down & libnx_key) && (time - nx_keys_time[idx] >= key_held_threshold)) {
                     this->process(KeyHeldEvent(key, 0));          // Key held for over min_held_time seconds
                 } else if (!(keys_down & libnx_key) && (nx_keys_time[idx] > 0.0f)) {
                     this->process(KeyReleasedEvent(key, 0));      // Key released
@@ -387,10 +421,19 @@ class InputManager {
             }
 
             // Touchscreen
+            static bool had_touch_last_frame;
+            static touchPosition pos;
             if (keys_down & KEY_TOUCH) {
-                touchPosition pos;
                 hidTouchRead(&pos, 0); // TODO: support multiple touch points
-                this->process(ScreenTouchedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
+                if (!had_touch_last_frame)
+                    this->process(ScreenPressedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
+                else
+                    this->process(ScreenTouchedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
+                had_touch_last_frame = true;
+            } else {
+                if (had_touch_last_frame)
+                    this->process(ScreenReleasedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
+                had_touch_last_frame = false;
             }
 
             // Joysticks
@@ -408,14 +451,16 @@ class InputManager {
 
     private:
         static void keys_cb(GLFWwindow *window, int key, int scancode, int action, int modifiers) {
-#ifndef CMW_SWITCH // Keys are manually handled on switch (key held functionality doesn't work)
             if (action == GLFW_PRESS)
                 s_this->process(KeyPressedEvent(key, modifiers));
             else if (action == GLFW_RELEASE)
                 s_this->process(KeyReleasedEvent(key, modifiers));
             else
                 s_this->process(KeyHeldEvent(key, modifiers));
-#endif
+        }
+
+        static void char_cb(GLFWwindow *window, unsigned int codepoint) {
+            s_this->process(CharTypedEvent(codepoint));
         }
 
         static void cursor_cb(GLFWwindow *window, double x, double y) {
@@ -459,7 +504,7 @@ class InputManager {
         std::size_t cur_handle = 0;
         std::array<std::map<std::size_t, Callback<>>, (std::size_t)EventType::Max> callbacks;
 #ifdef CMW_SWITCH
-        static inline constexpr float min_held_time = 0.5f; // Time (s) a key to to be held to begin firing KeyHeldEvents
+        static inline constexpr float key_held_threshold = 0.5f; // Time (s) a key to to be held to begin firing KeyHeldEvents
 #endif
 };
 

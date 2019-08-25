@@ -1,36 +1,50 @@
+ifeq ($(strip $(DEVKITPRO)),)
+    $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
+endif
+
+# -----------------------------------------------
+
 TARGET            =    lib$(notdir $(CURDIR))
 EXTENSION         =    a
 OUT               =    lib
 BUILD             =    build
-SOURCES           =    src
-INCLUDES          =    include
+SOURCES           =    src imgui -not -path "imgui/*/*"
+INCLUDES          =    include imgui ../glad/include
 LIBS              =
 
-ARCH              =    -march=native
-FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections
+ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
+FLAGS             =    -Wall -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
-ARFLAGS           =    -qc
+ARFLAGS           =    -rc
 
-PREFIX            =
+PREFIX            =    aarch64-none-elf-
 CC                =    $(PREFIX)gcc
 CXX               =    $(PREFIX)g++
 AS                =    $(PREFIX)as
-AR                =    $(PREFIX)ar
-RANLIB            =    $(PREFIX)ranlib
+AR                =    $(PREFIX)gcc-ar
+RANLIB            =    $(PREFIX)gcc-ranlib
 
 # -----------------------------------------------
 
 CFILES            =    $(shell find $(SOURCES) -name *.c)
 CPPFILES          =    $(shell find $(SOURCES) -name *.cpp)
 SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
-OFILES            =    $(CFILES:%=$(BUILD)/%.pc.o) $(CPPFILES:%=$(BUILD)/%.pc.o) $(SFILES:%=$(BUILD)/%.pc.o)
+OFILES            =    $(CFILES:%=$(BUILD)/%.nx.o) $(CPPFILES:%=$(BUILD)/%.nx.o) $(SFILES:%=$(BUILD)/%.nx.o)
 DFILES            =    $(OFILES:.o=.d)
 
-LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
+LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.$(EXTENSION), .$(OUT)/$(TARGET)-nx.$(EXTENSION))
 
 INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
+
+# -----------------------------------------------
+
+export PATH      :=    $(DEVKITPRO)/tools/bin:$(DEVKITPRO)/devkitA64/bin:$(PORTLIBS)/bin:$(PATH)
+
+PORTLIBS          =    $(DEVKITPRO)/portlibs/switch
+LIBNX             =    $(DEVKITPRO)/libnx
+LIBS             :=    $(LIBS) $(LIBNX) $(PORTLIBS)
 
 # -----------------------------------------------
 
@@ -43,27 +57,27 @@ all: $(LIB_TARGET)
 $(LIB_TARGET): $(OFILES)
 	@echo " AR  " $@
 	@mkdir -p $(dir $@)
+	@rm -f $@
 	@$(AR) $(ARFLAGS) $@ $^
-	@$(RANLIB) $@
 	@echo "Built" $(notdir $@)
 
-$(BUILD)/%.c.pc.o: %.c
+$(BUILD)/%.c.nx.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
 	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(BUILD)/%.cpp.pc.o: %.cpp
+$(BUILD)/%.cpp.nx.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
 	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(BUILD)/%.s.pc.o: %.s %.S
+$(BUILD)/%.s.nx.o: %.s %.S
 	@echo " AS  " $@
 	@mkdir -p $(dir $@)
 	@$(AS) -MMD -MP -x assembler-with-cpp $(ARCH) $(FLAGS) $(ASFLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 clean:
 	@echo Cleaning...
-	@rm -rf $(shell find $(BUILD) $(OUT) -name "*pc*")
+	@rm -rf $(shell find $(BUILD) $(OUT) -name "*nx*")
 
 -include $(DFILES)

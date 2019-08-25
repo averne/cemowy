@@ -7,7 +7,7 @@ INCLUDES          =    include
 LIBS              =
 
 ARCH              =    -march=native
-FLAGS             =    -Wall -pipe -O2 -ffunction-sections -fdata-sections
+FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =

@@ -4,16 +4,16 @@ OUT               =    out
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-CUSTOM_LIBS       =    lib/glad lib/stb_image
+CUSTOM_LIBS       =    lib/glad lib/stb_image lib/imgui
 
-DEFINES           =
+DEFINES           =    DEBUG
 ARCH              =    -march=native -fpie
 FLAGS             =    -Wall -pipe
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie
-LINKS             =    -lglfw -lglad-pc -lstbi-pc
+LINKS             =    -lglfw -lglad-pc -lstbi-pc -limgui-pc
 
 RELEASE_DEFINES   =    NDEBUG=1
 RELEASE_FLAGS     =    $(FLAGS) -O2 -ffunction-sections -fdata-sections -flto

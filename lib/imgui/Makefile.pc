@@ -2,8 +2,8 @@ TARGET            =    lib$(notdir $(CURDIR))
 EXTENSION         =    a
 OUT               =    lib
 BUILD             =    build
-SOURCES           =    src
-INCLUDES          =    include
+SOURCES           =    src imgui -not -path "imgui/*/*"
+INCLUDES          =    include imgui ../glad/include
 LIBS              =
 
 ARCH              =    -march=native
