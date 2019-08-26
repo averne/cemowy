@@ -16,7 +16,7 @@ OUT               =    out
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-CUSTOM_LIBS       =    lib/stb_image lib/glad lib/imgui
+CUSTOM_LIBS       =    lib/cmw lib/stb_image lib/glad lib/imgui
 ROMFS             =    res
 
 DEFINES           =    __SWITCH__ DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI GLM_FORCE_PURE
@@ -26,7 +26,7 @@ CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17 -fno-rtti
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie -specs=$(DEVKITPRO)/libnx/switch.specs -g
-LINKS             =    -lglad-nx -lglfw3 -lEGL -lglapi -ldrm_nouveau -lnx -lm -lstbi-nx -limgui-nx
+LINKS             =    -lglad-nx -lglfw3 -lEGL -lglapi -ldrm_nouveau -lnx -lm -lstbi-nx -limgui-nx -lcmw-nx
 
 PREFIX            =    aarch64-none-elf-
 CC                =    $(PREFIX)gcc
@@ -43,6 +43,7 @@ SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
 OFILES            =    $(CFILES:%=$(BUILD)/%.nx.o) $(CPPFILES:%=$(BUILD)/%.nx.o) $(SFILES:%=$(BUILD)/%.nx.o)
 DFILES            =    $(OFILES:.o=.d)
 
+LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS) -name "*-nx.a")
 NX_TARGET         =    $(if $(OUT:=), $(OUT)/$(TARGET).$(EXTENSION), .$(OUT)/$(TARGET).$(EXTENSION))
 ELF_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.elf, .$(OUT)/$(TARGET)-nx.elf)
 NACP_TARGET       =    $(if $(OUT:=), $(OUT)/$(TARGET).nacp, .$(OUT)/$(TARGET).nacp)
@@ -107,7 +108,7 @@ $(NX_TARGET): $(ELF_TARGET) $(NACP_TARGET)
 	@elf2nro $< $@ $(NROFLAGS)
 	@echo "Built" $(notdir $@)
 
-$(ELF_TARGET): $(OFILES)
+$(ELF_TARGET): $(LIBS_TARGET) $(OFILES)
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
 	@$(LD) $(ARCH) $(LDFLAGS) -Wl,-Map,$(BUILD)/$(TARGET)-nx.map $(LIB_FLAGS) $^ $(LINKS) -o $@

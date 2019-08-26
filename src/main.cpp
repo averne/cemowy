@@ -181,6 +181,7 @@ int main() {
 
         cmw::imgui::begin_frame();
 
+#ifdef CMW_DEBUG
         ImGui::Begin("Debug panel", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::Text("%#.2f fps", ImGui::GetIO().Framerate);
         ImGui::Separator();
@@ -188,6 +189,7 @@ int main() {
         ImGui::ColorPicker3("Clear color", (float *)&clear_color,
             ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_DisplayHex);
         ImGui::End();
+#endif
 
         cmw::imgui::end_frame();
         window->update();

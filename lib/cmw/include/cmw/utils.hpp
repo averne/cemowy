@@ -181,7 +181,7 @@ static inline void unbind_all(Args &&...args) {
     (args.unbind(), ...);
 }
 
-FILE *open_asset(const std::string &path, const std::string &mode = "r") {
+static inline FILE *open_asset(const std::string &path, const std::string &mode = "r") {
 #ifdef CMW_SWITCH
     std::string asset_path = "romfs:/" + path;
 #else

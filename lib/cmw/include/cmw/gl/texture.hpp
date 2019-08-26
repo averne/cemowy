@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <algorithm>
 #include <utility>
-#include <initializer_list>
 #include <glad/glad.h>
 #include <stb_image.h>
 

@@ -12,6 +12,7 @@ SOURCES           =    src
 INCLUDES          =    include
 LIBS              =
 
+DEFINES           =    __SWITCH__
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
 FLAGS             =    -Wall -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
@@ -36,6 +37,7 @@ DFILES            =    $(OFILES:.o=.d)
 
 LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.$(EXTENSION), .$(OUT)/$(TARGET)-nx.$(EXTENSION))
 
+DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
 INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
 
 # -----------------------------------------------
@@ -64,12 +66,12 @@ $(LIB_TARGET): $(OFILES)
 $(BUILD)/%.c.nx.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
-	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 $(BUILD)/%.cpp.nx.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
-	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 $(BUILD)/%.s.nx.o: %.s %.S
 	@echo " AS  " $@

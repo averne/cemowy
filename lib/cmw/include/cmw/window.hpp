@@ -1,8 +1,5 @@
 #pragma once
 
-#include <initializer_list>
-#include <algorithm>
-#include <stdexcept>
 #include <utility>
 #include <memory>
 #include <glad/glad.h>
@@ -20,17 +17,7 @@ struct GlVersion {
 class Window {
     public:
         Window(int w, int h, const char *name, int x = 0, int y = 0, GLboolean resizable = GL_TRUE,
-                GlVersion ver = {3, 3, GLFW_OPENGL_CORE_PROFILE}) {
-            CMW_TRACE("Creating window object\n");
-            set_gl_version(ver);
-            hint(std::pair{GLFW_RESIZABLE, resizable});
-            CMW_TRY_THROW((this->window = glfwCreateWindow(w, h, name, nullptr, nullptr)),
-                std::runtime_error("Could not create window object"));
-            make_ctx_current();
-            set_pos(x, y);
-            set_vsync(true);
-            this->input_manager = std::make_unique<InputManager>(get_window());
-        }
+                GlVersion ver = {3, 3, GLFW_OPENGL_CORE_PROFILE});
 
         ~Window() {
             CMW_TRACE("Destructing window object\n");

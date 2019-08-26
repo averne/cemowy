@@ -4,11 +4,11 @@ OUT               =    lib
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-LIBS              =
+LIBS              =	   ../glad ../stb_image ../imgui
 
 DEFINES           =
 ARCH              =    -march=native
-FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections -flto
+FLAGS             =    -Wall -Wno-unused-function -g -pipe -O2 -ffunction-sections -fdata-sections -flto
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
@@ -29,9 +29,9 @@ SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
 OFILES            =    $(CFILES:%=$(BUILD)/%.pc.o) $(CPPFILES:%=$(BUILD)/%.pc.o) $(SFILES:%=$(BUILD)/%.pc.o)
 DFILES            =    $(OFILES:.o=.d)
 
-DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
 LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
 
+DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
 INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
 
 # -----------------------------------------------

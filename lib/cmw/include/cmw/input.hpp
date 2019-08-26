@@ -12,6 +12,20 @@
 #include "platform.h"
 
 // From glfw3.hpp
+#define CMW_MOUSE_BUTTON_1         0
+#define CMW_MOUSE_BUTTON_2         1
+#define CMW_MOUSE_BUTTON_3         2
+#define CMW_MOUSE_BUTTON_4         3
+#define CMW_MOUSE_BUTTON_5         4
+#define CMW_MOUSE_BUTTON_6         5
+#define CMW_MOUSE_BUTTON_7         6
+#define CMW_MOUSE_BUTTON_8         7
+
+#define CMW_MOUSE_BUTTON_LAST      CMW_MOUSE_BUTTON_8
+#define CMW_MOUSE_BUTTON_LEFT      CMW_MOUSE_BUTTON_1
+#define CMW_MOUSE_BUTTON_RIGHT     CMW_MOUSE_BUTTON_2
+#define CMW_MOUSE_BUTTON_MIDDLE    CMW_MOUSE_BUTTON_3
+
 #define CMW_KEY_UNKNOWN            -1
 
 #define CMW_KEY_SPACE              32
@@ -135,7 +149,6 @@
 #define CMW_KEY_RIGHT_SUPER        347
 #define CMW_KEY_MENU               348
 
-
 // Switch-specific codes (important -- same order as libnx)
 #define CMW_SWITCH_KEY_A           400
 #define CMW_SWITCH_KEY_B           401
@@ -157,6 +170,13 @@
 #define CMW_KEY_LAST               CMW_SWITCH_KEY_DDOWN
 #define CMW_SWITCH_KEY_FIRST       CMW_SWITCH_KEY_A
 #define CMW_SWITCH_KEY_LAST        CMW_SWITCH_KEY_DDOWN
+
+#define CMW_MOD_SHIFT              CMW_BIT(0)
+#define CMW_MOD_CONTROL            CMW_BIT(1)
+#define CMW_MOD_ALT                CMW_BIT(2)
+#define CMW_MOD_SUPER              CMW_BIT(3)
+#define CMW_MOD_CAPS_LOCK          CMW_BIT(4)
+#define CMW_MOD_NUM_LOCK           CMW_BIT(5)
 
 namespace cmw {
 
@@ -354,8 +374,10 @@ class InputManager {
         using Callback = std::function<void(T &)>;
 
         InputManager(GLFWwindow *window) {
-            s_this = this;
+#ifndef CMW_SWITCH
             set_window(window);
+#endif
+
 #ifdef CMW_SWITCH
             hidInitialize();
 #endif
@@ -366,6 +388,10 @@ class InputManager {
             hidExit();
 #endif
         }
+
+#ifndef CMW_SWITCH
+        void set_window(GLFWwindow *window);
+#endif
 
         template <typename T>
         std::size_t register_callback(Callback<T> cb) {
@@ -384,127 +410,30 @@ class InputManager {
                 cb(event);
         }
 
-        void set_window(GLFWwindow *window) const {
 #ifndef CMW_SWITCH
-            glfwSetKeyCallback(window, keys_cb);
-            glfwSetCharCallback(window, char_cb);
-            glfwSetCursorPosCallback(window, cursor_cb);
-            glfwSetScrollCallback(window, scroll_cb);
-            glfwSetMouseButtonCallback(window, click_cb);
-            glfwSetWindowPosCallback(window, window_pos_cb);
-            glfwSetWindowSizeCallback(window, window_size_cb);
-            glfwSetWindowFocusCallback(window, window_focus_cb);
-            glfwSetWindowCloseCallback(window, window_close_cb);
+        void set_window(GLFWwindow *window) const;
 #endif
-        }
 
 #ifdef CMW_SWITCH
-        void process_nx_events(GLFWwindow *window) {
-            static std::array<float, CMW_SWITCH_KEY_LAST - CMW_SWITCH_KEY_FIRST + 1> nx_keys_time; // The rest are supported by glfw
-            float time = glfwGetTime();
-            u64 keys_down = hidKeysDown(CONTROLLER_P1_AUTO) | hidKeysHeld(CONTROLLER_P1_AUTO); // glfw internally calls hidScanInput
-
-            // Buttons
-            for (uint32_t key = CMW_SWITCH_KEY_FIRST; key <= CMW_SWITCH_KEY_LAST; ++key) {
-                const uint32_t idx       = key - CMW_SWITCH_KEY_FIRST;
-                const uint32_t libnx_key = CMW_BIT(idx);
-
-                if ((keys_down & libnx_key) && (nx_keys_time[idx] == 0.0f)) {
-                    this->process(KeyPressedEvent(key, 0));       // Key pressed for the first time
-                    nx_keys_time[idx] = time;
-                } else if ((keys_down & libnx_key) && (time - nx_keys_time[idx] >= key_held_threshold)) {
-                    this->process(KeyHeldEvent(key, 0));          // Key held for over min_held_time seconds
-                } else if (!(keys_down & libnx_key) && (nx_keys_time[idx] > 0.0f)) {
-                    this->process(KeyReleasedEvent(key, 0));      // Key released
-                    nx_keys_time[idx] = 0.0f;
-                }
-            }
-
-            // Touchscreen
-            static bool had_touch_last_frame;
-            static touchPosition pos;
-            if (keys_down & KEY_TOUCH) {
-                hidTouchRead(&pos, 0); // TODO: support multiple touch points
-                if (!had_touch_last_frame)
-                    this->process(ScreenPressedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
-                else
-                    this->process(ScreenTouchedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
-                had_touch_last_frame = true;
-            } else {
-                if (had_touch_last_frame)
-                    this->process(ScreenReleasedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
-                had_touch_last_frame = false;
-            }
-
-            // Joysticks
-            {
-                JoystickPosition pos;
-                hidJoystickRead(&pos, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
-                if ((pos.dx + pos.dy) != 0)
-                    this->process(JoystickMovedEvent(pos.dx, pos.dy, 1));
-                hidJoystickRead(&pos, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
-                if ((pos.dx + pos.dy) != 0)
-                    this->process(JoystickMovedEvent(pos.dx, pos.dy, 0));
-            }
-        }
+        void process_nx_events(GLFWwindow *window) const;
 #endif
 
     private:
-        static void keys_cb(GLFWwindow *window, int key, int scancode, int action, int modifiers) {
-            if (action == GLFW_PRESS)
-                s_this->process(KeyPressedEvent(key, modifiers));
-            else if (action == GLFW_RELEASE)
-                s_this->process(KeyReleasedEvent(key, modifiers));
-            else
-                s_this->process(KeyHeldEvent(key, modifiers));
-        }
-
-        static void char_cb(GLFWwindow *window, unsigned int codepoint) {
-            s_this->process(CharTypedEvent(codepoint));
-        }
-
-        static void cursor_cb(GLFWwindow *window, double x, double y) {
-            s_this->process(MouseMovedEvent(x, y));
-        }
-
-        static void scroll_cb(GLFWwindow *window, double x, double y) {
-            s_this->process(MouseScrolledEvent(x, y));
-        }
-
-        static void click_cb(GLFWwindow *window, int key, int action, int modifiers) {
-            if (action == GLFW_PRESS)
-                s_this->process(MouseButtonPressedEvent(key, modifiers));
-            else if (action == GLFW_RELEASE)
-                s_this->process(MouseButtonReleasedEvent(key, modifiers));
-            else
-                s_this->process(MouseButtonHeldEvent(key, modifiers));
-        }
-
-        static void window_pos_cb(GLFWwindow* window, int x, int y) {
-            s_this->process(WindowMovedEvent(x, y));
-        }
-
-        static void window_size_cb(GLFWwindow* window, int width, int height) {
-            s_this->process(WindowResizedEvent(width, height));
-        }
-
-        static void window_focus_cb(GLFWwindow* window, int focused) {
-            if (focused)
-                s_this->process(WindowFocusedEvent());
-            else
-                s_this->process(WindowDefocusedEvent());
-        }
-
-        static void window_close_cb(GLFWwindow* window) {
-            s_this->process(WindowClosedEvent());
-        }
+        static void keys_cb(GLFWwindow *window, int key, int scancode, int action, int modifiers);
+        static void char_cb(GLFWwindow *window, unsigned int codepoint);
+        static void cursor_cb(GLFWwindow *window, double x, double y);
+        static void scroll_cb(GLFWwindow *window, double x, double y);
+        static void click_cb(GLFWwindow *window, int key, int action, int modifiers);
+        static void window_pos_cb(GLFWwindow *window, int x, int y);
+        static void window_size_cb(GLFWwindow *window, int width, int height);
+        static void window_focus_cb(GLFWwindow *window, int focused);
+        static void window_close_cb(GLFWwindow *window);
 
     protected:
-        static inline InputManager *s_this;
         std::size_t cur_handle = 0;
         std::array<std::map<std::size_t, Callback<>>, (std::size_t)EventType::Max> callbacks;
 #ifdef CMW_SWITCH
-        static inline constexpr float key_held_threshold = 0.5f; // Time (s) a key to to be held to begin firing KeyHeldEvents
+        static constexpr float key_held_threshold = 0.5f; // Time (s) a key to to be held to begin firing KeyHeldEvents
 #endif
 };
 

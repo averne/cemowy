@@ -6,8 +6,9 @@ SOURCES           =    src imgui -not -path "imgui/*/*"
 INCLUDES          =    include imgui ../glad/include
 LIBS              =
 
+DEFINES           =
 ARCH              =    -march=native
-FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections
+FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections -flto
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
@@ -30,6 +31,7 @@ DFILES            =    $(OFILES:.o=.d)
 
 LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
 
+DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
 INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
 
 # -----------------------------------------------
@@ -51,12 +53,12 @@ $(LIB_TARGET): $(OFILES)
 $(BUILD)/%.c.pc.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
-	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 $(BUILD)/%.cpp.pc.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
-	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINES) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 $(BUILD)/%.s.pc.o: %.s %.S
 	@echo " AS  " $@

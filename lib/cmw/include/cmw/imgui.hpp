@@ -12,6 +12,8 @@
 
 namespace cmw::imgui {
 
+#ifdef CMW_DEBUG
+
 namespace {
 
 float g_last_time = 0.0f;
@@ -95,7 +97,7 @@ void keyboard_char_cb(CharTypedEvent &e) {
 
 #endif // CMW_SWITCH
 
-#if defined(CMW_DEBUG) && CMW_LOG_BACKEND_IS_IMGUI
+#if CMW_LOG_BACKEND_IS_IMGUI
 
 void draw_log_window(std::vector<char> &logs) {
     if (!ImGui::Begin("Logs", nullptr)) {
@@ -122,7 +124,7 @@ void draw_log_window(std::vector<char> &logs) {
     ImGui::End();
 }
 
-#endif // defined(CMW_DEBUG) && CMW_LOG_BACKEND_IS_IMGUI
+#endif // CMW_LOG_BACKEND_IS_IMGUI
 
 } // namespace
 
@@ -214,7 +216,7 @@ void begin_frame() {
     io.KeySuper = io.KeysDown[CMW_KEY_LEFT_SUPER]   || io.KeysDown[CMW_KEY_RIGHT_SUPER];
 #endif
 
-#if defined(CMW_DEBUG) && CMW_LOG_BACKEND_IS_IMGUI
+#if CMW_LOG_BACKEND_IS_IMGUI
     draw_log_window(log::get_logs());
 #endif
 }
@@ -224,4 +226,13 @@ void end_frame() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-}
+#else // CMW_DEBUG
+
+void initialize(std::shared_ptr<Window>) { }
+void finalize() { }
+void begin_frame() { }
+void end_frame() { }
+
+#endif // CMW_DEBUG
+
+} // namespace cmw::imgui
