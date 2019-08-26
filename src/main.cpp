@@ -1,19 +1,100 @@
 #include <string>
 #include <memory>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <cmw.hpp>
 
+
 struct Vertex {
-    glm::vec3 position;
-    glm::vec3 color;
+    union {
+        GLfloat coords[3];
+        struct {
+            GLfloat x, y, z;
+        };
+    };
+    union {
+        GLfloat tex_coords[2];
+        struct {
+            GLfloat s, t;
+        };
+    };
 };
 
-Vertex vertices[] = {
-    {{-0.5f, -0.5f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-    {{+0.5f, -0.5f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-    {{+0.0f, +0.5f, 1.0f}, {0.0f, 0.0f, 1.0f}},
+constexpr Vertex vertices[] = {
+    { {-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f} },
+    { { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f} },
+    { { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f} },
+    { { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f} },
+    { {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f} },
+    { {-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f} },
+
+    { {-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f} },
+    { { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f} },
+    { { 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f} },
+    { { 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f} },
+    { {-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f} },
+    { {-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f} },
+
+    { {-0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} },
+    { {-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f} },
+    { {-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} },
+    { {-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} },
+    { {-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f} },
+    { {-0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} },
+
+    { { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} },
+    { { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f} },
+    { { 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} },
+    { { 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} },
+    { { 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f} },
+    { { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} },
+
+    { {-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} },
+    { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f} },
+    { { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f} },
+    { { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f} },
+    { {-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f} },
+    { {-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} },
+
+    { {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f} },
+    { { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f} },
+    { { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} },
+    { { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} },
+    { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f} },
+    { {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f} },
 };
+
+struct CubeParam {
+    glm::vec3 pos, rot_axis;
+};
+
+constexpr CubeParam cube_params[] = {
+    { glm::vec3( 0.0f,  0.0f,   0.0f), glm::vec3(-0.85f, -0.13f, -0.44f) },
+    { glm::vec3( 2.0f,  5.0f, -15.0f), glm::vec3(-0.13f, -0.97f, -0.93f) },
+    { glm::vec3(-1.5f, -2.2f, - 2.5f), glm::vec3( 0.70f,  0.30f,  0.06f) },
+    { glm::vec3(-3.8f, -2.0f, -12.3f), glm::vec3(-0.87f,  0.37f,  0.51f) },
+    { glm::vec3( 2.4f, -0.4f, - 3.5f), glm::vec3( 0.46f,  0.99f,  0.27f) },
+    { glm::vec3(-1.7f,  3.0f, - 7.5f), glm::vec3(-0.85f,  0.87f, -0.37f) },
+    { glm::vec3( 1.3f, -2.0f, - 2.5f), glm::vec3(-0.62f,  0.38f,  0.84f) },
+    { glm::vec3( 1.5f,  2.0f, - 2.5f), glm::vec3(-0.29f,  0.51f,  0.76f) },
+    { glm::vec3( 1.5f,  0.2f, - 1.5f), glm::vec3(-0.95f,  0.77f,  0.55f) },
+    { glm::vec3(-1.3f,  1.0f, - 1.5f), glm::vec3( 0.93f, -0.13f,  0.85f) },
+};
+
+#ifdef CMW_SWITCH
+
+extern "C" void __appExit();
+
+extern "C" void __libnx_exception_handler(ThreadExceptionDump *ctx) {
+    MemoryInfo mem_info; u32 page_info;
+    svcQueryMemory(&mem_info, &page_info, ctx->pc.x);
+    CMW_FATAL("%#x exception with pc=%#lx & lr=%#lx\n", ctx->error_desc,
+        ctx->pc.x - mem_info.addr, ctx->lr.x - mem_info.addr);
+    __appExit();
+}
+
+#endif
 
 constexpr int window_w = 1280, window_h = 720;
 
@@ -21,15 +102,16 @@ int main() {
 #ifdef CMW_SWITCH
     CMW_TRY_RC_RETURN(romfsInit());
     CMW_SCOPE_GUARD([]() { romfsExit(); });
+    appletInitializeGamePlayRecording();
 #endif
 
     CMW_TRY_RC_RETURN(cmw::log::initialize());
     CMW_SCOPE_GUARD([]() { cmw::log::finalize(); });
 
+    CMW_INFO("Starting\n");
+
     glfwInit();
     CMW_SCOPE_GUARD([]() { glfwTerminate(); });
-
-    CMW_INFO("Starting\n");
 
     auto window = std::make_shared<cmw::Window>(window_w, window_h, "Cemowy");
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -37,6 +119,15 @@ int main() {
         return -1;
     }
 
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity,
+            GLsizei length, const GLchar* message, const void *userParam) {
+        CMW_INFO("[GL] (t %#x, s %#x): %s\n", type, severity, message );
+    }, nullptr);
+    CMW_TRACE("Vendor: %s, GL version: %s, GLSL version: %s\n",
+        glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+    glEnable(GL_DEPTH_TEST);
     window->set_vsync(true);
     window->set_viewport(window_w, window_h);
 
@@ -52,9 +143,11 @@ int main() {
     cmw::imgui::initialize(window);
     CMW_SCOPE_GUARD([]() { cmw::imgui::finalize(); });
 
+    cmw::Texture2d tex{"textures/191407_1308820425_orig.jpg", 0};
+
     cmw::ShaderProgram program = {
-        cmw::VertexShader  {"shaders/triangle.vert"},
-        cmw::FragmentShader{"shaders/triangle.frag"}
+        cmw::VertexShader  {"shaders/cube.vert"},
+        cmw::FragmentShader{"shaders/cube.frag"}
     };
 
     cmw::VertexArray vao;
@@ -62,22 +155,35 @@ int main() {
     vbo.set_data(vertices, sizeof(vertices));
     vbo.set_layout({
         cmw::BufferElement::Float3,
-        cmw::BufferElement::Float3,
+        cmw::BufferElement::Float2,
     });
 
     vao.bind();
     program.bind();
+    program.set_value("tex", 0);
+
+    constexpr glm::vec3 cam_pos = glm::vec3(0.0f, 0.0f, 3.0f), cam_front = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::mat4 view_mat  = glm::lookAt(cam_pos, cam_pos + cam_front, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
+    program.set_value("view_proj", proj_mat * view_mat);
 
     cmw::Colorf clear_color{0.18f, 0.20f, 0.25f, 1.0f};
     while (!window->get_should_close()) {
         glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        for (std::size_t i = 0; i < 10; ++i) {
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), cube_params[i].pos);
+            model = glm::rotate(model, (float)glfwGetTime(), cube_params[i].rot_axis);
+            program.set_value("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         cmw::imgui::begin_frame();
 
         ImGui::Begin("Debug panel", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::Text("%#.2f fps", ImGui::GetIO().Framerate);
+        ImGui::Separator();
         ImGui::SetWindowPos(ImVec2(900, 10), ImGuiCond_Once);
         ImGui::ColorPicker3("Clear color", (float *)&clear_color,
             ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_DisplayHex);

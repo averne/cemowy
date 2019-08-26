@@ -5,8 +5,8 @@
 #include <imgui.hpp>
 #include <imgui_impl_opengl3.h>
 
-#include "gl/window.hpp"
-#include "gl/input.hpp"
+#include "window.hpp"
+#include "input.hpp"
 #include "log.hpp"
 #include "platform.h"
 

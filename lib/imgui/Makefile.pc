@@ -43,6 +43,7 @@ all: $(LIB_TARGET)
 $(LIB_TARGET): $(OFILES)
 	@echo " AR  " $@
 	@mkdir -p $(dir $@)
+	@rm -f $@
 	@$(AR) $(ARFLAGS) $@ $^
 	@$(RANLIB) $@
 	@echo "Built" $(notdir $@)

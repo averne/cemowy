@@ -190,6 +190,7 @@ FILE *open_asset(const std::string &path, const std::string &mode = "r") {
     FILE *fp = fopen(asset_path.c_str(), mode.c_str());
     if (!fp)
         CMW_ERROR("Failed to open %s\n", asset_path.c_str());
+    CMW_TRACE("Loaded %s\n", asset_path.c_str());
     return fp;
 }
 

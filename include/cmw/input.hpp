@@ -8,8 +8,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "../utils.hpp"
-#include "../platform.h"
+#include "utils.hpp"
+#include "platform.h"
 
 // From glfw3.hpp
 #define CMW_KEY_UNKNOWN            -1

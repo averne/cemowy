@@ -9,7 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include "input.hpp"
-#include "../platform.h"
+#include "platform.h"
 
 namespace cmw {
 

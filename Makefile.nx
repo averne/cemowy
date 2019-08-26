@@ -19,7 +19,7 @@ INCLUDES          =    include
 CUSTOM_LIBS       =    lib/stb_image lib/glad lib/imgui
 ROMFS             =    res
 
-DEFINES           =    __SWITCH__ DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI
+DEFINES           =    __SWITCH__ DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI GLM_FORCE_PURE
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
 FLAGS             =    -Wall -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
