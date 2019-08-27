@@ -47,3 +47,40 @@ IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_CreateFontsTexture();
 IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyFontsTexture();
 IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_CreateDeviceObjects();
 IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyDeviceObjects();
+
+namespace ImGui::Gl3Impl {
+
+inline static void Init(const char *glsl_version = NULL) {
+    ImGui_ImplOpenGL3_Init(glsl_version);
+}
+
+inline static void Shutdown() {
+    ImGui_ImplOpenGL3_Shutdown();
+}
+
+inline static void NewFrame() {
+    ImGui_ImplOpenGL3_NewFrame();
+}
+
+inline static void RenderDrawData(ImDrawData *draw_data) {
+    ImGui_ImplOpenGL3_RenderDrawData(draw_data);
+}
+
+inline static bool CreateFontsTexture() {
+    return ImGui_ImplOpenGL3_CreateFontsTexture();
+}
+
+inline static void DestroyFontsTexture() {
+    ImGui_ImplOpenGL3_DestroyFontsTexture();
+}
+
+inline static bool CreateDeviceObjects() {
+    return ImGui_ImplOpenGL3_CreateDeviceObjects();
+}
+
+inline static void DestoryDeviceObjects() {
+    ImGui_ImplOpenGL3_DestroyDeviceObjects();
+}
+
+} // namespace ImGui::Gl3Impl
+

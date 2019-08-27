@@ -22,25 +22,25 @@ std::shared_ptr<Window> window = nullptr;
 #ifdef CMW_SWITCH
 
 void touchscreen_press_cb(ScreenPressedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
     io.MouseDown[0] = true;
 }
 
 void touchscreen_touch_cb(ScreenTouchedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
     io.MouseDown[0] = true;
 }
 
 void touchscreen_release_cb(ScreenReleasedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
     io.MouseDown[0] = false;
 }
 
 void key_press_cb(KeyPressedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = true;
     if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = true;
     else if (e.get_key() == CMW_SWITCH_KEY_ZL) io.KeyShift = true;
@@ -48,7 +48,7 @@ void key_press_cb(KeyPressedEvent &e) {
 }
 
 void key_release_cb(KeyReleasedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = false;
     if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = false;
     else if (e.get_key() == CMW_SWITCH_KEY_ZL) io.KeyShift = false;
@@ -58,40 +58,40 @@ void key_release_cb(KeyReleasedEvent &e) {
 #else // CMW_SWITCH
 
 void mouse_pos_cb(MouseMovedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
 }
 
 void mouse_scroll_cb(MouseScrolledEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.MouseWheelH += e.get_x();
     io.MouseWheel  += e.get_y();
 }
 
 void mouse_button_press_cb(MouseButtonPressedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
         io.MouseDown[key] = true;
 }
 
 void mouse_button_release_cb(MouseButtonReleasedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
         io.MouseDown[key] = false;
 }
 
 void keyboard_key_press_cb(KeyPressedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = true;
 }
 
 void keyboard_key_release_cb(KeyReleasedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = false;
 }
 
 void keyboard_char_cb(CharTypedEvent &e) {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.AddInputCharacter(e.get_codepoint());
 }
 
@@ -133,7 +133,7 @@ void initialize(std::shared_ptr<Window> win) {
     auto [w, h] = window->get_size();
 
     ImGui::CreateContext();
-    ImGui_ImplOpenGL3_Init("#version 330");
+    ImGui::Gl3Impl::Init("#version 330");
     ImGui::StyleColorsDark();
 
     InputManager *in_man = window->get_input_manager();
@@ -153,7 +153,7 @@ void initialize(std::shared_ptr<Window> win) {
     in_man->register_callback<CharTypedEvent>(keyboard_char_cb);
 #endif
 
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
 
     io.IniFilename = nullptr;
     io.BackendPlatformName = "cmw";
@@ -162,6 +162,7 @@ void initialize(std::shared_ptr<Window> win) {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 #ifdef CMW_SWITCH
     io.ConfigFlags |= ImGuiConfigFlags_IsTouchScreen;
+    // io.FontGlobalScale = 1.5f;
 #endif
 
 #ifdef CMW_SWITCH
@@ -190,19 +191,24 @@ void initialize(std::shared_ptr<Window> win) {
     io.KeyMap[ImGuiKey_Enter]           = CMW_KEY_ENTER;
     io.KeyMap[ImGuiKey_Escape]          = CMW_KEY_ESCAPE;
 #endif
+
+#ifdef CMW_SWITCH
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.ScaleAllSizes(1.5f);
+#endif
 }
 
 void finalize() {
-    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::Gl3Impl::Shutdown();
     ImGui::DestroyContext();
     window.reset();
 }
 
 void begin_frame() {
-    ImGui_ImplOpenGL3_NewFrame();
+    ImGui::Gl3Impl::NewFrame();
     ImGui::NewFrame();
 
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
 
     float time = (float)glfwGetTime();
     io.DeltaTime = g_last_time > 0.0f ? (time - g_last_time) : (float)(1.0f / 60.0f);
@@ -223,7 +229,7 @@ void begin_frame() {
 
 void end_frame() {
     ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui::Gl3Impl::RenderDrawData(ImGui::GetDrawData());
 }
 
 #else // CMW_DEBUG

@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <limits>
 #include <utility>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -63,14 +64,15 @@ void InputManager::process_nx_events(GLFWwindow *window) const {
     }
 
     // Joysticks
+    constexpr float joystick_max = (float)std::numeric_limits<int16_t>::max();
     {
         JoystickPosition pos;
         hidJoystickRead(&pos, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
         if ((pos.dx + pos.dy) != 0)
-            this->process(JoystickMovedEvent(pos.dx, pos.dy, 1));
+            this->process(JoystickMovedEvent((float)pos.dx / joystick_max, (float)pos.dy / joystick_max, 1));
         hidJoystickRead(&pos, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
         if ((pos.dx + pos.dy) != 0)
-            this->process(JoystickMovedEvent(pos.dx, pos.dy, 0));
+            this->process(JoystickMovedEvent((float)pos.dx / joystick_max, (float)pos.dy / joystick_max, 0));
     }
 }
 #endif

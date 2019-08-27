@@ -323,8 +323,8 @@ struct WindowClosedEvent: public Event {
     static inline constexpr EventType get_type() { return EventType::WindowClosed; }
 };
 
-struct JoystickMovedEvent: public Event, public Position<int32_t> {
-    inline JoystickMovedEvent(int32_t x, int32_t y, bool is_left): Position(x, y), id(is_left) { }
+struct JoystickMovedEvent: public Event, public Position<float> {
+    inline JoystickMovedEvent(float x, float y, bool is_left): Position(x, y), id(is_left) { }
 
     inline bool is_left()  const { return  this->id; }
     inline bool is_right() const { return !this->id; }
