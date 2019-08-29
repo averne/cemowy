@@ -1,0 +1,140 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "pc release",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "pc",
+                "release"
+            ],
+            "presentation": {
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ]
+            }
+        },
+        {
+            "label": "pc debug",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "pc",
+                "debug"
+            ],
+            "presentation": {
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ]
+            }
+        },
+        {
+            "label": "nx",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "nx",
+                "all"
+            ],
+            "presentation": {
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ]
+            }
+        },
+        {
+            "label": "pc nx",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "pc",
+                "nx",
+                "all"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "pc clean",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "pc",
+                "clean"
+            ],
+            "presentation": {
+                "panel": "shared",
+                "reveal": "never"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "nx clean",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "nx",
+                "clean"
+            ],
+            "presentation": {
+                "panel": "shared",
+                "reveal": "never"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "mrproper",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "nx",
+                "pc",
+                "mrproper"
+            ],
+            "presentation": {
+                "panel": "shared",
+                "reveal": "never"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "run",
+            "dependsOn": [
+                "pc debug"
+            ],
+            "type": "shell",
+            "command": "${workspaceFolder}/out/Cemowy-pc-dbg.elf",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

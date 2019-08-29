@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "Makefile*": "makefile"
+    },
+    "files.exclude": {
+        "lib/**/lib": true,
+        "**/build": true,
+        "**/out": true
+    }
+}
