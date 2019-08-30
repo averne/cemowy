@@ -9,6 +9,9 @@ namespace cmw {
 
 template <std::size_t N = 1>
 class VertexArrayN: public GlObject {
+    CMW_NON_COPYABLE(VertexArrayN);
+    CMW_NON_MOVEABLE(VertexArrayN);
+
     public:
         VertexArrayN() {
             CMW_TRACE("Creating vertex array object\n");

@@ -15,6 +15,9 @@ namespace cmw {
 
 template <GLenum Type>
 class Shader: public GlObject {
+    CMW_NON_COPYABLE(Shader);
+    CMW_NON_MOVEABLE(Shader);
+
     public:
         Shader(): GlObject(glCreateShader(get_type())) {
             CMW_TRACE("Creating shader object\n");
