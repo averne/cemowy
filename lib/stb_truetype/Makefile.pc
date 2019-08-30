@@ -1,14 +1,14 @@
-TARGET            =    lib$(notdir $(CURDIR))
+TARGET            =    libstbtt
 EXTENSION         =    a
 OUT               =    lib
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-LIBS              =    ../glad ../imgui ../stb_image ../stb_truetype
+LIBS              =
 
-DEFINES           =    DEBUG
+DEFINES           =
 ARCH              =    -march=native
-FLAGS             =    -Wall -Wno-unused-function -g -pipe -O2 -ffunction-sections -fdata-sections -flto
+FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections -flto
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =

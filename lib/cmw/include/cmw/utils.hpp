@@ -37,20 +37,21 @@
     }                                                                                               \
 })
 
-#define CMW_TRY(x)           CMW_TRY_IMPL(x, )
-#define CMW_TRY_GOTO(x, l)   CMW_TRY_IMPL(x, goto l)
-#define CMW_TRY_THROW(x, e)  CMW_TRY_IMPL(x, throw e)
-#define CMW_TRY_RETURN(x, v) CMW_TRY_IMPL(x, return v)
-#define CMW_TRY_FATAL(x, v)  CMW_TRY_IMPL(x, CMW_FATAL(v))
-#define CMW_TRY_RC(x)        CMW_TRY_RC_IMPL(x, )
-#define CMW_TRY_RC_RETURN(x) CMW_TRY_RC_IMPL(x, return (uint32_t)rc)
-#define CMW_TRY_RC_FATAL(x)  CMW_TRY_RC_IMPL(x, CMW_FATAL(rc))
+#define CMW_TRY(x)             CMW_TRY_IMPL(x, )
+#define CMW_TRY_GOTO(x, l)     CMW_TRY_IMPL(x, goto l)
+#define CMW_TRY_THROW(x, e)    CMW_TRY_IMPL(x, throw e)
+#define CMW_TRY_RETURN(x, v)   CMW_TRY_IMPL(x, return v)
+#define CMW_TRY_FATAL(x, v)    CMW_TRY_IMPL(x, CMW_FATAL(v))
+#define CMW_TRY_RC(x)          CMW_TRY_RC_IMPL(x, )
+#define CMW_TRY_RC_THROW(x, e) CMW_TRY_RC_IMPL(x, throw e)
+#define CMW_TRY_RC_RETURN(x)   CMW_TRY_RC_IMPL(x, return (uint32_t)rc)
+#define CMW_TRY_RC_FATAL(x)    CMW_TRY_RC_IMPL(x, CMW_FATAL(rc))
 
 #define CMW_ASSERT_SIZE(x, sz)        static_assert(sizeof(x) == (sz), "Wrong size in " CMW_STRING(x))
 #define CMW_ASSERT_STANDARD_LAYOUT(x) static_assert(std::is_standard_layout_v<x>, CMW_STRING(x) " is not standard layout")
 
-#define CMW_SERV_INIT(s, ...) CMW_TRY_FATAL(CONCATENATE(s, Initialize)(__VA_ARGS__))
-#define CMW_SERV_EXIT(s, ...) CONCATENATE(s, Exit)(__VA_ARGS__)
+#define CMW_SERV_INIT(s, ...) CMW_TRY_FATAL(CMW_CAT(s, Initialize)(__VA_ARGS__))
+#define CMW_SERV_EXIT(s, ...) CMW_CAT(s, Exit)(__VA_ARGS__)
 
 #ifdef CMW_SWITCH
 #   define CMW_EXIT(x) fatalSimple(x)

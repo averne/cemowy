@@ -5,7 +5,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <cmw.hpp>
 
-
 struct Vertex {
     union {
         GLfloat coords[3];
@@ -128,6 +127,10 @@ int main() {
         glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
     window->set_vsync(true);
     window->set_viewport(window_w, window_h);
 
@@ -143,51 +146,67 @@ int main() {
     cmw::imgui::initialize(window);
     CMW_SCOPE_GUARD([]() { cmw::imgui::finalize(); });
 
-    cmw::Texture2d tex{"textures/191407_1308820425_orig.jpg", 0};
+#ifdef CMW_SWITCH
+    cmw::Font font{PlSharedFontType_Standard};
+#else
+    cmw::Font font{"fonts/FontStandard.ttf"};
+#endif
 
-    cmw::ShaderProgram program = {
+    cmw::Texture2d cube_tex{"textures/191407_1308820425_orig.jpg", 0};
+
+    cmw::ShaderProgram cube_program = {
         cmw::VertexShader  {"shaders/cube.vert"},
         cmw::FragmentShader{"shaders/cube.frag"}
     };
 
-    cmw::VertexArray vao;
-    cmw::VertexBuffer vbo;
-    vbo.set_data(vertices, sizeof(vertices));
-    vbo.set_layout({
+    cmw::VertexArray cube_vao;
+    cmw::VertexBuffer cube_vbo;
+    cube_vbo.set_data(vertices, sizeof(vertices));
+    cube_vbo.set_layout({
         cmw::BufferElement::Float3,
         cmw::BufferElement::Float2,
     });
 
-    vao.bind();
-    program.bind();
-    program.set_value("tex", 0);
+    cube_vao.bind();
+    cube_program.bind();
+    cube_program.set_value("tex", 0);
 
     constexpr glm::vec3 cam_pos = glm::vec3(0.0f, 0.0f, 3.0f), cam_front = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::mat4 view_mat  = glm::lookAt(cam_pos, cam_pos + cam_front, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
-    program.set_value("view_proj", proj_mat * view_mat);
+    cube_program.set_value("view_proj", proj_mat * view_mat);
 
     cmw::Colorf clear_color{0.18f, 0.20f, 0.25f, 1.0f};
+    cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
     while (!window->get_should_close()) {
         glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        cmw::Texture2d::active(0);
+        cube_tex.bind();
+        cube_vao.bind();
+        cube_program.bind();
+
         for (std::size_t i = 0; i < 10; ++i) {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), cube_params[i].pos);
             model = glm::rotate(model, (float)glfwGetTime(), cube_params[i].rot_axis);
-            program.set_value("model", model);
+            cube_program.set_value("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+        font.draw_string(window, u"Hello world\nBazinga é_è", 100.0f, 400.0f, 0.5f, text_color);
 
         cmw::imgui::begin_frame();
 
 #ifdef CMW_DEBUG
+        ImGui::SetNextWindowPos(ImVec2(900, 10), ImGuiCond_Once);
         ImGui::Begin("Debug panel", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::Text("%#.2f fps", ImGui::GetIO().Framerate);
         ImGui::Separator();
-        ImGui::SetWindowPos(ImVec2(900, 10), ImGuiCond_Once);
-        ImGui::ColorPicker3("Clear color", (float *)&clear_color,
-            ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_DisplayHex);
+
+        ImGui::ColorEdit3("Clear color", (float *)&clear_color, ImGuiColorEditFlags_PickerHueWheel);
+        ImGui::ColorEdit3("Text color",  (float *)&text_color,  ImGuiColorEditFlags_PickerHueWheel);
+
         ImGui::End();
 #endif
 

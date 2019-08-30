@@ -10,9 +10,9 @@ OUT               =    lib
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-LIBS              =	   ../glad ../stb_image ../imgui
+LIBS              =    ../glad ../imgui ../stb_image ../stb_truetype
 
-DEFINES           =    __SWITCH__
+DEFINES           =    __SWITCH__ DEBUG
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
 FLAGS             =    -Wall -Wno-unused-function -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11

@@ -7,6 +7,7 @@
 #include "cmw/imgui.hpp"
 #include "cmw/input.hpp"
 #include "cmw/log.hpp"
+#include "cmw/text.hpp"
 #include "cmw/utils.hpp"
 #include "cmw/window.hpp"
 

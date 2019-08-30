@@ -4,25 +4,25 @@ OUT               =    out
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-CUSTOM_LIBS       =    lib/cmw lib/glad lib/stb_image lib/imgui
+CUSTOM_LIBS       =    lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
 
-DEFINES           =    DEBUG
+DEFINES           =    CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI
 ARCH              =    -march=native -fpie
 FLAGS             =    -Wall -pipe
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie
-LINKS             =    -lglfw -lglad-pc -lstbi-pc -limgui-pc -lcmw-pc
+LINKS             =    -lglfw -lglad-pc -lcmw-pc -limgui-pc -lstbi-pc -lstbtt-pc
 
-RELEASE_DEFINES   =    NDEBUG=1
+RELEASE_DEFINES   =    $(DEFINES) NDEBUG=1
 RELEASE_FLAGS     =    $(FLAGS) -O2 -ffunction-sections -fdata-sections -flto
 RELEASE_CFLAGS    =    $(CFLAGS)
 RELEASE_CXXFLAGS  =    $(CXXFLAGS)
 RELEASE_ASFLAGS   =    $(ASFLAGS)
 RELEASE_LDFLAGS   =    $(LDFLAGS) -Wl,--gc-sections -flto -s
 
-DEBUG_DEFINES     =    DEBUG=1 CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI
+DEBUG_DEFINES     =    $(DEFINES) DEBUG=1
 DEBUG_FLAGS       =    $(FLAGS) -g -Og
 DEBUG_CFLAGS      =    $(CFLAGS)
 DEBUG_CXXFLAGS    =    $(CXXFLAGS)

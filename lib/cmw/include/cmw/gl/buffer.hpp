@@ -86,6 +86,10 @@ class BufferN: public GlObject {
             glBufferData(get_type(), size, data, draw_type);
         }
 
+        void set_sub_data(const void *data, std::size_t size, void *off = 0) {
+            glBufferSubData(get_type(), (GLintptr)off, size, data);
+        }
+
         void bind() const {
             glBindBuffer(get_type(), get_handle());
         }

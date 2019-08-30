@@ -9,8 +9,12 @@ namespace cmw::err {
 
 constexpr uint32_t Module = 420;
 
-inline constexpr Result FailedFopen        {Module, 0};
-inline constexpr Result AlreadyActive      {Module, 1};
-inline constexpr Result AlreadyInactive    {Module, 2};
+#define DECL_ERR(name, desc) inline constexpr Result name = {Module, desc}
+
+DECL_ERR(FailedFopen,     	0);
+DECL_ERR(AlreadyActive,   	1);
+DECL_ERR(AlreadyInactive,	2);
+
+#undef DECL_ERR
 
 } // namespace cmw::err
