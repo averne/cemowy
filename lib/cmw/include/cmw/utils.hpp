@@ -82,12 +82,12 @@ class ScopeGuard {
         }
 
         ~ScopeGuard() {
-            if (f)
+            if (this->f)
                 run();
         }
 
         void run() {
-            f();
+            this->f();
             dismiss();
         }
 

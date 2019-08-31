@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string>
 #include <chrono>
+#include <vector>
 
 #include "platform.h"
 
@@ -46,7 +47,7 @@ const char * lvl_strings[] = {"[TRACE]:", "[INFO]: ", "[WARN]: ", "[ERROR]:", "[
 constexpr int logs_max_size = 1000;
 std::vector<char> logs;
 
-void add_log(const std::string &str) {
+static inline void add_log(const std::string &str) {
     logs.reserve(logs.size() + str.size() - 1); // Ignore null terminator
     std::copy(&*str.begin(), &*str.end() - 1, std::back_inserter(logs));
 }
@@ -73,12 +74,12 @@ static inline Level get_log_lvl() {
 }
 
 #if CMW_LOG_BACKEND_IS_IMGUI
-std::vector<char> &get_logs() {
+static inline std::vector<char> &get_logs() {
     return logs;
 }
 #endif
 
-static uint32_t initialize() {
+static inline uint32_t initialize() {
     if (is_running())
         return 0x224; // err::AlreadyActve
     start_time = std::chrono::system_clock::now();
@@ -99,7 +100,7 @@ static uint32_t initialize() {
     return 0;
 }
 
-static uint32_t finalize() {
+static inline uint32_t finalize() {
     if (!is_running())
         return 0x2a4; // err::AlreadyInactive
     running = false;

@@ -6,7 +6,7 @@ SOURCES           =    src
 INCLUDES          =    include
 LIBS              =    ../glad ../imgui ../stb_image ../stb_truetype
 
-DEFINES           =    DEBUG
+DEFINES           =
 ARCH              =    -march=native
 FLAGS             =    -Wall -Wno-unused-function -g -pipe -O2 -ffunction-sections -fdata-sections -flto
 CFLAGS            =    -std=gnu11

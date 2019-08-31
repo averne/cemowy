@@ -21,25 +21,25 @@ std::shared_ptr<Window> window = nullptr;
 
 #ifdef CMW_SWITCH
 
-void touchscreen_press_cb(ScreenPressedEvent &e) {
+static void touchscreen_press_cb(ScreenPressedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
     io.MouseDown[0] = true;
 }
 
-void touchscreen_touch_cb(ScreenTouchedEvent &e) {
+static void touchscreen_touch_cb(ScreenTouchedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
     io.MouseDown[0] = true;
 }
 
-void touchscreen_release_cb(ScreenReleasedEvent &e) {
+static void touchscreen_release_cb(ScreenReleasedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
     io.MouseDown[0] = false;
 }
 
-void key_press_cb(KeyPressedEvent &e) {
+static void key_press_cb(KeyPressedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = true;
     if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = true;
@@ -47,7 +47,7 @@ void key_press_cb(KeyPressedEvent &e) {
     else if (e.get_key() == CMW_SWITCH_KEY_R)  io.KeyAlt   = true;
 }
 
-void key_release_cb(KeyReleasedEvent &e) {
+static void key_release_cb(KeyReleasedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = false;
     if      (e.get_key() == CMW_SWITCH_KEY_L)  io.KeyCtrl  = false;
@@ -57,40 +57,40 @@ void key_release_cb(KeyReleasedEvent &e) {
 
 #else // CMW_SWITCH
 
-void mouse_pos_cb(MouseMovedEvent &e) {
+static void mouse_pos_cb(MouseMovedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
 }
 
-void mouse_scroll_cb(MouseScrolledEvent &e) {
+static void mouse_scroll_cb(MouseScrolledEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.MouseWheelH += e.get_x();
     io.MouseWheel  += e.get_y();
 }
 
-void mouse_button_press_cb(MouseButtonPressedEvent &e) {
+static void mouse_button_press_cb(MouseButtonPressedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
         io.MouseDown[key] = true;
 }
 
-void mouse_button_release_cb(MouseButtonReleasedEvent &e) {
+static void mouse_button_release_cb(MouseButtonReleasedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     if (auto key = e.get_key(); key < 5) // Hardcoded in ImGui example code
         io.MouseDown[key] = false;
 }
 
-void keyboard_key_press_cb(KeyPressedEvent &e) {
+static void keyboard_key_press_cb(KeyPressedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = true;
 }
 
-void keyboard_key_release_cb(KeyReleasedEvent &e) {
+static void keyboard_key_release_cb(KeyReleasedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = false;
 }
 
-void keyboard_char_cb(CharTypedEvent &e) {
+static void keyboard_char_cb(CharTypedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.AddInputCharacter(e.get_codepoint());
 }
@@ -99,7 +99,7 @@ void keyboard_char_cb(CharTypedEvent &e) {
 
 #if CMW_LOG_BACKEND_IS_IMGUI
 
-void draw_log_window(std::vector<char> &logs) {
+static void draw_log_window(std::vector<char> &logs) {
     if (!ImGui::Begin("Logs", nullptr)) {
         ImGui::End();
         return;
@@ -128,7 +128,7 @@ void draw_log_window(std::vector<char> &logs) {
 
 } // namespace
 
-void initialize(std::shared_ptr<Window> win) {
+static inline void initialize(std::shared_ptr<Window> win) {
     window = win;
     auto [w, h] = window->get_size();
 
@@ -198,13 +198,13 @@ void initialize(std::shared_ptr<Window> win) {
 #endif
 }
 
-void finalize() {
+static inline void finalize() {
     ImGui::Gl3Impl::Shutdown();
     ImGui::DestroyContext();
     window.reset();
 }
 
-void begin_frame() {
+static inline void begin_frame() {
     ImGui::Gl3Impl::NewFrame();
     ImGui::NewFrame();
 
@@ -227,17 +227,17 @@ void begin_frame() {
 #endif
 }
 
-void end_frame() {
+static inline void end_frame() {
     ImGui::Render();
     ImGui::Gl3Impl::RenderDrawData(ImGui::GetDrawData());
 }
 
 #else // CMW_DEBUG
 
-void initialize(std::shared_ptr<Window>) { }
-void finalize() { }
-void begin_frame() { }
-void end_frame() { }
+static void initialize(std::shared_ptr<Window>) { }
+static void finalize() { }
+static void begin_frame() { }
+static void end_frame() { }
 
 #endif // CMW_DEBUG
 

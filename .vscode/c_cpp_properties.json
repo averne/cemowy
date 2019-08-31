@@ -33,12 +33,16 @@
                 "${DEVKITPRO}/devkitA64/lib/gcc/aarch64-none-elf/*/include",
 
                 "${DEVKITPRO}/libnx/include",
-                "${DEVKITPRO}/portlibs/switch/include"
+                "${DEVKITPRO}/portlibs/switch/include",
+
+                "/usr/include",
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.1.0/include/"
             ],
             "defines": [
                 "__SWITCH__",
                 "DEBUG",
-                "CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI"
+                "CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI",
+                "GLM_FORCE_PURE"
             ],
             "compilerPath": "${DEVKITPRO}/devkitA64/bin/aarch64-none-elf-gcc",
             "cStandard": "c11",
