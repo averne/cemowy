@@ -126,11 +126,6 @@ int main() {
     CMW_TRACE("Vendor: %s, GL version: %s, GLSL version: %s\n",
         glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    glEnable(GL_DEPTH_TEST);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
     window->set_vsync(true);
     window->set_viewport(window_w, window_h);
 
@@ -152,12 +147,30 @@ int main() {
     cmw::Font font{"fonts/FontStandard.ttf"};
 #endif
 
+    cmw::Renderer renderer;
+    renderer.set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
+
     cmw::Texture2d cube_tex{"textures/191407_1308820425_orig.jpg", 0};
 
     cmw::ShaderProgram cube_program = {
         cmw::VertexShader  {"shaders/cube.vert"},
         cmw::FragmentShader{"shaders/cube.frag"}
     };
+
+    cmw::ShaderProgram mesh_program = {
+        cmw::VertexShader  {"shaders/mesh.vert"},
+        cmw::FragmentShader{"shaders/mesh.frag"}
+    };
+
+    cmw::elements::Line line = {{
+        {+0.0f, +0.0f, 0.0f},
+        {+1.0f, +1.0f, 0.0f},
+    }};
+
+    line.add_points(
+        glm::vec3(+1.0f, +1.0f, 0.0f),
+        glm::vec3(-0.7f, +0.3f, 0.0f)
+    );
 
     cmw::VertexArray cube_vao;
     cmw::VertexBuffer cube_vbo;
@@ -176,11 +189,12 @@ int main() {
     glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
     cube_program.set_value("view_proj", proj_mat * view_mat);
 
-    cmw::Colorf clear_color{0.18f, 0.20f, 0.25f, 1.0f};
+    renderer.set_view_matrix(view_mat);
+    renderer.set_proj_matrix(proj_mat);
+
     cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
     while (!window->get_should_close()) {
-        glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         cmw::Texture2d::active(0);
         cube_tex.bind();
@@ -194,7 +208,9 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        font.draw_string(window, u"Hello world\nBazinga é_è", 100.0f, 400.0f, 0.5f, text_color);
+        renderer.submit(mesh_program, glm::mat4(1.0f), line);
+
+        font.draw_string(window, u"gg Hello world\nBazinga é_è", 100.0f, 400.0f, 0.5f, text_color);
 
         cmw::imgui::begin_frame();
 
@@ -204,7 +220,7 @@ int main() {
         ImGui::Text("%#.2f fps", ImGui::GetIO().Framerate);
         ImGui::Separator();
 
-        ImGui::ColorEdit3("Clear color", (float *)&clear_color, ImGuiColorEditFlags_PickerHueWheel);
+        ImGui::ColorEdit3("Clear color", (float *)&renderer.get_clear_color(), ImGuiColorEditFlags_PickerHueWheel);
         ImGui::ColorEdit3("Text color",  (float *)&text_color,  ImGuiColorEditFlags_PickerHueWheel);
 
         ImGui::End();

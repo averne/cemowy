@@ -108,7 +108,7 @@ void Font::draw_string(std::shared_ptr<Window> window, const std::u16string &str
     float xpos = x, ypos = y;
     for (char16_t chr: str) {
         if (chr == u'\n') {
-            y += (this->ascender + this->descender + 15.0f) * scale; // ??? this->linegap == 0
+            y += (this->ascender + this->descender + 40.0f) * scale; // ??? this->linegap == 0
             xpos = x;
             continue;
         }

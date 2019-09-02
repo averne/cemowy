@@ -155,8 +155,7 @@ struct Position {
     inline T get_y() const { return this->y; }
     inline std::pair<T, T> get_pos() const { return {this->x, this->y}; }
 
-    protected:
-        T x = 0, y = 0;
+    T x = 0, y = 0;
 };
 
 template <typename T>
@@ -168,8 +167,7 @@ struct Area {
     inline T get_h() const { return this->h; }
     inline std::pair<T, T> get_dims() const { return {this->w, this->h}; }
 
-    protected:
-        T w = 0, h = 0;
+    T w = 0, h = 0;
 };
 
 template <typename ...Args>

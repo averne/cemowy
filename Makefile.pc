@@ -6,7 +6,7 @@ SOURCES           =    src
 INCLUDES          =    include
 CUSTOM_LIBS       =    lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
 
-DEFINES           =    CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI
+DEFINES           =    CMW_LOG_BACKEND=CMW_LOG_BACKEND_STDOUT
 ARCH              =    -march=native -fpie
 FLAGS             =    -Wall -pipe
 CFLAGS            =    -std=gnu11

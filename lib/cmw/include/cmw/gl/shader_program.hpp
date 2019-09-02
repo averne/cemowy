@@ -79,22 +79,23 @@ class ShaderProgram: public GlObject {
         }
 
         template <typename T>
-        void set_value(GLint loc, const T &val) const {
-            if constexpr (std::is_same_v<T, GLboolean> || std::is_same_v<T, GLint>)
+        void set_value(GLint loc, T &&val) const {
+            using Type = std::remove_cv_t<std::remove_reference_t<T>>;
+            if constexpr (std::is_same_v<Type, GLboolean> || std::is_same_v<Type, GLint>)
                 glUniform1i(loc, (int)val);
-            else if constexpr (std::is_same_v<T, GLfloat>)
+            else if constexpr (std::is_same_v<Type, GLfloat>)
                 glUniform1f(loc, val);
-            else if constexpr (std::is_same_v<T, glm::vec2>)
+            else if constexpr (std::is_same_v<Type, glm::vec2>)
                 glUniform2fv(loc, 1, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<T, glm::vec3>)
+            else if constexpr (std::is_same_v<Type, glm::vec3>)
                 glUniform3fv(loc, 1, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<T, glm::vec4>)
+            else if constexpr (std::is_same_v<Type, glm::vec4>)
                 glUniform4fv(loc, 1, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<T, glm::mat2>)
+            else if constexpr (std::is_same_v<Type, glm::mat2>)
                 glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<T, glm::mat3>)
+            else if constexpr (std::is_same_v<Type, glm::mat3>)
                 glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<T, glm::mat4>)
+            else if constexpr (std::is_same_v<Type, glm::mat4>)
                 glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));
             else
                 throw std::invalid_argument("Invalid argument for ShaderProgram::set_value");

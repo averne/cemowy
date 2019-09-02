@@ -7,9 +7,12 @@
 #include "cmw/imgui.hpp"
 #include "cmw/input.hpp"
 #include "cmw/log.hpp"
+#include "cmw/renderer.hpp"
 #include "cmw/text.hpp"
 #include "cmw/utils.hpp"
 #include "cmw/window.hpp"
+
+#include "cmw/elements/line.hpp"
 
 #include "cmw/gl/buffer.hpp"
 #include "cmw/gl/object.hpp"
