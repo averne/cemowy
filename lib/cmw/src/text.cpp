@@ -108,7 +108,7 @@ void Font::draw_string(std::shared_ptr<Window> window, const std::u16string &str
     float xpos = x, ypos = y;
     for (char16_t chr: str) {
         if (chr == u'\n') {
-            y += (this->ascender + this->descender + 40.0f) * scale; // ??? this->linegap == 0
+            y -= (this->ascender + this->descender + 40.0f) * scale; // ??? this->linegap == 0
             xpos = x;
             continue;
         }
@@ -119,7 +119,7 @@ void Font::draw_string(std::shared_ptr<Window> window, const std::u16string &str
 
         float w = (float)glyph.get_width() * scale, h = (float)glyph.get_height() * scale;
         xpos += glyph.get_bearing() * scale;
-        ypos = window_h - y - h - glyph.get_bitmap_top() * scale;
+        ypos = y - h - glyph.get_bitmap_top() * scale;
 
         GLfloat vertices[6][4] = {
             { xpos,     ypos + h, 0.0, 0.0 },

@@ -33,14 +33,18 @@ using Colorf = ColorX<float>;
 using Colord = ColorX<double>;
 using Color  = Colorf;
 
-constexpr Color white  {255, 255, 255, 255};
-constexpr Color black  {0,   0,   0,   255};
-constexpr Color gray   {127, 127, 127, 255};
-constexpr Color red    {255, 0,   0,   255};
-constexpr Color green  {0,   255, 0,   255};
-constexpr Color blue   {0,   0,   255, 255};
-constexpr Color yellow {255, 255, 0,   255};
-constexpr Color magenta{255, 0,   255, 255};
-constexpr Color cyan   {0,   255, 255, 255};
+namespace colors {
+
+constexpr Colorf White  {255, 255, 255, 255};
+constexpr Colorf Black  {0,   0,   0,   255};
+constexpr Colorf Gray   {127, 127, 127, 255};
+constexpr Colorf Red    {255, 0,   0,   255};
+constexpr Colorf Green  {0,   255, 0,   255};
+constexpr Colorf Blue   {0,   0,   255, 255};
+constexpr Colorf Yellow {255, 255, 0,   255};
+constexpr Colorf Magenta{255, 0,   255, 255};
+constexpr Colorf Cyan   {0,   255, 255, 255};
+
+} // namespace colors
 
 } // namespace cmw

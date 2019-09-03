@@ -9,31 +9,23 @@
 
 namespace cmw::elements {
 
-class Line {
+class Point {
     public:
-        Line(GLfloat width = 1.0f, Colorf color = colors::White): width(width), color(color) { }
-        Line(std::vector<glm::vec3> positions, GLfloat width = 1.0f, Colorf color = colors::White): Line(width, color) {
-            this->vertices.reserve(positions.size());
-            for (auto &pos: positions)
-                this->vertices.push_back({pos, glm::vec2(0.5f, 0.5f)});
+        Point(GLfloat width = 1.0f, Colorf color = colors::White): width(width), color(color) { }
+        Point(glm::vec3 position, GLfloat width = 1.0f, Colorf color = colors::White): Point(width, color) {
+            this->vertices.push_back({position, glm::vec2(0.5f, 0.5f)});
             this->mesh.fill_buffers(this->vertices);
         }
 
-        ~Line() = default;
+        ~Point() = default;
 
-        template <typename ...Args>
-        void add_points(Args &&...positions) {
-            (this->vertices.push_back({positions, glm::vec2(0.5f, 0.5f)}), ...);
-            this->mesh.fill_buffers(this->vertices);
-        }
-
-        void edit_point(std::size_t idx, glm::vec3 position) {
-            this->vertices[idx].position = position;
+        void set_position(glm::vec3 position) {
+            this->vertices[0].position = position;
             this->mesh.fill_buffers(this->vertices);
         }
 
         void on_draw() {
-            glLineWidth(this->width);
+            glPointSize(this->width);
         };
 
         inline const std::vector<Mesh::Vertex> &get_vertices() const { return this->vertices; }

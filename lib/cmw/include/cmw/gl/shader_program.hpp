@@ -75,7 +75,6 @@ class ShaderProgram: public GlObject {
                 CMW_ERROR("Could not find uniform %s\n", name.c_str());
             this->uniform_loc_cache[name] = loc;
             return loc;
-
         }
 
         template <typename T>

@@ -12,18 +12,24 @@ namespace cmw {
 
 class Mesh {
     public:
+        struct Vertex {
+            glm::vec3 position;
+            glm::vec2 uv;
+        };
+
         Mesh()  {
             this->vao.bind();
             this->vbo.set_layout({
-                cmw::BufferElement::Float3,
+                BufferElement::Float3,
+                BufferElement::Float2,
             });
         }
+
         ~Mesh() = default;
 
-        void fill_buffers(std::vector<glm::vec3> &vertices) {
-            CMW_TRACE("Filling buffer object\n");
+        void fill_buffers(std::vector<Vertex> &vertices) {
             this->vbo.bind();
-            this->vbo.set_data(vertices.data(), sizeof(glm::vec3) * vertices.size());
+            this->vbo.set_data(vertices.data(), sizeof(Vertex) * vertices.size());
             this->size = vertices.size();
         }
 

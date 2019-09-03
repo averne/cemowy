@@ -2,11 +2,14 @@
 
 #include <glad/glad.h>
 #include <type_traits>
+#include <utility>
 
 #include "gl/shader_program.hpp"
 #include "elements/line.hpp"
+#include "elements/point.hpp"
 #include "color.hpp"
 #include "mesh.hpp"
+#include "resource_manager.hpp"
 
 namespace cmw {
 
@@ -31,14 +34,17 @@ class Renderer {
 
         template <typename T>
         void submit(ShaderProgram &program, const glm::mat4 model, T &&element) const {
+            element.on_draw();
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
             if constexpr (std::is_same_v<Type, elements::Line>)
-                render_mesh(GL_LINES, program, model, element.get_mesh());
+                render_mesh(GL_LINES, program, model, element.get_mesh(), element.get_color());
+            if constexpr (std::is_same_v<Type, elements::Point>)
+                render_mesh(GL_POINTS, program, model, element.get_mesh(), element.get_color());
             else
-                render_mesh(GL_TRIANGLES, program, model, element.get_mesh());
+                render_mesh(GL_TRIANGLES, program, model, element.get_mesh(), element.get_color());
         }
 
-        void render_mesh(GLenum mode, ShaderProgram &program, const glm::mat4 model, const Mesh &mesh) const;
+        void render_mesh(GLenum mode, ShaderProgram &program, const glm::mat4 model, const Mesh &mesh, Colorf color) const;
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
         inline Colorf &get_clear_color() { return this->clear_color; }
@@ -46,9 +52,12 @@ class Renderer {
         inline void set_view_matrix(glm::mat4 view) { this->view = view; }
         inline void set_proj_matrix(glm::mat4 proj) { this->proj = proj; }
 
+        inline const ResourceManager &get_resource_man() const { return this->resource_man; }
+
     protected:
         glm::mat4 view{1.0f}, proj{1.0f};
         Colorf clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
+        ResourceManager resource_man;
 };
 
 } // namespace cmw

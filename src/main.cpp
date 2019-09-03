@@ -162,14 +162,24 @@ int main() {
         cmw::FragmentShader{"shaders/mesh.frag"}
     };
 
-    cmw::elements::Line line = {{
-        {+0.0f, +0.0f, 0.0f},
-        {+1.0f, +1.0f, 0.0f},
-    }};
+    cmw::elements::Line line = {
+        {
+            {+0.0f, +0.0f, 0.0f},
+            {+1280.0f, +720.0f, 0.0f},
+        },
+        3.0f,
+        {0.8f, 0.7f, 0.1f}
+    };
+
+    cmw::elements::Point point = {
+        {+1000.0f, +100.0f, 0.0f},
+        10.0f,
+        {0.1f, 0.6f, 0.9f}
+    };
 
     line.add_points(
-        glm::vec3(+1.0f, +1.0f, 0.0f),
-        glm::vec3(-0.7f, +0.3f, 0.0f)
+        glm::vec3(+1280.0f, +720.0f, 0.0f),
+        glm::vec3(+100.0f, +300.0f, 0.0f)
     );
 
     cmw::VertexArray cube_vao;
@@ -189,8 +199,8 @@ int main() {
     glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
     cube_program.set_value("view_proj", proj_mat * view_mat);
 
-    renderer.set_view_matrix(view_mat);
-    renderer.set_proj_matrix(proj_mat);
+    renderer.set_view_matrix(glm::mat4(1.0f));
+    renderer.set_proj_matrix(glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h));
 
     cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
     while (!window->get_should_close()) {
@@ -209,8 +219,9 @@ int main() {
         }
 
         renderer.submit(mesh_program, glm::mat4(1.0f), line);
+        renderer.submit(mesh_program, glm::mat4(1.0f), point);
 
-        font.draw_string(window, u"gg Hello world\nBazinga é_è", 100.0f, 400.0f, 0.5f, text_color);
+        font.draw_string(window, u"gg Hello world\nBazinga é_è", 100.0f, 300.0f, 0.5f, text_color);
 
         cmw::imgui::begin_frame();
 
