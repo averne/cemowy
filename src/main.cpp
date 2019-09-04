@@ -205,7 +205,7 @@ int main() {
         app->get_renderer().submit(mesh_program, glm::mat4(1.0f), line);
         app->get_renderer().submit(mesh_program, glm::mat4(1.0f), point);
 
-        font.draw_string(app->get_window(), u"gg Hello world\nBazinga é_è", 100.0f, 300.0f, 0.5f, text_color);
+        font.draw_string(app->get_window(), u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 0.5f, text_color);
 
         cmw::imgui::begin_frame();
 

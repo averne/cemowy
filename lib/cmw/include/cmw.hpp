@@ -12,6 +12,7 @@
 #include "cmw/renderer.hpp"
 #include "cmw/resource_manager.hpp"
 #include "cmw/text.hpp"
+#include "cmw/time.hpp"
 #include "cmw/utils.hpp"
 #include "cmw/window.hpp"
 
