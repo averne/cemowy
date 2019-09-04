@@ -16,7 +16,7 @@
 #include "object.hpp"
 #include "../platform.h"
 
-namespace cmw {
+namespace cmw::gl {
 
 class ShaderProgram: public GlObject {
     CMW_NON_COPYABLE(ShaderProgram);

@@ -5,10 +5,10 @@
 #include <GLFW/glfw3.h>
 
 #include <cmw/gl/shader_program.hpp>
-#include <cmw/window.hpp>
 #include <cmw/error.hpp>
-#include <cmw/utils.hpp>
 #include <cmw/platform.h>
+#include <cmw/utils.hpp>
+#include <cmw/window.hpp>
 
 #include <cmw/text.hpp>
 
@@ -39,12 +39,12 @@ Glyph::Glyph(stbtt_fontinfo *font_ctx, float scale, int codepoint, int idx, void
     for (char16_t i=first_cached; i<=last_cached; ++i)                                                              \
         cache_glyph(i);                                                                                             \
                                                                                                                     \
-    this->program.set_shaders(VertexShader{"shaders/glyph.vert"}, FragmentShader{"shaders/glyph.frag"});            \
+    this->program.set_shaders(gl::VertexShader{"shaders/glyph.vert"}, gl::FragmentShader{"shaders/glyph.frag"});    \
     this->program.link();                                                                                           \
                                                                                                                     \
     this->vao.bind();                                                                                               \
     this->vbo.set_data(nullptr, 6 * 4 * sizeof(float), GL_DYNAMIC_DRAW);                                            \
-    this->vbo.set_layout({ BufferElement::Float4 });                                                                \
+    this->vbo.set_layout({ gl::BufferElement::Float4 });                                                            \
 })
 
 #ifdef CMW_SWITCH
@@ -113,7 +113,7 @@ void Font::draw_string(std::shared_ptr<Window> window, const std::u16string &str
             continue;
         }
 
-        Texture2d::active(0);
+        gl::Texture2d::active(0);
         auto &glyph = this->get_glyph(chr);
         glyph.get_texture().bind();
 

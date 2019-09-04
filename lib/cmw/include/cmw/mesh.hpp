@@ -20,8 +20,8 @@ class Mesh {
         Mesh()  {
             this->vao.bind();
             this->vbo.set_layout({
-                BufferElement::Float3,
-                BufferElement::Float2,
+                gl::BufferElement::Float3,
+                gl::BufferElement::Float2,
             });
         }
 
@@ -35,14 +35,14 @@ class Mesh {
 
         inline void bind() const { this->vao.bind(); }
 
-        inline const VertexBuffer &get_vertices() const { return this->vbo; }
+        inline const gl::VertexBuffer &get_vertices() const { return this->vbo; }
 
         inline std::size_t get_size() const { return this->size; }
 
     protected:
         std::size_t size = 0;
-        VertexArray vao;
-        VertexBuffer vbo;
+        gl::VertexArray vao;
+        gl::VertexBuffer vbo;
 };
 
 } // namespace cmw

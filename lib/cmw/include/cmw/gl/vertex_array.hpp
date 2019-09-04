@@ -5,7 +5,7 @@
 #include "object.hpp"
 #include "../platform.h"
 
-namespace cmw {
+namespace cmw::gl {
 
 template <std::size_t N = 1>
 class VertexArrayN: public GlObject {

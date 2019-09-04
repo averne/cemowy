@@ -33,7 +33,7 @@ class Renderer {
         }
 
         template <typename T>
-        void submit(ShaderProgram &program, const glm::mat4 model, T &&element) const {
+        void submit(gl::ShaderProgram &program, const glm::mat4 model, T &&element) const {
             element.on_draw();
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
             if constexpr (std::is_same_v<Type, elements::Line>)
@@ -44,7 +44,7 @@ class Renderer {
                 render_mesh(GL_TRIANGLES, program, model, element.get_mesh(), element.get_color());
         }
 
-        void render_mesh(GLenum mode, ShaderProgram &program, const glm::mat4 model, const Mesh &mesh, Colorf color) const;
+        void render_mesh(GLenum mode, gl::ShaderProgram &program, const glm::mat4 model, const Mesh &mesh, Colorf color) const;
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
         inline Colorf &get_clear_color() { return this->clear_color; }

@@ -11,7 +11,7 @@
 #include "../utils.hpp"
 #include "../platform.h"
 
-namespace cmw {
+namespace cmw::gl {
 
 enum class TextureType {
     Diffuse,

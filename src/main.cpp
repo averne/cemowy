@@ -147,20 +147,28 @@ int main() {
     cmw::Font font{"fonts/FontStandard.ttf"};
 #endif
 
+    cmw::ResourceManager res_man;
+
     cmw::Renderer renderer;
     renderer.set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
 
-    cmw::Texture2d cube_tex{"textures/191407_1308820425_orig.jpg", 0};
+    cmw::gl::Texture2d::active(0);
+    cmw::gl::Texture2d &cube_tex = res_man.get_texture("textures/191407_1308820425_orig.jpg");
 
-    cmw::ShaderProgram cube_program = {
-        cmw::VertexShader  {"shaders/cube.vert"},
-        cmw::FragmentShader{"shaders/cube.frag"}
-    };
+    cmw::gl::ShaderProgram &cube_program = res_man.get_shader("shaders/cube.vert", "shaders/cube.frag");
+    cmw::gl::ShaderProgram &mesh_program = res_man.get_shader("shaders/mesh.vert", "shaders/mesh.frag");
 
-    cmw::ShaderProgram mesh_program = {
-        cmw::VertexShader  {"shaders/mesh.vert"},
-        cmw::FragmentShader{"shaders/mesh.frag"}
-    };
+    // cmw::Texture2d cube_tex{"textures/191407_1308820425_orig.jpg", 0};
+
+    // cmw::ShaderProgram cube_program = {
+    //     cmw::VertexShader  {"shaders/cube.vert"},
+    //     cmw::FragmentShader{"shaders/cube.frag"}
+    // };
+
+    // cmw::ShaderProgram mesh_program = {
+    //     cmw::VertexShader  {"shaders/mesh.vert"},
+    //     cmw::FragmentShader{"shaders/mesh.frag"}
+    // };
 
     cmw::elements::Line line = {
         {
@@ -182,12 +190,12 @@ int main() {
         glm::vec3(+100.0f, +300.0f, 0.0f)
     );
 
-    cmw::VertexArray cube_vao;
-    cmw::VertexBuffer cube_vbo;
+    cmw::gl::VertexArray cube_vao;
+    cmw::gl::VertexBuffer cube_vbo;
     cube_vbo.set_data(vertices, sizeof(vertices));
     cube_vbo.set_layout({
-        cmw::BufferElement::Float3,
-        cmw::BufferElement::Float2,
+        cmw::gl::BufferElement::Float3,
+        cmw::gl::BufferElement::Float2,
     });
 
     cube_vao.bind();
@@ -206,7 +214,7 @@ int main() {
     while (!window->get_should_close()) {
         renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        cmw::Texture2d::active(0);
+        cmw::gl::Texture2d::active(0);
         cube_tex.bind();
         cube_vao.bind();
         cube_program.bind();

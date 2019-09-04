@@ -21,7 +21,7 @@ class Glyph {
         inline int get_codepoint() const { return this->codepoint; }
         inline int get_idx()       const { return this->idx; }
 
-        inline const Texture2d &get_texture() const { return this->texture; }
+        inline const gl::Texture2d &get_texture() const { return this->texture; }
         inline int get_width()      const { return this->x2 - this->x1; }
         inline int get_height()     const { return this->y2 - this->y1; }
         inline int get_bitmap_top() const { return this->y1; }
@@ -29,7 +29,7 @@ class Glyph {
         inline int get_bearing()    const { return this->bearing; }
 
     protected:
-        Texture2d texture;
+        gl::Texture2d texture;
         int codepoint, idx;
         int buf_width, buf_height, buf_off_x, buf_off_y;
         int x1, y1, x2, y2;
@@ -66,9 +66,9 @@ class Font {
     protected:
         static constexpr float font_scale = 0.105f;
 
-        ShaderProgram program;
-        VertexArray vao;
-        VertexBuffer vbo;
+        gl::ShaderProgram program;
+        gl::VertexArray vao;
+        gl::VertexBuffer vbo;
 
         unsigned char *data = nullptr;
         stbtt_fontinfo font_ctx;

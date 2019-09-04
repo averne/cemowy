@@ -1,22 +1,37 @@
 #pragma once
 
+#include <cstdio>
+#include <string>
+#include <map>
+
+#include "gl/shader_program.hpp"
 #include "gl/texture.hpp"
+#include "log.hpp"
 
 namespace cmw {
 
 class ResourceManager {
     public:
+        static inline std::string WhiteTexture = "";
+
         ResourceManager() {
-            this->white_tex.set_blank_data(10, 10);
-            this->white_tex.generate_mipmap();
+            auto pair = this->textures.try_emplace(WhiteTexture);
+            this->white_texture = &pair.first->second;
+            this->white_texture->set_blank_data(10, 10);
+            this->white_texture->generate_mipmap();
         }
 
         ~ResourceManager() = default;
 
-        const Texture2d &get_white_texture() const { return this->white_tex; }
+        gl::Texture2d &get_texture(const std::string &path);
+        gl::Texture2d &get_white_texture() const { return *this->white_texture; }
+
+        gl::ShaderProgram &get_shader(const std::string &vert_path, const std::string &frag_path);
 
     private:
-        Texture2d white_tex;
+        gl::Texture2d *white_texture;
+        std::map<std::string, gl::Texture2d> textures;
+        std::map<std::string, gl::ShaderProgram> shader_programs;
 };
 
 } // namespace cmw

@@ -10,7 +10,7 @@
 #include "../utils.hpp"
 #include "../platform.h"
 
-namespace cmw {
+namespace cmw::gl {
 
 struct BufferElement {
     enum Type: uint8_t {

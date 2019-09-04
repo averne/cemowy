@@ -4,7 +4,7 @@
 
 #include "../platform.h"
 
-namespace cmw {
+namespace cmw::gl {
 
 class GlObject {
     public:
