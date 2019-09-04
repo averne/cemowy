@@ -52,7 +52,7 @@ class Font {
 
         const Glyph &get_glyph(char16_t chr);
 
-        void draw_string(std::shared_ptr<Window> window, const std::u16string &str, float x = 0.0f, float y = 0.0f, float scale = 1.0f,
+        void draw_string(Window &window, const std::u16string &str, float x = 0.0f, float y = 0.0f, float scale = 1.0f,
             Colorf color = {1.0f, 1.0f, 1.0f});
 
         inline stbtt_fontinfo *get_ctx() { return &this->font_ctx; }

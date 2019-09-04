@@ -17,7 +17,7 @@ namespace cmw::imgui {
 namespace {
 
 float g_last_time = 0.0f;
-std::shared_ptr<Window> window = nullptr;
+Window *window = nullptr;
 
 #ifdef CMW_SWITCH
 
@@ -128,7 +128,7 @@ static void draw_log_window(std::vector<char> &logs) {
 
 } // namespace
 
-static inline void initialize(std::shared_ptr<Window> win) {
+static inline void initialize(Window *win) {
     window = win;
     auto [w, h] = window->get_size();
 
@@ -201,7 +201,7 @@ static inline void initialize(std::shared_ptr<Window> win) {
 static inline void finalize() {
     ImGui::Gl3Impl::Shutdown();
     ImGui::DestroyContext();
-    window.reset();
+    window = nullptr;
 }
 
 static inline void begin_frame() {

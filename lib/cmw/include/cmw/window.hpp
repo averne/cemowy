@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <utility>
 #include <memory>
 #include <glad/glad.h>
@@ -16,12 +17,13 @@ struct GlVersion {
 
 class Window {
     public:
-        Window(int w, int h, const char *name, int x = 0, int y = 0, GLboolean resizable = GL_TRUE,
+        Window(int w, int h, const std::string &name, int x = 0, int y = 0, GLboolean resizable = GL_TRUE,
                 GlVersion ver = {3, 3, GLFW_OPENGL_CORE_PROFILE});
 
         ~Window() {
             CMW_TRACE("Destructing window object\n");
             glfwDestroyWindow(get_window());
+            glfwTerminate();
         }
 
         void make_ctx_current() const {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cmw/platform.h"
+#include "cmw/application.hpp"
 #include "cmw/camera.hpp"
 #include "cmw/color.hpp"
 #include "cmw/error.hpp"

@@ -96,8 +96,8 @@ const Glyph &Font::get_glyph(char16_t chr) {
     return cache_glyph(chr);
 }
 
-void Font::draw_string(std::shared_ptr<Window> window, const std::u16string &str, float x, float y, float scale, Colorf color) {
-    auto [window_w, window_h] = window->get_size();
+void Font::draw_string(Window &window, const std::u16string &str, float x, float y, float scale, Colorf color) {
+    auto [window_w, window_h] = window.get_size();
     this->program.bind();
     this->program.set_value("u_projection", glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h));
     this->program.set_value("glyph_color", color.r, color.g, color.b);

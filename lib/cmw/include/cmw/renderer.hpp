@@ -15,7 +15,7 @@ namespace cmw {
 
 class Renderer {
     public:
-        Renderer() {
+        Renderer(ResourceManager &resource_man): resource_man(resource_man) {
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LESS);
 
@@ -52,12 +52,10 @@ class Renderer {
         inline void set_view_matrix(glm::mat4 view) { this->view = view; }
         inline void set_proj_matrix(glm::mat4 proj) { this->proj = proj; }
 
-        inline const ResourceManager &get_resource_man() const { return this->resource_man; }
-
     protected:
         glm::mat4 view{1.0f}, proj{1.0f};
         Colorf clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
-        ResourceManager resource_man;
+        ResourceManager &resource_man;
 };
 
 } // namespace cmw

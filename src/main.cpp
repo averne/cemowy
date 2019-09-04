@@ -109,14 +109,9 @@ int main() {
 
     CMW_INFO("Starting\n");
 
-    glfwInit();
-    CMW_SCOPE_GUARD([]() { glfwTerminate(); });
-
-    auto window = std::make_shared<cmw::Window>(window_w, window_h, "Cemowy");
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Failed to initialize glad" << std::endl;
-        return -1;
-    }
+    auto app = std::make_shared<cmw::Application>(window_w, window_h, "Cemowy");
+    app->get_window().set_vsync(true);
+    app->get_window().set_viewport(window_w, window_h);
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity,
@@ -126,19 +121,15 @@ int main() {
     CMW_TRACE("Vendor: %s, GL version: %s, GLSL version: %s\n",
         glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    window->set_vsync(true);
-    window->set_viewport(window_w, window_h);
-
-    window->get_input_manager()->register_callback<cmw::KeyPressedEvent>([&window](auto &e) {
+    app->get_window().get_input_manager()->register_callback<cmw::KeyPressedEvent>([&window = app->get_window()](auto &e) {
 #ifdef CMW_SWITCH
         if (e.get_key() == CMW_SWITCH_KEY_PLUS)
 #else
         if ((e.get_key() == CMW_KEY_ENTER) && (e.get_mods() & GLFW_MOD_CONTROL))
 #endif
-            window->set_should_close(true);
+            window.set_should_close(true);
     });
-
-    cmw::imgui::initialize(window);
+    cmw::imgui::initialize(&app->get_window());
     CMW_SCOPE_GUARD([]() { cmw::imgui::finalize(); });
 
 #ifdef CMW_SWITCH
@@ -147,28 +138,13 @@ int main() {
     cmw::Font font{"fonts/FontStandard.ttf"};
 #endif
 
-    cmw::ResourceManager res_man;
-
-    cmw::Renderer renderer;
-    renderer.set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
+    app->get_renderer().set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
 
     cmw::gl::Texture2d::active(0);
-    cmw::gl::Texture2d &cube_tex = res_man.get_texture("textures/191407_1308820425_orig.jpg");
+    cmw::gl::Texture2d &cube_tex = app->get_resource_manager().get_texture("textures/191407_1308820425_orig.jpg");
 
-    cmw::gl::ShaderProgram &cube_program = res_man.get_shader("shaders/cube.vert", "shaders/cube.frag");
-    cmw::gl::ShaderProgram &mesh_program = res_man.get_shader("shaders/mesh.vert", "shaders/mesh.frag");
-
-    // cmw::Texture2d cube_tex{"textures/191407_1308820425_orig.jpg", 0};
-
-    // cmw::ShaderProgram cube_program = {
-    //     cmw::VertexShader  {"shaders/cube.vert"},
-    //     cmw::FragmentShader{"shaders/cube.frag"}
-    // };
-
-    // cmw::ShaderProgram mesh_program = {
-    //     cmw::VertexShader  {"shaders/mesh.vert"},
-    //     cmw::FragmentShader{"shaders/mesh.frag"}
-    // };
+    cmw::gl::ShaderProgram &cube_program = app->get_resource_manager().get_shader("shaders/cube.vert", "shaders/cube.frag");
+    cmw::gl::ShaderProgram &mesh_program = app->get_resource_manager().get_shader("shaders/mesh.vert", "shaders/mesh.frag");
 
     cmw::elements::Line line = {
         {
@@ -207,12 +183,12 @@ int main() {
     glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
     cube_program.set_value("view_proj", proj_mat * view_mat);
 
-    renderer.set_view_matrix(glm::mat4(1.0f));
-    renderer.set_proj_matrix(glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h));
+    app->get_renderer().set_view_matrix(glm::mat4(1.0f));
+    app->get_renderer().set_proj_matrix(glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h));
 
     cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
-    while (!window->get_should_close()) {
-        renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    while (!app->get_window().get_should_close()) {
+        app->get_renderer().clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         cmw::gl::Texture2d::active(0);
         cube_tex.bind();
@@ -226,10 +202,10 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        renderer.submit(mesh_program, glm::mat4(1.0f), line);
-        renderer.submit(mesh_program, glm::mat4(1.0f), point);
+        app->get_renderer().submit(mesh_program, glm::mat4(1.0f), line);
+        app->get_renderer().submit(mesh_program, glm::mat4(1.0f), point);
 
-        font.draw_string(window, u"gg Hello world\nBazinga é_è", 100.0f, 300.0f, 0.5f, text_color);
+        font.draw_string(app->get_window(), u"gg Hello world\nBazinga é_è", 100.0f, 300.0f, 0.5f, text_color);
 
         cmw::imgui::begin_frame();
 
@@ -239,14 +215,14 @@ int main() {
         ImGui::Text("%#.2f fps", ImGui::GetIO().Framerate);
         ImGui::Separator();
 
-        ImGui::ColorEdit3("Clear color", (float *)&renderer.get_clear_color(), ImGuiColorEditFlags_PickerHueWheel);
+        ImGui::ColorEdit3("Clear color", (float *)&app->get_renderer().get_clear_color(), ImGuiColorEditFlags_PickerHueWheel);
         ImGui::ColorEdit3("Text color",  (float *)&text_color,  ImGuiColorEditFlags_PickerHueWheel);
 
         ImGui::End();
 #endif
 
         cmw::imgui::end_frame();
-        window->update();
+        app->get_window().update();
     }
 
     CMW_INFO("Exiting\n");
