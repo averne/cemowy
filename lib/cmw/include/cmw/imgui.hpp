@@ -234,7 +234,7 @@ static inline void end_frame() {
 
 #else // CMW_DEBUG
 
-static void initialize(std::shared_ptr<Window>) { }
+static void initialize(Window *) { }
 static void finalize() { }
 static void begin_frame() { }
 static void end_frame() { }

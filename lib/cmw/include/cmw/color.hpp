@@ -35,15 +35,15 @@ using Color  = Colorf;
 
 namespace colors {
 
-constexpr Colorf White  {255, 255, 255, 255};
-constexpr Colorf Black  {0,   0,   0,   255};
-constexpr Colorf Gray   {127, 127, 127, 255};
-constexpr Colorf Red    {255, 0,   0,   255};
-constexpr Colorf Green  {0,   255, 0,   255};
-constexpr Colorf Blue   {0,   0,   255, 255};
-constexpr Colorf Yellow {255, 255, 0,   255};
-constexpr Colorf Magenta{255, 0,   255, 255};
-constexpr Colorf Cyan   {0,   255, 255, 255};
+constexpr Colorf White      { 1.0f, 1.0f, 1.0f, 1.0f };
+constexpr Colorf Black      { 0.0f, 0.0f, 0.0f, 1.0f };
+constexpr Colorf Gray       { 0.5f, 0.5f, 0.5f, 1.0f };
+constexpr Colorf Red        { 1.0f, 0.0f, 0.0f, 1.0f };
+constexpr Colorf Green      { 0.0f, 1.0f, 0.0f, 1.0f };
+constexpr Colorf Blue       { 0.0f, 0.0f, 1.0f, 1.0f };
+constexpr Colorf Yellow     { 1.0f, 1.0f, 0.0f, 1.0f };
+constexpr Colorf Magenta    { 1.0f, 0.0f, 1.0f, 1.0f };
+constexpr Colorf Cyan       { 0.0f, 1.0f, 1.0f, 1.0f };
 
 } // namespace colors
 

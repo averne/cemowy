@@ -12,7 +12,7 @@ SOURCES           =    src
 INCLUDES          =    include
 LIBS              =    ../glad ../imgui ../stb_image ../stb_truetype
 
-DEFINES           =    __SWITCH__ DEBUG
+DEFINES           =    __SWITCH__ DEBUG GLM_FORCE_PURE
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
 FLAGS             =    -Wall -Wno-unused-function -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11

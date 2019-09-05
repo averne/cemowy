@@ -9,13 +9,12 @@
 
 namespace cmw {
 
-void Renderer::render_mesh(GLenum mode, gl::ShaderProgram &program, const glm::mat4 model, const Mesh &mesh, Colorf color) const {
+void Renderer::render_mesh(GLenum mode, const Mesh &mesh, const glm::mat4 &model, gl::ShaderProgram &program) const {
     program.bind();
     program.set_value("u_mvp_mat", this->proj * this->view * model);
     program.set_value("u_texture", 0);
-    program.set_value("u_blend_color", color.r, color.g, color.b, color.a);
+    program.set_value("u_blend_color", mesh.get_blend_color().r, mesh.get_blend_color().g, mesh.get_blend_color().b, mesh.get_blend_color().a);
     gl::Texture2d::active(0);
-    this->resource_man.get_white_texture().bind();
     mesh.bind();
     glDrawArrays(mode, 0, mesh.get_size());
 }

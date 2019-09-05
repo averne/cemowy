@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#include "../gl/texture.hpp"
 #include "../color.hpp"
 #include "../mesh.hpp"
 #include "../platform.h"
@@ -11,44 +13,47 @@ namespace cmw::elements {
 
 class Line {
     public:
-        Line(GLfloat width = 1.0f, Colorf color = colors::White): width(width), color(color) { }
-        Line(std::vector<glm::vec3> positions, GLfloat width = 1.0f, Colorf color = colors::White): Line(width, color) {
-            this->vertices.reserve(positions.size());
+        Line(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): mesh(texture, color), width(width) { }
+
+        Line(std::vector<glm::vec3> positions, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
+                Line(texture, color, width) {
+            std::vector<Mesh::Vertex> vertices;
+            vertices.reserve(positions.size());
             for (auto &pos: positions)
-                this->vertices.push_back({pos, glm::vec2(0.5f, 0.5f)});
-            this->mesh.fill_buffers(this->vertices);
+                vertices.emplace_back(pos);
+            this->get_mesh().set_vertices(vertices);
         }
 
         ~Line() = default;
 
         template <typename ...Args>
         void add_points(Args &&...positions) {
-            (this->vertices.push_back({positions, glm::vec2(0.5f, 0.5f)}), ...);
-            this->mesh.fill_buffers(this->vertices);
+            auto &vertices = this->mesh.get_vertices();
+            vertices.reserve(sizeof...(Args));
+            (vertices.emplace_back(positions), ...);
+            this->get_mesh().fill_buffers();
         }
 
         void edit_point(std::size_t idx, glm::vec3 position) {
-            this->vertices[idx].position = position;
-            this->mesh.fill_buffers(this->vertices);
+            this->get_mesh().get_vertices()[idx].position = position;
+            this->get_mesh().fill_buffers();
         }
 
         void on_draw() {
             glLineWidth(this->width);
         };
 
-        inline const std::vector<Mesh::Vertex> &get_vertices() const { return this->vertices; }
-        inline const Mesh &get_mesh() const { return this->mesh; }
+        inline Mesh &get_mesh() { return this->mesh; }
 
-        inline Colorf get_color() const { return this->color; }
-        inline void set_color(Colorf color) { this->color = color; }
+        inline Colorf get_color() const { return this->mesh.get_blend_color(); }
+        inline void set_color(Colorf color) { this->get_mesh().get_blend_color() = color; }
+
         inline GLfloat get_width() const { return this->width; }
         inline void set_width(GLfloat width) { this->width = width; }
 
     private:
-        GLfloat width;
-        Colorf color;
-        std::vector<Mesh::Vertex> vertices;
         Mesh mesh;
+        GLfloat width;
 };
 
 } // namespace cmw::elements

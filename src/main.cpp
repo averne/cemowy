@@ -137,8 +137,9 @@ int main() {
 
     app->get_renderer().set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
 
-    cmw::gl::Texture2d::active(0);
-    cmw::gl::Texture2d &cube_tex = app->get_resource_manager().get_texture("textures/191407_1308820425_orig.jpg");
+    cmw::gl::Texture2d &cube_tex  = app->get_resource_manager().get_texture("textures/191407_1308820425_orig.jpg");
+    cmw::gl::Texture2d &bog_tex   = app->get_resource_manager().get_texture("textures/bog.jpg");
+    cmw::gl::Texture2d &white_tex = app->get_resource_manager().get_white_texture();
 
     cmw::gl::ShaderProgram &cube_program = app->get_resource_manager().get_shader("shaders/cube.vert", "shaders/cube.frag");
     cmw::gl::ShaderProgram &mesh_program = app->get_resource_manager().get_shader("shaders/mesh.vert", "shaders/mesh.frag");
@@ -148,20 +149,32 @@ int main() {
             {+0.0f, +0.0f, 0.0f},
             {+1280.0f, +720.0f, 0.0f},
         },
-        3.0f,
-        {0.8f, 0.7f, 0.1f}
+        white_tex,
+        cmw::colors::Yellow,
+        3.0f
     };
 
     cmw::elements::Point point = {
         {+1000.0f, +100.0f, 0.0f},
-        10.0f,
-        {0.1f, 0.6f, 0.9f}
+        white_tex,
+        cmw::colors::Cyan,
+        10.0f
     };
 
     line.add_points(
         glm::vec3(+1280.0f, +720.0f, 0.0f),
         glm::vec3(+100.0f, +300.0f, 0.0f)
     );
+
+    cmw::elements::Triangle triangle = {
+        {
+            {{+100.0f, +100.0f, 0.0f}, {0.0f, 0.0f}},
+            {{+300.0f, +100.0f, 0.0f}, {1.0f, 0.0f}},
+            {{+200.0f, +300.0f, 0.0f}, {0.5f, 1.0f}},
+        },
+        bog_tex,
+        cmw::colors::Magenta
+    };
 
     cmw::gl::VertexArray cube_vao;
     cmw::gl::VertexBuffer cube_vbo;
@@ -199,8 +212,9 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        app->get_renderer().submit(mesh_program, glm::mat4(1.0f), line);
-        app->get_renderer().submit(mesh_program, glm::mat4(1.0f), point);
+        app->get_renderer().submit(line,     glm::mat4(1.0f), mesh_program);
+        app->get_renderer().submit(point,    glm::mat4(1.0f), mesh_program);
+        app->get_renderer().submit(triangle, glm::mat4(1.0f), mesh_program);
 
         font.draw_string(app->get_window(), u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 0.5f, text_color);
 
