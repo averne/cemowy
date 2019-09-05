@@ -55,7 +55,7 @@ class Window {
         void update() const {
             poll_events();
 #ifdef CMW_SWITCH
-            this->input_manager->process_nx_events(get_window());
+            this->input_manager.process_nx_events(get_window());
 #endif
             swap_buffers();
         }
@@ -80,11 +80,20 @@ class Window {
         inline std::pair<int, int> get_size()  const { int w, h; glfwGetWindowSize(get_window(), &w, &h); return {w, h}; }
 
         inline GLFWwindow *get_window() const { return this->window; }
-        inline InputManager *get_input_manager() const { return this->input_manager.get(); }
+
+        inline InputManager &get_input_manager() { return this->input_manager; }
+
+        template <typename T> std::size_t register_callback(InputManager::Callback<T> cb) {
+            return get_input_manager().register_callback<T>(cb);
+        }
+
+        template <typename T> void remove_callback(std::size_t handle) {
+            get_input_manager().remove_callback<T>(handle);
+        }
 
     protected:
         GLFWwindow *window;
-        std::unique_ptr<InputManager> input_manager;
+        InputManager input_manager;
 };
 
 } // namespace cmw

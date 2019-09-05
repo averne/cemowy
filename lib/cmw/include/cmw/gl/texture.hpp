@@ -13,17 +13,8 @@
 
 namespace cmw::gl {
 
-enum class TextureType {
-    Diffuse,
-    Specular,
-    Normal,
-};
-
 template <GLenum Type, std::size_t N = 1>
 class TextureN: public GlObject {
-    CMW_NON_COPYABLE(TextureN);
-    CMW_NON_MOVEABLE(TextureN);
-
     public:
         TextureN() {
             CMW_TRACE("Creating texture object\n");

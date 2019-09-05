@@ -136,21 +136,21 @@ static inline void initialize(Window *win) {
     ImGui::Gl3Impl::Init("#version 330");
     ImGui::StyleColorsDark();
 
-    InputManager *in_man = window->get_input_manager();
+    InputManager &in_man = window->get_input_manager();
 #ifdef CMW_SWITCH
-    in_man->register_callback<ScreenPressedEvent>(touchscreen_press_cb);
-    in_man->register_callback<ScreenTouchedEvent>(touchscreen_touch_cb);
-    in_man->register_callback<ScreenReleasedEvent>(touchscreen_release_cb);
-    in_man->register_callback<KeyPressedEvent>(key_press_cb);
-    in_man->register_callback<KeyReleasedEvent>(key_release_cb);
+    in_man.register_callback<ScreenPressedEvent>(touchscreen_press_cb);
+    in_man.register_callback<ScreenTouchedEvent>(touchscreen_touch_cb);
+    in_man.register_callback<ScreenReleasedEvent>(touchscreen_release_cb);
+    in_man.register_callback<KeyPressedEvent>(key_press_cb);
+    in_man.register_callback<KeyReleasedEvent>(key_release_cb);
 #else
-    in_man->register_callback<MouseMovedEvent>(mouse_pos_cb);
-    in_man->register_callback<MouseScrolledEvent>(mouse_scroll_cb);
-    in_man->register_callback<MouseButtonPressedEvent>(mouse_button_press_cb);
-    in_man->register_callback<MouseButtonReleasedEvent>(mouse_button_release_cb);
-    in_man->register_callback<KeyPressedEvent>(keyboard_key_press_cb);
-    in_man->register_callback<KeyReleasedEvent>(keyboard_key_release_cb);
-    in_man->register_callback<CharTypedEvent>(keyboard_char_cb);
+    in_man.register_callback<MouseMovedEvent>(mouse_pos_cb);
+    in_man.register_callback<MouseScrolledEvent>(mouse_scroll_cb);
+    in_man.register_callback<MouseButtonPressedEvent>(mouse_button_press_cb);
+    in_man.register_callback<MouseButtonReleasedEvent>(mouse_button_release_cb);
+    in_man.register_callback<KeyPressedEvent>(keyboard_key_press_cb);
+    in_man.register_callback<KeyReleasedEvent>(keyboard_key_release_cb);
+    in_man.register_callback<CharTypedEvent>(keyboard_char_cb);
 #endif
 
     ImGuiIO &io = ImGui::GetIO();

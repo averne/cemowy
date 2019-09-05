@@ -373,11 +373,7 @@ class InputManager {
         template <typename T = Event>
         using Callback = std::function<void(T &)>;
 
-        InputManager(GLFWwindow *window) {
-#ifndef CMW_SWITCH
-            set_window(window);
-#endif
-
+        InputManager() {
 #ifdef CMW_SWITCH
             hidInitialize();
 #endif
@@ -389,9 +385,7 @@ class InputManager {
 #endif
         }
 
-#ifndef CMW_SWITCH
         void set_window(GLFWwindow *window);
-#endif
 
         template <typename T>
         std::size_t register_callback(Callback<T> cb) {

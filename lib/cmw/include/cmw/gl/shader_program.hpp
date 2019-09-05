@@ -19,9 +19,6 @@
 namespace cmw::gl {
 
 class ShaderProgram: public GlObject {
-    CMW_NON_COPYABLE(ShaderProgram);
-    CMW_NON_MOVEABLE(ShaderProgram);
-
     public:
         ShaderProgram(): GlObject(glCreateProgram()) {
             CMW_TRACE("Creating shader program object\n");

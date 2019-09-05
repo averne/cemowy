@@ -11,8 +11,8 @@
 
 namespace cmw {
 
-#ifndef CMW_SWITCH
 void InputManager::set_window(GLFWwindow *window) {
+#ifndef CMW_SWITCH
     glfwSetKeyCallback(window, keys_cb);
     glfwSetCharCallback(window, char_cb);
     glfwSetCursorPosCallback(window, cursor_cb);
@@ -22,8 +22,8 @@ void InputManager::set_window(GLFWwindow *window) {
     glfwSetWindowSizeCallback(window, window_size_cb);
     glfwSetWindowFocusCallback(window, window_focus_cb);
     glfwSetWindowCloseCallback(window, window_close_cb);
-}
 #endif
+}
 
 #ifdef CMW_SWITCH
 void InputManager::process_nx_events(GLFWwindow *window) const {
@@ -78,61 +78,61 @@ void InputManager::process_nx_events(GLFWwindow *window) const {
 #endif
 
 void InputManager::keys_cb(GLFWwindow *window, int key, int scancode, int action, int modifiers) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
     if (action == GLFW_PRESS)
-        tmp_this->process(KeyPressedEvent(key, modifiers));
+        tmp_this.process(KeyPressedEvent(key, modifiers));
     else if (action == GLFW_RELEASE)
-        tmp_this->process(KeyReleasedEvent(key, modifiers));
+        tmp_this.process(KeyReleasedEvent(key, modifiers));
     else
-        tmp_this->process(KeyHeldEvent(key, modifiers));
+        tmp_this.process(KeyHeldEvent(key, modifiers));
 }
 
 void InputManager::char_cb(GLFWwindow *window, unsigned int codepoint) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this->process(CharTypedEvent(codepoint));
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    tmp_this.process(CharTypedEvent(codepoint));
 }
 
 void InputManager::cursor_cb(GLFWwindow *window, double x, double y) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this->process(MouseMovedEvent(x, y));
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    tmp_this.process(MouseMovedEvent(x, y));
 }
 
 void InputManager::scroll_cb(GLFWwindow *window, double x, double y) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this->process(MouseScrolledEvent(x, y));
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    tmp_this.process(MouseScrolledEvent(x, y));
 }
 
 void InputManager::click_cb(GLFWwindow *window, int key, int action, int modifiers) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
     if (action == GLFW_PRESS)
-        tmp_this->process(MouseButtonPressedEvent(key, modifiers));
+        tmp_this.process(MouseButtonPressedEvent(key, modifiers));
     else if (action == GLFW_RELEASE)
-        tmp_this->process(MouseButtonReleasedEvent(key, modifiers));
+        tmp_this.process(MouseButtonReleasedEvent(key, modifiers));
     else
-        tmp_this->process(MouseButtonHeldEvent(key, modifiers));
+        tmp_this.process(MouseButtonHeldEvent(key, modifiers));
 }
 
 void InputManager::window_pos_cb(GLFWwindow* window, int x, int y) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this->process(WindowMovedEvent(x, y));
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    tmp_this.process(WindowMovedEvent(x, y));
 }
 
 void InputManager::window_size_cb(GLFWwindow* window, int width, int height) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this->process(WindowResizedEvent(width, height));
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    tmp_this.process(WindowResizedEvent(width, height));
 }
 
 void InputManager::window_focus_cb(GLFWwindow* window, int focused) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
     if (focused)
-        tmp_this->process(WindowFocusedEvent());
+        tmp_this.process(WindowFocusedEvent());
     else
-        tmp_this->process(WindowDefocusedEvent());
+        tmp_this.process(WindowDefocusedEvent());
 }
 
 void InputManager::window_close_cb(GLFWwindow* window) {
-    InputManager *tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this->process(WindowClosedEvent());
+    InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
+    tmp_this.process(WindowClosedEvent());
 }
 
 } // namespace cmw

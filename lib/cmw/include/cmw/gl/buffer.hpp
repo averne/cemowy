@@ -65,9 +65,6 @@ struct BufferLayout {
 
 template <GLenum Type, std::size_t N = 1>
 class BufferN: public GlObject {
-    CMW_NON_COPYABLE(BufferN);
-    CMW_NON_MOVEABLE(BufferN);
-
     public:
         BufferN() {
             CMW_TRACE("Creating buffer object\n");

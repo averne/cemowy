@@ -104,12 +104,10 @@ int main() {
     appletInitializeGamePlayRecording();
 #endif
 
-    CMW_TRY_RC_RETURN(cmw::log::initialize());
-    CMW_SCOPE_GUARD([]() { cmw::log::finalize(); });
+    auto app = std::make_shared<cmw::Application>(window_w, window_h, "Cemowy");
 
     CMW_INFO("Starting\n");
 
-    auto app = std::make_shared<cmw::Application>(window_w, window_h, "Cemowy");
     app->get_window().set_vsync(true);
     app->get_window().set_viewport(window_w, window_h);
 
@@ -118,10 +116,11 @@ int main() {
             GLsizei length, const GLchar* message, const void *userParam) {
         CMW_INFO("[GL] (t %#x, s %#x): %s\n", type, severity, message );
     }, nullptr);
+
     CMW_TRACE("Vendor: %s, GL version: %s, GLSL version: %s\n",
         glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    app->get_window().get_input_manager()->register_callback<cmw::KeyPressedEvent>([&window = app->get_window()](auto &e) {
+    app->get_window().register_callback<cmw::KeyPressedEvent>([&window = app->get_window()](auto &e) {
 #ifdef CMW_SWITCH
         if (e.get_key() == CMW_SWITCH_KEY_PLUS)
 #else
@@ -129,8 +128,6 @@ int main() {
 #endif
             window.set_should_close(true);
     });
-    cmw::imgui::initialize(&app->get_window());
-    CMW_SCOPE_GUARD([]() { cmw::imgui::finalize(); });
 
 #ifdef CMW_SWITCH
     cmw::Font font{PlSharedFontType_Standard};
