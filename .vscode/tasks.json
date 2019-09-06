@@ -28,6 +28,10 @@
                 "pc",
                 "debug"
             ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "presentation": {
                 "panel": "shared"
             },
@@ -67,10 +71,6 @@
                 "nx",
                 "all"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "presentation": {
                 "panel": "shared"
             },
@@ -120,7 +120,7 @@
             "problemMatcher": []
         },
         {
-            "label": "run",
+            "label": "pc run",
             "dependsOn": [
                 "pc debug"
             ],
@@ -135,6 +135,21 @@
                 "clear": true
             },
             "problemMatcher": []
-        }
+        },
+        {
+            "label": "nx run",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "nx",
+                "run"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
     ]
 }
