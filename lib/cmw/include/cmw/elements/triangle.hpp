@@ -14,7 +14,7 @@ class Triangle {
     public:
         Triangle(gl::Texture2d &texture, Colorf color = colors::White): mesh(texture, color) { }
 
-        Triangle(std::vector<glm::vec3> positions, gl::Texture2d &texture, Colorf color = colors::White):
+        Triangle(const std::vector<glm::vec3> &positions, gl::Texture2d &texture, Colorf color = colors::White):
                 Triangle(texture, color) {
             std::vector<Mesh::Vertex> vertices;
             vertices.reserve(3);
@@ -23,17 +23,17 @@ class Triangle {
             this->mesh.set_vertices(vertices);
         }
 
-        Triangle(std::vector<Mesh::Vertex> vertices, gl::Texture2d &texture, Colorf color = colors::White):
+        Triangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White):
             mesh(vertices, texture, color) { }
 
         ~Triangle() = default;
 
-        void edit_point(std::size_t idx, glm::vec3 position) {
+        void edit_point(std::size_t idx, const glm::vec3 &position) {
             this->mesh.get_vertices()[idx].position = position;
             this->mesh.fill_buffers();
         }
 
-        void edit_point(std::size_t idx, Mesh::Vertex vertex) {
+        void edit_point(std::size_t idx, const Mesh::Vertex &vertex) {
             this->mesh.get_vertices()[idx] = vertex;
             this->mesh.fill_buffers();
         }

@@ -15,7 +15,7 @@ class Point {
     public:
         Point(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): mesh(texture, color), width(width) { }
 
-        Point(glm::vec3 position, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
+        Point(const glm::vec3 &position, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
                 Point(texture, color, width) {
             this->get_mesh().get_vertices().emplace_back(position);
             this->get_mesh().fill_buffers();
@@ -23,7 +23,7 @@ class Point {
 
         ~Point() = default;
 
-        void set_position(glm::vec3 position) {
+        void set_position(const glm::vec3 &position) {
             this->get_mesh().get_vertices()[0].position = position;
             this->get_mesh().fill_buffers();
         }

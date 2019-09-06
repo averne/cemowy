@@ -23,8 +23,8 @@ class PerspectiveCamera {
             Right,
         };
 
-        PerspectiveCamera(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f), GLfloat fov = 45.0f,
-                float speed = 0.2f, float sensitivity = 0.05f):
+        PerspectiveCamera(const glm::vec3 &pos = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 &front = glm::vec3(0.0f, 0.0f, -1.0f),
+                GLfloat fov = 45.0f, float speed = 0.2f, float sensitivity = 0.05f):
                 pos(pos), front(front), fov(fov), speed(speed), sensitivity(sensitivity) {
             glm::vec3 n_front = glm::normalize(this->front);
             this->yaw = glm::degrees(atan2(n_front.x, n_front.z));
