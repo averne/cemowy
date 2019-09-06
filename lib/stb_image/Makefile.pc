@@ -8,7 +8,7 @@ LIBS              =
 
 DEFINES           =
 ARCH              =    -march=native
-FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections -flto
+FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections -flto -ffat-lto-objects
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
@@ -18,8 +18,8 @@ PREFIX            =
 CC                =    $(PREFIX)gcc
 CXX               =    $(PREFIX)g++
 AS                =    $(PREFIX)as
-AR                =    $(PREFIX)ar
-RANLIB            =    $(PREFIX)ranlib
+AR                =    $(PREFIX)gcc-ar
+RANLIB            =    $(PREFIX)gcc-ranlib
 
 # -----------------------------------------------
 

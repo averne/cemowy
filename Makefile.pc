@@ -20,14 +20,14 @@ RELEASE_FLAGS     =    $(FLAGS) -O2 -ffunction-sections -fdata-sections -flto
 RELEASE_CFLAGS    =    $(CFLAGS)
 RELEASE_CXXFLAGS  =    $(CXXFLAGS)
 RELEASE_ASFLAGS   =    $(ASFLAGS)
-RELEASE_LDFLAGS   =    $(LDFLAGS) -Wl,--gc-sections -flto -s
+RELEASE_LDFLAGS   =    $(LDFLAGS) -Wl,--gc-sections -flto -fuse-linker-plugin -s
 
 DEBUG_DEFINES     =    $(DEFINES) DEBUG=1
 DEBUG_FLAGS       =    $(FLAGS) -g -Og
 DEBUG_CFLAGS      =    $(CFLAGS)
 DEBUG_CXXFLAGS    =    $(CXXFLAGS)
 DEBUG_ASFLAGS     =    $(ASFLAGS) -g
-DEBUG_LDFLAGS     =    $(LDFLAGS) -g -Wl,-Map,$(BUILD)/$(TARGET).pc-dbg.map
+DEBUG_LDFLAGS     =    $(LDFLAGS) -g -Wl,-Map,$(BUILD)/$(TARGET).pc-dbg.map -fno-lto
 
 PREFIX            =
 CC                =    $(PREFIX)gcc
