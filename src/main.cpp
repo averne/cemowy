@@ -168,9 +168,9 @@ int main() {
 
     cmw::elements::Triangle triangle = {
         {
-            {{+100.0f, +100.0f, 0.0f}, {0.0f, 0.0f}},
-            {{+300.0f, +100.0f, 0.0f}, {1.0f, 0.0f}},
-            {{+200.0f, +300.0f, 0.0f}, {0.5f, 1.0f}},
+            {{+200.0f, +200.0f, 0.0f}, {0.0f, 0.0f}},
+            {{+600.0f, +200.0f, 0.0f}, {1.0f, 0.0f}},
+            {{+400.0f, +600.0f, 0.0f}, {0.5f, 1.0f}},
         },
         bog_tex,
         cmw::colors::Magenta
@@ -193,8 +193,7 @@ int main() {
     glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
     cube_program.set_value("view_proj", proj_mat * view_mat);
 
-    app->get_renderer().set_view_matrix(glm::mat4(1.0f));
-    app->get_renderer().set_proj_matrix(glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h));
+    cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h};
 
     cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
     while (!app->get_window().get_should_close()) {
@@ -212,11 +211,18 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        app->get_renderer().submit(line,     glm::mat4(1.0f), mesh_program);
-        app->get_renderer().submit(point,    glm::mat4(1.0f), mesh_program);
-        app->get_renderer().submit(triangle, glm::mat4(1.0f), mesh_program);
+        camera.set_rotation(glm::degrees(app->get_time<float>()));
+
+        app->get_renderer().begin_scene(camera);
+
+        app->get_renderer().submit(line, glm::mat4(1.0f), mesh_program);
+        app->get_renderer().submit(point, glm::mat4(1.0f), mesh_program);
+        app->get_renderer().submit(triangle,
+            glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)), mesh_program);
 
         font.draw_string(app->get_window(), u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 0.5f, text_color);
+
+        app->get_renderer().end_scene();
 
         cmw::imgui::begin_frame();
 

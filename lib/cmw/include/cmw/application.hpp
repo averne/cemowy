@@ -21,6 +21,11 @@ class Application {
             cmw::log::finalize();
         };
 
+        template <typename T>
+        inline T get_time() const {
+            return (T)glfwGetTime();
+        }
+
         inline Renderer        &get_renderer()         { return this->renderer; }
         inline ResourceManager &get_resource_manager() { return this->resource_manager; }
         inline Window          &get_window()           { return this->window; }

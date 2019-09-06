@@ -33,6 +33,13 @@ class Renderer {
         }
 
         template <typename T>
+        void begin_scene(T &&camera) {
+            this->view_proj = const_cast<glm::mat4 *>(&camera.get_view_proj());
+        }
+
+        void end_scene() { }
+
+        template <typename T>
         void submit(T &&element, const glm::mat4 &model, gl::ShaderProgram &program) const {
             element.on_draw();
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
@@ -49,11 +56,8 @@ class Renderer {
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
         inline Colorf &get_clear_color() { return this->clear_color; }
 
-        inline void set_view_matrix(glm::mat4 view) { this->view = view; }
-        inline void set_proj_matrix(glm::mat4 proj) { this->proj = proj; }
-
     protected:
-        glm::mat4 view{1.0f}, proj{1.0f};
+        glm::mat4 *view_proj;
         Colorf clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
         ResourceManager &resource_man;
 };
