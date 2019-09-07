@@ -9,7 +9,7 @@
 #include "../mesh.hpp"
 #include "../platform.h"
 
-namespace cmw::elements {
+namespace cmw::shapes {
 
 class Line {
     public:
@@ -74,4 +74,4 @@ class Line {
         GLfloat width;
 };
 
-} // namespace cmw::elements
+} // namespace cmw::shapes

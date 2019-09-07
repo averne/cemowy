@@ -8,7 +8,7 @@
 #include "../mesh.hpp"
 #include "../platform.h"
 
-namespace cmw::elements {
+namespace cmw::shapes {
 
 class Triangle {
     public:
@@ -47,4 +47,4 @@ class Triangle {
         Mesh mesh;
 };
 
-} // namespace cmw::elements
+} // namespace cmw::shapes

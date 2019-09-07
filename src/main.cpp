@@ -144,7 +144,7 @@ int main() {
     cmw::gl::ShaderProgram &cube_program = app->get_resource_manager().get_shader("shaders/cube.vert", "shaders/cube.frag");
     cmw::gl::ShaderProgram &mesh_program = app->get_resource_manager().get_shader("shaders/mesh.vert", "shaders/mesh.frag");
 
-    cmw::elements::Line line = {
+    cmw::shapes::Line line = {
         {
             {+0.0f, +0.0f, 0.0f},
             {+1280.0f, +720.0f, 0.0f},
@@ -154,7 +154,7 @@ int main() {
         3.0f
     };
 
-    cmw::elements::Point point = {
+    cmw::shapes::Point point = {
         {+1000.0f, +100.0f, 0.0f},
         white_tex,
         cmw::colors::Cyan,
@@ -166,7 +166,7 @@ int main() {
         glm::vec3(+1280.0f, +0.0f, 0.0f)
     );
 
-    cmw::elements::Triangle triangle = {
+    cmw::shapes::Triangle triangle = {
         {
             {{+200.0f, +200.0f, 0.0f}, {0.0f, 0.0f}},
             {{+600.0f, +200.0f, 0.0f}, {1.0f, 0.0f}},
@@ -176,7 +176,7 @@ int main() {
         cmw::colors::Magenta
     };
 
-    cmw::elements::Rectangle rectangle = {
+    cmw::shapes::Rectangle rectangle = {
         {
             {{+ 800.0f, +400.0f, 0.0f}, {0.0f, 0.0f}},
             {{+1000.0f, +400.0f, 0.0f}, {1.0f, 0.0f}},

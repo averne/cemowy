@@ -5,8 +5,8 @@
 #include <utility>
 
 #include "gl/shader_program.hpp"
-#include "elements/line.hpp"
-#include "elements/point.hpp"
+#include "shapes/line.hpp"
+#include "shapes/point.hpp"
 #include "color.hpp"
 #include "mesh.hpp"
 #include "resource_manager.hpp"
@@ -43,9 +43,9 @@ class Renderer {
         void submit(T &&element, const glm::mat4 &model, gl::ShaderProgram &program) const {
             element.on_draw();
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
-            if constexpr (std::is_same_v<Type, elements::Point>)
+            if constexpr (std::is_same_v<Type, shapes::Point>)
                 render_mesh(GL_POINTS, element.get_mesh(), model, program);
-            else if constexpr (std::is_same_v<Type, elements::Line>)
+            else if constexpr (std::is_same_v<Type, shapes::Line>)
                 render_mesh(GL_LINES, element.get_mesh(), model, program);
             else
                 render_mesh(GL_TRIANGLES, element.get_mesh(), model, program);

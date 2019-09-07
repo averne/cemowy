@@ -16,10 +16,10 @@
 #include "cmw/utils.hpp"
 #include "cmw/window.hpp"
 
-#include "cmw/elements/line.hpp"
-#include "cmw/elements/point.hpp"
-#include "cmw/elements/rectangle.hpp"
-#include "cmw/elements/triangle.hpp"
+#include "cmw/shapes/line.hpp"
+#include "cmw/shapes/point.hpp"
+#include "cmw/shapes/rectangle.hpp"
+#include "cmw/shapes/triangle.hpp"
 
 #include "cmw/gl/buffer.hpp"
 #include "cmw/gl/object.hpp"
