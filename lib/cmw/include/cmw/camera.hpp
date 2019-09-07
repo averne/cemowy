@@ -116,8 +116,6 @@ class OrthographicCamera {
             update();
         }
 
-        ~OrthographicCamera() = default;
-
         inline void move(const glm::vec3 &dposition) { this->position += dposition; update(); }
         inline void rotate(float drotation) { this->rotation += drotation; update(); }
 

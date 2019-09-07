@@ -1,3 +1,5 @@
+#pragma once
+
 #include <map>
 #include <tuple>
 #include <memory>
@@ -8,15 +10,19 @@
 #include <cmw/gl/vertex_array.hpp>
 #include <cmw/gl/shader_program.hpp>
 #include <cmw/color.hpp>
+#include <cmw/window.hpp>
 #include <cmw/platform.h>
 
 namespace cmw {
 
 class Glyph {
     public:
-        Glyph(stbtt_fontinfo *font_ctx, float scale,
-            int codepoint, int idx, void *data, int width, int height, int off_x, int off_y);
+        Glyph(stbtt_fontinfo *font_ctx, float scale, int codepoint, int idx, void *data, int width, int height, int off_x, int off_y);
         ~Glyph() = default;
+
+        inline void bind() const {
+            this->texture.bind();
+        }
 
         inline int get_codepoint() const { return this->codepoint; }
         inline int get_idx()       const { return this->idx; }
@@ -52,8 +58,13 @@ class Font {
 
         const Glyph &get_glyph(char16_t chr);
 
-        void draw_string(Window &window, const std::u16string &str, float x = 0.0f, float y = 0.0f, float scale = 1.0f,
-            Colorf color = {1.0f, 1.0f, 1.0f});
+        inline void bind() const {
+            bind_all(this->vao, this->vbo);
+        }
+
+        inline void set_vertex_data(void *vertices, std::size_t size) const {
+            this->vbo.set_sub_data(vertices, size);
+        }
 
         inline stbtt_fontinfo *get_ctx() { return &this->font_ctx; }
 
@@ -66,7 +77,6 @@ class Font {
     protected:
         static constexpr float font_scale = 0.105f;
 
-        gl::ShaderProgram program;
         gl::VertexArray vao;
         gl::VertexBuffer vbo;
 

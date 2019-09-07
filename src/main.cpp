@@ -142,7 +142,6 @@ int main() {
     cmw::gl::Texture2d &white_tex = app->get_resource_manager().get_white_texture();
 
     cmw::gl::ShaderProgram &cube_program = app->get_resource_manager().get_shader("shaders/cube.vert", "shaders/cube.frag");
-    cmw::gl::ShaderProgram &mesh_program = app->get_resource_manager().get_shader("shaders/mesh.vert", "shaders/mesh.frag");
 
     cmw::shapes::Line line = {
         {
@@ -206,7 +205,7 @@ int main() {
 
     cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h, -10.0f, 10.0f};
 
-    cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
+    cmw::Colorf text_color{cmw::colors::Red};
     while (!app->get_window().get_should_close()) {
         app->get_renderer().clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -226,13 +225,13 @@ int main() {
 
         app->get_renderer().begin_scene(camera);
 
-        app->get_renderer().submit(line, glm::mat4(1.0f), mesh_program);
-        app->get_renderer().submit(point, glm::mat4(1.0f), mesh_program);
+        app->get_renderer().submit(line, glm::mat4(1.0f));
+        app->get_renderer().submit(point, glm::mat4(1.0f));
         app->get_renderer().submit(triangle,
-            glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)), mesh_program);
-        app->get_renderer().submit(rectangle, glm::mat4(1.0f), mesh_program);
+            glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)));
+        app->get_renderer().submit(rectangle, glm::mat4(1.0f));
 
-        font.draw_string(app->get_window(), u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 0.5f, text_color);
+        app->get_renderer().draw_string(font, u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 1.0f, 0.5f, text_color);
 
         app->get_renderer().end_scene();
 

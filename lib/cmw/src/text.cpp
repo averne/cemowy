@@ -39,12 +39,9 @@ Glyph::Glyph(stbtt_fontinfo *font_ctx, float scale, int codepoint, int idx, void
     for (char16_t i=first_cached; i<=last_cached; ++i)                                                              \
         cache_glyph(i);                                                                                             \
                                                                                                                     \
-    this->program.set_shaders(gl::VertexShader{"shaders/glyph.vert"}, gl::FragmentShader{"shaders/glyph.frag"});    \
-    this->program.link();                                                                                           \
-                                                                                                                    \
     this->vao.bind();                                                                                               \
-    this->vbo.set_data(nullptr, 6 * 4 * sizeof(float), GL_DYNAMIC_DRAW);                                            \
-    this->vbo.set_layout({ gl::BufferElement::Float4 });                                                            \
+    this->vbo.set_data(nullptr, 6 * 5 * sizeof(float), GL_DYNAMIC_DRAW);                                            \
+    this->vbo.set_layout({ gl::BufferElement::Float3, gl::BufferElement::Float2 });                                                            \
 })
 
 #ifdef CMW_SWITCH
@@ -94,50 +91,6 @@ const Glyph &Font::get_glyph(char16_t chr) {
     if (it != this->cached_glyphs.end())
         return it->second;
     return cache_glyph(chr);
-}
-
-void Font::draw_string(Window &window, const std::u16string &str, float x, float y, float scale, Colorf color) {
-    auto [window_w, window_h] = window.get_size();
-    this->program.bind();
-    this->program.set_value("u_projection", glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h));
-    this->program.set_value("glyph_color", color.r, color.g, color.b);
-
-    this->vao.bind();
-    this->vbo.bind();
-    int last_codepoint = -1;
-    float xpos = x, ypos = y;
-    for (char16_t chr: str) {
-        if (chr == u'\n') {
-            y -= (this->ascender + this->descender + 40.0f) * scale; // ??? this->linegap == 0
-            xpos = x;
-            continue;
-        }
-
-        gl::Texture2d::active(0);
-        auto &glyph = this->get_glyph(chr);
-        glyph.get_texture().bind();
-
-        float w = (float)glyph.get_width() * scale, h = (float)glyph.get_height() * scale;
-        xpos += glyph.get_bearing() * scale;
-        ypos = y - h - glyph.get_bitmap_top() * scale;
-
-        GLfloat vertices[6][4] = {
-            { xpos,     ypos + h, 0.0, 0.0 },
-            { xpos,     ypos,     0.0, 1.0 },
-            { xpos + w, ypos,     1.0, 1.0 },
-            { xpos,     ypos + h, 0.0, 0.0 },
-            { xpos + w, ypos,     1.0, 1.0 },
-            { xpos + w, ypos + h, 1.0, 0.0 },
-        };
-
-        this->vbo.set_sub_data(vertices, sizeof(vertices));
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        xpos += glyph.get_advance() * scale;
-        if (last_codepoint)
-            xpos += stbtt_GetCodepointKernAdvance(&this->font_ctx, last_codepoint, glyph.get_codepoint()) * scale;
-        last_codepoint = glyph.get_codepoint();
-    }
 }
 
 } // namespace cmw
