@@ -109,9 +109,9 @@ class PerspectiveCamera {
 
 class OrthographicCamera {
     public:
-        OrthographicCamera(float left, float right, float bottom, float top,
+        OrthographicCamera(float left, float right, float bottom, float top, float near , float far,
                 const glm::vec3 &position = {0.0f, 0.0f, 0.0f}, float rotation = 0.0f):
-                position(position), rotation(rotation), proj(glm::ortho(left, right, bottom, top)) {
+                position(position), rotation(rotation), proj(glm::ortho(left, right, bottom, top, near, far)) {
             this->offset = {glm::abs(left - right) / 2.0f, glm::abs(top - bottom) / 2.0f, 0.0f};
             update();
         }

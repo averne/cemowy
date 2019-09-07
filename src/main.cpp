@@ -146,8 +146,8 @@ int main() {
 
     cmw::shapes::Line line = {
         {
-            {+0.0f, +0.0f, 0.0f},
-            {+1280.0f, +720.0f, 0.0f},
+            {+   0.0f, +  0.0f, +0.0f},
+            {+1280.0f, +720.0f, +0.0f},
         },
         white_tex,
         cmw::colors::Yellow,
@@ -155,22 +155,22 @@ int main() {
     };
 
     cmw::shapes::Point point = {
-        {+1000.0f, +100.0f, 0.0f},
+        {+1000.0f, +100.0f, +0.0f},
         white_tex,
         cmw::colors::Cyan,
         10.0f
     };
 
     line.add_points(
-        glm::vec3(+100.0f, +300.0f, 0.0f),
-        glm::vec3(+1280.0f, +0.0f, 0.0f)
+        glm::vec3(+ 100.0f, +300.0f, +0.0f),
+        glm::vec3(+1280.0f, +  0.0f, +0.0f)
     );
 
     cmw::shapes::Triangle triangle = {
         {
-            {{+200.0f, +200.0f, 0.0f}, {0.0f, 0.0f}},
-            {{+600.0f, +200.0f, 0.0f}, {1.0f, 0.0f}},
-            {{+400.0f, +600.0f, 0.0f}, {0.5f, 1.0f}},
+            {{+200.0f, +200.0f, +1.0f}, {0.0f, 0.0f}},
+            {{+600.0f, +200.0f, +1.0f}, {1.0f, 0.0f}},
+            {{+400.0f, +600.0f, +1.0f}, {0.5f, 1.0f}},
         },
         bog_tex,
         cmw::colors::Magenta
@@ -178,10 +178,10 @@ int main() {
 
     cmw::shapes::Rectangle rectangle = {
         {
-            {{+ 800.0f, +400.0f, 0.0f}, {0.0f, 0.0f}},
-            {{+1000.0f, +400.0f, 0.0f}, {1.0f, 0.0f}},
-            {{+1000.0f, +600.0f, 0.0f}, {1.0f, 1.0f}},
-            {{+ 800.0f, +600.0f, 0.0f}, {0.0f, 1.0f}},
+            {{+ 800.0f, +400.0f, -1.0f}, {0.0f, 0.0f}},
+            {{+1000.0f, +400.0f, -1.0f}, {1.0f, 0.0f}},
+            {{+1000.0f, +600.0f, -1.0f}, {1.0f, 1.0f}},
+            {{+ 800.0f, +600.0f, -1.0f}, {0.0f, 1.0f}},
         },
         bog_tex,
         cmw::colors::Green
@@ -204,7 +204,7 @@ int main() {
     glm::mat4 proj_mat  = glm::perspective(glm::radians(45.0f), (float)window_w / (float)window_h, 0.1f, 100.0f);
     cube_program.set_value("view_proj", proj_mat * view_mat);
 
-    cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h};
+    cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h, -10.0f, 10.0f};
 
     cmw::Colorf text_color{0.7f, 0.8f, 0.3f, 1.0f};
     while (!app->get_window().get_should_close()) {
