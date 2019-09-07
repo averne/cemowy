@@ -16,7 +16,10 @@ void Renderer::render_mesh(GLenum mode, const Mesh &mesh, const glm::mat4 &model
     program.set_value("u_blend_color", mesh.get_blend_color().r, mesh.get_blend_color().g, mesh.get_blend_color().b, mesh.get_blend_color().a);
     gl::Texture2d::active(0);
     mesh.bind();
-    glDrawArrays(mode, 0, mesh.get_size());
+    if (mesh.is_indexed())
+        glDrawElements(mode, mesh.get_size(), GL_UNSIGNED_INT, 0);
+    else
+        glDrawArrays(mode, 0, mesh.get_size());
 }
 
 } // namespace cmw

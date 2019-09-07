@@ -18,6 +18,7 @@
 
 #include "cmw/elements/line.hpp"
 #include "cmw/elements/point.hpp"
+#include "cmw/elements/rectangle.hpp"
 #include "cmw/elements/triangle.hpp"
 
 #include "cmw/gl/buffer.hpp"

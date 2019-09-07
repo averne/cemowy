@@ -10,20 +10,22 @@
 
 namespace cmw::elements {
 
-class Triangle {
+class Rectangle {
     public:
-        Triangle(gl::Texture2d &texture, Colorf color = colors::White): mesh(texture, color) { }
+        Rectangle(gl::Texture2d &texture, Colorf color = colors::White): mesh(texture, color) { }
 
-        Triangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White):
-            mesh(vertices, texture, color) { }
-
-        Triangle(const std::vector<glm::vec3> &positions, gl::Texture2d &texture, Colorf color = colors::White):
-                Triangle(texture, color) {
+        Rectangle(const std::vector<glm::vec3> &positions, gl::Texture2d &texture, Colorf color = colors::White):
+                Rectangle(texture, color) {
             std::vector<Mesh::Vertex> vertices;
-            vertices.reserve(3);
-            for (std::size_t i = 0; i <= 3; ++i)
+            vertices.reserve(4);
+            for (std::size_t i = 0; i <= 4; ++i)
                 vertices.emplace_back(positions[i]);
-            this->mesh.set_data(vertices);
+            this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
+        }
+
+        Rectangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White):
+                Rectangle(texture, color) {
+            this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
         }
 
         void edit_point(std::size_t idx, const glm::vec3 &position) {

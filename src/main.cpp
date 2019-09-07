@@ -162,8 +162,8 @@ int main() {
     };
 
     line.add_points(
-        glm::vec3(+1280.0f, +720.0f, 0.0f),
-        glm::vec3(+100.0f, +300.0f, 0.0f)
+        glm::vec3(+100.0f, +300.0f, 0.0f),
+        glm::vec3(+1280.0f, +0.0f, 0.0f)
     );
 
     cmw::elements::Triangle triangle = {
@@ -174,6 +174,17 @@ int main() {
         },
         bog_tex,
         cmw::colors::Magenta
+    };
+
+    cmw::elements::Rectangle rectangle = {
+        {
+            {{+ 800.0f, +400.0f, 0.0f}, {0.0f, 0.0f}},
+            {{+1000.0f, +400.0f, 0.0f}, {1.0f, 0.0f}},
+            {{+1000.0f, +600.0f, 0.0f}, {1.0f, 1.0f}},
+            {{+ 800.0f, +600.0f, 0.0f}, {0.0f, 1.0f}},
+        },
+        bog_tex,
+        cmw::colors::Green
     };
 
     cmw::gl::VertexArray cube_vao;
@@ -219,6 +230,7 @@ int main() {
         app->get_renderer().submit(point, glm::mat4(1.0f), mesh_program);
         app->get_renderer().submit(triangle,
             glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)), mesh_program);
+        app->get_renderer().submit(rectangle, glm::mat4(1.0f), mesh_program);
 
         font.draw_string(app->get_window(), u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 0.5f, text_color);
 
