@@ -22,6 +22,7 @@ class Point {
 
         void set_position(const glm::vec3 &position) {
             this->get_mesh().set_data({(Mesh::Vertex){position}});
+            this->get_mesh().fill_buffers();
         }
 
         void on_draw() {

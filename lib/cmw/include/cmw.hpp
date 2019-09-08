@@ -16,6 +16,7 @@
 #include "cmw/utils.hpp"
 #include "cmw/window.hpp"
 
+#include "cmw/shapes/circle.hpp"
 #include "cmw/shapes/line.hpp"
 #include "cmw/shapes/point.hpp"
 #include "cmw/shapes/rectangle.hpp"

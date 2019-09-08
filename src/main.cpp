@@ -186,6 +186,13 @@ int main() {
         cmw::colors::Green
     };
 
+    cmw::shapes::Circle circle = {
+        {+ 800.0f, +200.0f, +0.0f},
+        100.0f,
+        bog_tex,
+        cmw::colors::Blue
+    };
+
     cmw::gl::VertexArray cube_vao;
     cmw::gl::VertexBuffer cube_vbo;
     cube_vbo.set_data(vertices, sizeof(vertices));
@@ -230,6 +237,7 @@ int main() {
         app->get_renderer().submit(triangle,
             glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)));
         app->get_renderer().submit(rectangle, glm::mat4(1.0f));
+        app->get_renderer().submit(circle, glm::mat4(1.0f));
 
         app->get_renderer().draw_string(font, u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 1.0f, 0.5f, text_color);
 
