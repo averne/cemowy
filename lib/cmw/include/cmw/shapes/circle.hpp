@@ -3,6 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "shape.hpp"
 #include "../gl/texture.hpp"
 #include "../color.hpp"
 #include "../mesh.hpp"
@@ -10,9 +11,9 @@
 
 namespace cmw::shapes {
 
-class Circle {
+class Circle: public Shape {
     public:
-        Circle(gl::Texture2d &texture, Colorf color = colors::White): mesh(texture, color) { }
+        Circle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) { }
 
         Circle(const glm::vec3 &position, float radius, gl::Texture2d &texture, Colorf color = colors::White, std::size_t segments = 24):
                 Circle(texture, color) {
@@ -53,15 +54,7 @@ class Circle {
             this->get_mesh().fill_buffers();
         }
 
-        void on_draw() { };
-
-        inline Mesh &get_mesh() { return this->mesh; }
-
-        inline Colorf get_color() const { return this->mesh.get_blend_color(); }
-        inline void set_color(Colorf color) { this->get_mesh().get_blend_color() = color; }
-
-    private:
-        Mesh mesh;
+        virtual void on_draw() override { }
 };
 
 } // namespace cmw::shapes

@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#include "shape.hpp"
 #include "../gl/texture.hpp"
 #include "../color.hpp"
 #include "../mesh.hpp"
@@ -11,9 +12,9 @@
 
 namespace cmw::shapes {
 
-class Point {
+class Point: public Shape {
     public:
-        Point(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): mesh(texture, color), width(width) { }
+        Point(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): Shape(texture, color), width(width) { }
 
         Point(const glm::vec3 &position, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
                 Point(texture, color, width) {
@@ -25,20 +26,14 @@ class Point {
             this->get_mesh().fill_buffers();
         }
 
-        void on_draw() {
+        virtual void on_draw() override {
             glPointSize(this->width);
-        };
-
-        inline Mesh &get_mesh() { return this->mesh; }
-
-        inline Colorf get_color() const { return this->mesh.get_blend_color(); }
-        inline void set_color(Colorf color) { this->get_mesh().get_blend_color() = color; }
+        }
 
         inline GLfloat get_width() const { return this->width; }
         inline void set_width(GLfloat width) { this->width = width; }
 
     private:
-        Mesh mesh;
         GLfloat width;
 };
 
