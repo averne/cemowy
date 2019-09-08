@@ -27,11 +27,12 @@ class ShaderProgram: public GlObject {
 
         template <typename ...Shaders>
         ShaderProgram(Shaders &&...shaders): ShaderProgram() {
-            set_shaders(std::forward<Shaders>(shaders)...);
+            attach_shaders(std::forward<Shaders>(shaders)...);
             if (!link()) {
                 print_log();
                 throw std::runtime_error("Could not link shader program");
             }
+            detach_shaders(std::forward<Shaders>(shaders)...);
         }
 
         ~ShaderProgram() {
@@ -40,8 +41,13 @@ class ShaderProgram: public GlObject {
         }
 
         template <typename ...Shaders>
-        void set_shaders(Shaders &&...shaders) const {
+        void attach_shaders(Shaders &&...shaders) const {
             (glAttachShader(get_handle(), shaders.get_handle()), ...);
+        }
+
+        template <typename ...Shaders>
+        void detach_shaders(Shaders &&...shaders) const {
+            (glDetachShader(get_handle(), shaders.get_handle()), ...);
         }
 
         GLint link() const {
