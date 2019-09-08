@@ -120,11 +120,11 @@ int main() {
     CMW_TRACE("Vendor: %s, GL version: %s, GLSL version: %s\n",
         glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    app->get_window().register_callback<cmw::KeyPressedEvent>([&window = app->get_window()](auto &e) {
+    app->get_window().register_callback<cmw::input::KeyPressedEvent>([&window = app->get_window()](auto &e) {
 #ifdef CMW_SWITCH
-        if (e.get_key() == CMW_SWITCH_KEY_PLUS)
+        if (e.get_key() == cmw::input::KeySwitchPlus)
 #else
-        if ((e.get_key() == CMW_KEY_ENTER) && (e.get_mods() & GLFW_MOD_CONTROL))
+        if ((e.get_key() == cmw::input::KeyEnter) && (e.get_mods() & GLFW_MOD_CONTROL))
 #endif
             window.set_should_close(true);
     });

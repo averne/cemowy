@@ -9,7 +9,7 @@
 
 #include <cmw/input.hpp>
 
-namespace cmw {
+namespace cmw::input {
 
 void InputManager::set_window(GLFWwindow *window) {
 #ifndef CMW_SWITCH
@@ -27,13 +27,13 @@ void InputManager::set_window(GLFWwindow *window) {
 
 #ifdef CMW_SWITCH
 void InputManager::process_nx_events(GLFWwindow *window) const {
-    static std::array<float, CMW_SWITCH_KEY_LAST - CMW_SWITCH_KEY_FIRST + 1> nx_keys_time; // The rest are supported by glfw
+    static std::array<float, Keys::KeySwitchLast - Keys::KeySwitchFirst + 1> nx_keys_time; // The rest are supported by glfw
     float time = glfwGetTime();
     u64 keys_down = hidKeysDown(CONTROLLER_P1_AUTO) | hidKeysHeld(CONTROLLER_P1_AUTO); // glfw internally calls hidScanInput
 
     // Buttons
-    for (uint32_t key = CMW_SWITCH_KEY_FIRST; key <= CMW_SWITCH_KEY_LAST; ++key) {
-        const uint32_t idx       = key - CMW_SWITCH_KEY_FIRST;
+    for (uint32_t key = Keys::KeySwitchFirst; key <= Keys::KeySwitchLast; ++key) {
+        const uint32_t idx       = key - Keys::KeySwitchFirst;
         const uint32_t libnx_key = CMW_BIT(idx);
 
         if ((keys_down & libnx_key) && (nx_keys_time[idx] == 0.0f)) {
@@ -135,4 +135,4 @@ void InputManager::window_close_cb(GLFWwindow* window) {
     tmp_this.process(WindowClosedEvent());
 }
 
-} // namespace cmw
+} // namespace cmw::input

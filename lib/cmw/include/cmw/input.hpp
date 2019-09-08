@@ -11,174 +11,181 @@
 #include "utils.hpp"
 #include "platform.h"
 
-// From glfw3.hpp
-#define CMW_MOUSE_BUTTON_1         0
-#define CMW_MOUSE_BUTTON_2         1
-#define CMW_MOUSE_BUTTON_3         2
-#define CMW_MOUSE_BUTTON_4         3
-#define CMW_MOUSE_BUTTON_5         4
-#define CMW_MOUSE_BUTTON_6         5
-#define CMW_MOUSE_BUTTON_7         6
-#define CMW_MOUSE_BUTTON_8         7
+namespace cmw::input {
 
-#define CMW_MOUSE_BUTTON_LAST      CMW_MOUSE_BUTTON_8
-#define CMW_MOUSE_BUTTON_LEFT      CMW_MOUSE_BUTTON_1
-#define CMW_MOUSE_BUTTON_RIGHT     CMW_MOUSE_BUTTON_2
-#define CMW_MOUSE_BUTTON_MIDDLE    CMW_MOUSE_BUTTON_3
+// Same as GLFW's
+enum MouseButtons: std::uint16_t {
+    Button1              = 0,
+    Button2              = 1,
+    Button3              = 2,
+    Button4              = 3,
+    Button5              = 4,
+    Button6              = 5,
+    Button7              = 6,
+    Button8              = 7,
 
-#define CMW_KEY_UNKNOWN            -1
+    Left                 = Button1,
+    Right                = Button2,
+    Middle               = Button3,
 
-#define CMW_KEY_SPACE              32
-#define CMW_KEY_APOSTROPHE         39  /* ' */
-#define CMW_KEY_COMMA              44  /* , */
-#define CMW_KEY_MINUS              45  /* - */
-#define CMW_KEY_PERIOD             46  /* . */
-#define CMW_KEY_SLASH              47  /* / */
-#define CMW_KEY_0                  48
-#define CMW_KEY_1                  49
-#define CMW_KEY_2                  50
-#define CMW_KEY_3                  51
-#define CMW_KEY_4                  52
-#define CMW_KEY_5                  53
-#define CMW_KEY_6                  54
-#define CMW_KEY_7                  55
-#define CMW_KEY_8                  56
-#define CMW_KEY_9                  57
-#define CMW_KEY_SEMICOLON          59  /* ; */
-#define CMW_KEY_EQUAL              61  /* = */
-#define CMW_KEY_A                  65
-#define CMW_KEY_B                  66
-#define CMW_KEY_C                  67
-#define CMW_KEY_D                  68
-#define CMW_KEY_E                  69
-#define CMW_KEY_F                  70
-#define CMW_KEY_G                  71
-#define CMW_KEY_H                  72
-#define CMW_KEY_I                  73
-#define CMW_KEY_J                  74
-#define CMW_KEY_K                  75
-#define CMW_KEY_L                  76
-#define CMW_KEY_M                  77
-#define CMW_KEY_N                  78
-#define CMW_KEY_O                  79
-#define CMW_KEY_P                  80
-#define CMW_KEY_Q                  81
-#define CMW_KEY_R                  82
-#define CMW_KEY_S                  83
-#define CMW_KEY_T                  84
-#define CMW_KEY_U                  85
-#define CMW_KEY_V                  86
-#define CMW_KEY_W                  87
-#define CMW_KEY_X                  88
-#define CMW_KEY_Y                  89
-#define CMW_KEY_Z                  90
-#define CMW_KEY_LEFT_BRACKET       91  /* [ */
-#define CMW_KEY_BACKSLASH          92  /* \ */
-#define CMW_KEY_RIGHT_BRACKET      93  /* ] */
-#define CMW_KEY_GRAVE_ACCENT       96  /* ` */
-#define CMW_KEY_WORLD_1            161 /* non-US #1 */
-#define CMW_KEY_WORLD_2            162 /* non-US #2 */
-#define CMW_KEY_ESCAPE             256
-#define CMW_KEY_ENTER              257
-#define CMW_KEY_TAB                258
-#define CMW_KEY_BACKSPACE          259
-#define CMW_KEY_INSERT             260
-#define CMW_KEY_DELETE             261
-#define CMW_KEY_RIGHT              262
-#define CMW_KEY_LEFT               263
-#define CMW_KEY_DOWN               264
-#define CMW_KEY_UP                 265
-#define CMW_KEY_PAGE_UP            266
-#define CMW_KEY_PAGE_DOWN          267
-#define CMW_KEY_HOME               268
-#define CMW_KEY_END                269
-#define CMW_KEY_CAPS_LOCK          280
-#define CMW_KEY_SCROLL_LOCK        281
-#define CMW_KEY_NUM_LOCK           282
-#define CMW_KEY_PRINT_SCREEN       283
-#define CMW_KEY_PAUSE              284
-#define CMW_KEY_F1                 290
-#define CMW_KEY_F2                 291
-#define CMW_KEY_F3                 292
-#define CMW_KEY_F4                 293
-#define CMW_KEY_F5                 294
-#define CMW_KEY_F6                 295
-#define CMW_KEY_F7                 296
-#define CMW_KEY_F8                 297
-#define CMW_KEY_F9                 298
-#define CMW_KEY_F10                299
-#define CMW_KEY_F11                300
-#define CMW_KEY_F12                301
-#define CMW_KEY_F13                302
-#define CMW_KEY_F14                303
-#define CMW_KEY_F15                304
-#define CMW_KEY_F16                305
-#define CMW_KEY_F17                306
-#define CMW_KEY_F18                307
-#define CMW_KEY_F19                308
-#define CMW_KEY_F20                309
-#define CMW_KEY_F21                310
-#define CMW_KEY_F22                311
-#define CMW_KEY_F23                312
-#define CMW_KEY_F24                313
-#define CMW_KEY_F25                314
-#define CMW_KEY_KP_0               320
-#define CMW_KEY_KP_1               321
-#define CMW_KEY_KP_2               322
-#define CMW_KEY_KP_3               323
-#define CMW_KEY_KP_4               324
-#define CMW_KEY_KP_5               325
-#define CMW_KEY_KP_6               326
-#define CMW_KEY_KP_7               327
-#define CMW_KEY_KP_8               328
-#define CMW_KEY_KP_9               329
-#define CMW_KEY_KP_DECIMAL         330
-#define CMW_KEY_KP_DIVIDE          331
-#define CMW_KEY_KP_MULTIPLY        332
-#define CMW_KEY_KP_SUBTRACT        333
-#define CMW_KEY_KP_ADD             334
-#define CMW_KEY_KP_ENTER           335
-#define CMW_KEY_KP_EQUAL           336
-#define CMW_KEY_LEFT_SHIFT         340
-#define CMW_KEY_LEFT_CONTROL       341
-#define CMW_KEY_LEFT_ALT           342
-#define CMW_KEY_LEFT_SUPER         343
-#define CMW_KEY_RIGHT_SHIFT        344
-#define CMW_KEY_RIGHT_CONTROL      345
-#define CMW_KEY_RIGHT_ALT          346
-#define CMW_KEY_RIGHT_SUPER        347
-#define CMW_KEY_MENU               348
+    First                = Button1,
+    Last                 = Button8,
+};
 
-// Switch-specific codes (important -- same order as libnx)
-#define CMW_SWITCH_KEY_A           400
-#define CMW_SWITCH_KEY_B           401
-#define CMW_SWITCH_KEY_X           402
-#define CMW_SWITCH_KEY_Y           403
-#define CMW_SWITCH_KEY_LSTICK      404
-#define CMW_SWITCH_KEY_RSTICK      405
-#define CMW_SWITCH_KEY_L           406
-#define CMW_SWITCH_KEY_R           407
-#define CMW_SWITCH_KEY_ZL          408
-#define CMW_SWITCH_KEY_ZR          409
-#define CMW_SWITCH_KEY_PLUS        410
-#define CMW_SWITCH_KEY_MINUS       411
-#define CMW_SWITCH_KEY_DLEFT       412
-#define CMW_SWITCH_KEY_DUP         413
-#define CMW_SWITCH_KEY_DRIGHT      414
-#define CMW_SWITCH_KEY_DDOWN       415
+enum Keys: std::uint16_t {
+    KeyUnknown           = std::numeric_limits<std::uint16_t>::max(),
 
-#define CMW_KEY_LAST               CMW_SWITCH_KEY_DDOWN
-#define CMW_SWITCH_KEY_FIRST       CMW_SWITCH_KEY_A
-#define CMW_SWITCH_KEY_LAST        CMW_SWITCH_KEY_DDOWN
+    KeySpace             = 32,
+    KeyApostrophe        = 39,  /* ' */
+    KeyComma             = 44,  /* , */
+    KeyMinus             = 45,  /* - */
+    KeyPeriod            = 46,  /* . */
+    KeySlash             = 47,  /* / */
+    Key0                 = 48,
+    Key1                 = 49,
+    Key2                 = 50,
+    Key3                 = 51,
+    Key4                 = 52,
+    Key5                 = 53,
+    Key6                 = 54,
+    Key7                 = 55,
+    Key8                 = 56,
+    Key9                 = 57,
+    KeySemicolon         = 59,  /* ; */
+    KeyEqual             = 61,  /* = */
+    KeyA                 = 65,
+    KeyB                 = 66,
+    KeyC                 = 67,
+    KeyD                 = 68,
+    KeyE                 = 69,
+    KeyF                 = 70,
+    KeyG                 = 71,
+    KeyH                 = 72,
+    KeyI                 = 73,
+    KeyJ                 = 74,
+    KeyK                 = 75,
+    KeyL                 = 76,
+    KeyM                 = 77,
+    KeyN                 = 78,
+    KeyO                 = 79,
+    KeyP                 = 80,
+    KeyQ                 = 81,
+    KeyR                 = 82,
+    KeyS                 = 83,
+    KeyT                 = 84,
+    KeyU                 = 85,
+    KeyV                 = 86,
+    KeyW                 = 87,
+    KeyX                 = 88,
+    KeyY                 = 89,
+    KeyZ                 = 90,
+    KeyLeftBracket       = 91,  /* [ */
+    KeyBackslash         = 92,  /* \ */
+    KeyRightBracket      = 93,  /* ] */
+    KeyGraveAccent       = 96,  /* ` */
+    KeyWorld1            = 161, /* non-US #1 */
+    KeyWorld2            = 162, /* non-US #2 */
+    KeyEscape            = 256,
+    KeyEnter             = 257,
+    KeyTab               = 258,
+    KeyBackspace         = 259,
+    KeyInsert            = 260,
+    KeyDelete            = 261,
+    KeyRight             = 262,
+    KeyLeft              = 263,
+    KeyDown              = 264,
+    KeyUp                = 265,
+    KeyPageUp            = 266,
+    KeyPageDown          = 267,
+    KeyHome              = 268,
+    KeyEnd               = 269,
+    KeyCapsLock          = 280,
+    KeyScrollLock        = 281,
+    KeyNumLock           = 282,
+    KeyPrintScreen       = 283,
+    KeyPause             = 284,
+    KeyF1                = 290,
+    KeyF2                = 291,
+    KeyF3                = 292,
+    KeyF4                = 293,
+    KeyF5                = 294,
+    KeyF6                = 295,
+    KeyF7                = 296,
+    KeyF8                = 297,
+    KeyF9                = 298,
+    KeyF10               = 299,
+    KeyF11               = 300,
+    KeyF12               = 301,
+    KeyF13               = 302,
+    KeyF14               = 303,
+    KeyF15               = 304,
+    KeyF16               = 305,
+    KeyF17               = 306,
+    KeyF18               = 307,
+    KeyF19               = 308,
+    KeyF20               = 309,
+    KeyF21               = 310,
+    KeyF22               = 311,
+    KeyF23               = 312,
+    KeyF24               = 313,
+    KeyF25               = 314,
+    KeyKp0               = 320,
+    KeyKp1               = 321,
+    KeyKp2               = 322,
+    KeyKp3               = 323,
+    KeyKp4               = 324,
+    KeyKp5               = 325,
+    KeyKp6               = 326,
+    KeyKp7               = 327,
+    KeyKp8               = 328,
+    KeyKp9               = 329,
+    KeyKpDecimal         = 330,
+    KeyKpDivide          = 331,
+    KeyKpMultiply        = 332,
+    KeyKpSubstract       = 333,
+    KeyKpAdd             = 334,
+    KeyKpEnter           = 335,
+    KeyKpEqual           = 336,
+    KeyLeftShift         = 340,
+    KeyLeftControl       = 341,
+    KeyLeftAlt           = 342,
+    KeyLeftSuper         = 343,
+    KeyRightShift        = 344,
+    KeyRightControl      = 345,
+    KeyRightAlt          = 346,
+    KeyRightSuper        = 347,
+    KeyMenu              = 348,
 
-#define CMW_MOD_SHIFT              CMW_BIT(0)
-#define CMW_MOD_CONTROL            CMW_BIT(1)
-#define CMW_MOD_ALT                CMW_BIT(2)
-#define CMW_MOD_SUPER              CMW_BIT(3)
-#define CMW_MOD_CAPS_LOCK          CMW_BIT(4)
-#define CMW_MOD_NUM_LOCK           CMW_BIT(5)
+    // Switch-specific codes (important -- same order as libnx)
+    KeySwitchA           = 400,
+    KeySwitchB           = 401,
+    KeySwitchX           = 402,
+    KeySwitchY           = 403,
+    KeySwitchLstick      = 404,
+    KeySwitchRstick      = 405,
+    KeySwitchL           = 406,
+    KeySwitchR           = 407,
+    KeySwitchZl          = 408,
+    KeySwitchZr          = 409,
+    KeySwitchPlus        = 410,
+    KeySwitchMinus       = 411,
+    KeySwitchDleft       = 412,
+    KeySwitchDup         = 413,
+    KeySwitchDright      = 414,
+    KeySwitchDdown       = 415,
 
-namespace cmw {
+    KeyFirst             = KeySpace,
+    KeyLast              = KeySwitchDdown,
+    KeySwitchFirst       = KeySwitchA,
+    KeySwitchLast        = KeySwitchDdown,
+
+    ModShift             = CMW_BIT(0),
+    ModControl           = CMW_BIT(1),
+    ModAlt               = CMW_BIT(2),
+    ModSuper             = CMW_BIT(3),
+    ModCapsLock          = CMW_BIT(4),
+    ModNumLock           = CMW_BIT(5),
+};
 
 enum class EventType: uint8_t {
     KeyPressed, KeyHeld, KeyReleased,
@@ -225,7 +232,7 @@ struct KeyHeldEvent: public KeyEvent {
     static inline constexpr EventType get_type() { return EventType::KeyHeld; };
 
     protected:
-        static inline std::array<std::uint32_t, GLFW_KEY_LAST> key_cnts;
+        static inline std::array<std::uint32_t, Keys::KeyLast> key_cnts;
 };
 
 struct KeyReleasedEvent: public KeyEvent {
@@ -282,7 +289,7 @@ struct MouseButtonHeldEvent: public KeyEvent {
     static inline constexpr EventType get_type() { return EventType::MouseButtonHeld; };
 
     protected:
-        static inline std::array<std::uint32_t, GLFW_MOUSE_BUTTON_LAST> key_cnts;
+        static inline std::array<std::uint32_t, MouseButtons::Last> key_cnts;
 };
 
 struct MouseButtonReleasedEvent: public KeyEvent {
@@ -431,4 +438,4 @@ class InputManager {
 #endif
 };
 
-} // namespace cmw
+} // namespace cmw::input
