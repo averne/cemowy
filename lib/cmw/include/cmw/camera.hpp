@@ -130,7 +130,7 @@ class OrthographicCamera {
         inline const glm::mat4 &get_view_proj() const { return this->view_proj; }
 
         void update() {
-		    this->view = glm::translate(glm::mat4(1.0f), this->offset);
+            this->view = glm::translate(glm::mat4(1.0f), this->offset);
             this->view = glm::rotate(this->view, glm::radians(this->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
             this->view = glm::translate(this->view, this->position - this->offset);
 

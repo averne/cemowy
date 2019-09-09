@@ -1,5 +1,5 @@
 ifeq ($(strip $(DEVKITPRO)),)
-	$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
+    $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
 endif
 
 # -----------------------------------------------
@@ -63,7 +63,7 @@ LIBNX             =    $(DEVKITPRO)/libnx
 LIBS              =    $(CUSTOM_LIBS) $(LIBNX) $(PORTLIBS)
 
 ifeq ($(strip $(APP_TITLE)),)
-    APP_TITLE     =	   $(TARGET)
+    APP_TITLE     =    $(TARGET)
 endif
 
 ifeq ($(strip $(APP_AUTHOR)),)

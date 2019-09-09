@@ -13,9 +13,9 @@ extern "C" {
 #endif
 
 #ifdef DEBUG
-#	define CMW_DEBUG  = 1
+#    define CMW_DEBUG  = 1
 #else
-#	define CMW_NDEBUG = 1
+#    define CMW_NDEBUG = 1
 #endif
 
 #define CMW_LOG_BACKEND_STDOUT 1
@@ -23,7 +23,7 @@ extern "C" {
 #define CMW_LOG_BACKEND_IMGUI  3
 
 #ifndef CMW_LOG_BACKEND
-#	define CMW_LOG_BACKEND CMW_LOG_BACKEND_STDOUT
+#    define CMW_LOG_BACKEND CMW_LOG_BACKEND_STDOUT
 #endif
 
 #ifdef __cplusplus
