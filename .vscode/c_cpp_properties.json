@@ -3,11 +3,12 @@
         {
             "name": "Linux",
             "includePath": [
-                "/usr/lib/gcc/x86_64-pc-linux-gnu/*/include/",
                 "${workspaceFolder}/lib/imgui/include",
                 "${workspaceFolder}/lib/stb_image/include",
                 "${workspaceFolder}/lib/stb_truetype/include",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.1.0/include/",
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.1.0/include-fixed/"
             ],
             "defines": [
                 "DEBUG",
