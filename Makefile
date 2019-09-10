@@ -1,5 +1,7 @@
 .PHONY: nx pc
 
+export LANG=en
+
 nx:
 	@$(MAKE) $(filter-out $@,$(MAKECMDGOALS)) --no-print-directory -f Makefile.nx
 

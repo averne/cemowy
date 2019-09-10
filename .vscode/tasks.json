@@ -10,7 +10,9 @@
                 "release"
             ],
             "presentation": {
-                "panel": "shared"
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": {
                 "base": "$gcc",
@@ -33,7 +35,8 @@
                 "isDefault": true
             },
             "presentation": {
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": {
                 "base": "$gcc",
@@ -52,7 +55,9 @@
                 "all"
             ],
             "presentation": {
-                "panel": "shared"
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": {
                 "base": "$gcc",
@@ -72,7 +77,9 @@
                 "all"
             ],
             "presentation": {
-                "panel": "shared"
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": []
         },
@@ -131,7 +138,7 @@
             },
             "presentation": {
                 "reveal": "always",
-                "panel": "dedicated",
+                "panel": "shared",
                 "clear": true
             },
             "problemMatcher": []
@@ -150,6 +157,6 @@
                 "clear": true
             },
             "problemMatcher": []
-        },
+        }
     ]
 }
