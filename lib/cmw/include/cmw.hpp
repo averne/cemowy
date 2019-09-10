@@ -9,6 +9,7 @@
 #include "cmw/input.hpp"
 #include "cmw/log.hpp"
 #include "cmw/mesh.hpp"
+#include "cmw/position.hpp"
 #include "cmw/renderer.hpp"
 #include "cmw/resource_manager.hpp"
 #include "cmw/text.hpp"

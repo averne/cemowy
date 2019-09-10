@@ -16,7 +16,7 @@ class Line: public Shape {
     public:
         Line(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): Shape(texture, color), width(width) { }
 
-        Line(const std::vector<glm::vec3> &positions, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
+        Line(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
                 Line(texture, color, width) {
             Mesh::Index idx = 1;
             std::vector<Mesh::Vertex> vertices;
@@ -53,7 +53,7 @@ class Line: public Shape {
             this->get_mesh().fill_buffers();
         }
 
-        void edit_point(std::size_t idx, const glm::vec3 &position) {
+        void edit_point(std::size_t idx, const Position &position) {
             this->get_mesh().get_vertices()[idx].position = position;
             this->get_mesh().fill_buffers();
         }

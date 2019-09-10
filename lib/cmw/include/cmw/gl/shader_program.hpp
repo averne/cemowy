@@ -14,6 +14,7 @@
 
 #include "shader.hpp"
 #include "object.hpp"
+#include "../position.hpp"
 #include "../platform.h"
 
 namespace cmw::gl {
@@ -87,11 +88,11 @@ class ShaderProgram: public GlObject {
                 glUniform1i(loc, (int)val);
             else if constexpr (std::is_same_v<Type, GLfloat>)
                 glUniform1f(loc, val);
-            else if constexpr (std::is_same_v<Type, glm::vec2>)
+            else if constexpr (std::is_same_v<Type, glm::vec2> || std::is_same_v<Type, Position2f>)
                 glUniform2fv(loc, 1, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<Type, glm::vec3>)
+            else if constexpr (std::is_same_v<Type, glm::vec3> || std::is_same_v<Type, Position3f>)
                 glUniform3fv(loc, 1, glm::value_ptr(val));
-            else if constexpr (std::is_same_v<Type, glm::vec4>)
+            else if constexpr (std::is_same_v<Type, glm::vec4> || std::is_same_v<Type, Position4f>)
                 glUniform4fv(loc, 1, glm::value_ptr(val));
             else if constexpr (std::is_same_v<Type, glm::mat2>)
                 glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(val));

@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "position.hpp"
 #include "utils.hpp"
 #include "platform.h"
 
@@ -254,8 +255,11 @@ struct CharTypedEvent: public Event {
         unsigned int codepoint;
 };
 
-struct MouseEvent: public Event, Position<float> {
-    inline MouseEvent(float x, float y): Position(x, y) { }
+struct MouseEvent: public Event, protected Position2f {
+    inline MouseEvent(float x, float y): Position2f(x, y) { }
+
+    inline float get_x() const { return this->x; }
+    inline float get_y() const { return this->y; }
 };
 
 struct MouseMovedEvent: public MouseEvent {
@@ -306,8 +310,8 @@ struct WindowResizedEvent: public Event, Area<int> {
     static inline constexpr EventType get_type() { return EventType::WindowResized; }
 };
 
-struct WindowMovedEvent: public Event, Position<int> {
-    inline WindowMovedEvent(int x, int y): Position(x, y) { }
+struct WindowMovedEvent: public Event, Position2i {
+    inline WindowMovedEvent(int x, int y): Position2i(x, y) { }
 
     static inline constexpr EventType get_type() { return EventType::WindowMoved; }
 };
@@ -330,8 +334,8 @@ struct WindowClosedEvent: public Event {
     static inline constexpr EventType get_type() { return EventType::WindowClosed; }
 };
 
-struct JoystickMovedEvent: public Event, public Position<float> {
-    inline JoystickMovedEvent(float x, float y, bool is_left): Position(x, y), id(is_left) { }
+struct JoystickMovedEvent: public Event, protected Position2f {
+    inline JoystickMovedEvent(float x, float y, bool is_left): Position2f(x, y), id(is_left) { }
 
     inline bool is_left()  const { return  this->id; }
     inline bool is_right() const { return !this->id; }
@@ -342,10 +346,12 @@ struct JoystickMovedEvent: public Event, public Position<float> {
         bool id;
 };
 
-struct TouchscreenEvent: public Event, public Position<uint32_t> {
+struct TouchscreenEvent: public Event, protected Position2u {
     inline TouchscreenEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
-            Position(x, y), dx(dx), dy(dy), angle(angle) { }
+            Position2u(x, y), dx(dx), dy(dy), angle(angle) { }
 
+    inline uint32_t get_x()     const { return this->x; }
+    inline uint32_t get_y()     const { return this->y; }
     inline uint32_t get_dx()    const { return this->dx; }
     inline uint32_t get_dy()    const { return this->dy; }
     inline uint32_t get_angle() const { return this->angle; }

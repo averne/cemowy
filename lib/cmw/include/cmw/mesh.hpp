@@ -8,6 +8,7 @@
 #include "gl/texture.hpp"
 #include "gl/vertex_array.hpp"
 #include "color.hpp"
+#include "position.hpp"
 #include "utils.hpp"
 #include "platform.h"
 
@@ -16,11 +17,11 @@ namespace cmw {
 class Mesh {
     public:
         struct Vertex {
-            glm::vec3 position;
-            glm::vec2 uv;
+            Position position;
+            Position2f uv;
 
-            constexpr Vertex(const glm::vec3 &position): position(position), uv(glm::vec2(0.5f, 0.5f)) { }
-            constexpr Vertex(const glm::vec3 &position, const glm::vec2 &uv): position(position), uv(uv) { }
+            constexpr Vertex(const Position &position): position(position), uv(Position2f(0.5f, 0.5f)) { }
+            constexpr Vertex(const Position &position, const Position2f &uv): position(position), uv(uv) { }
         };
 
         using Index = std::uint32_t;

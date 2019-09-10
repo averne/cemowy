@@ -15,7 +15,7 @@ class Rectangle: public Shape {
     public:
         Rectangle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) { }
 
-        Rectangle(const std::vector<glm::vec3> &positions, gl::Texture2d &texture, Colorf color = colors::White):
+        Rectangle(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White):
                 Rectangle(texture, color) {
             std::vector<Mesh::Vertex> vertices;
             vertices.reserve(4);
@@ -29,7 +29,7 @@ class Rectangle: public Shape {
             this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
         }
 
-        void edit_point(std::size_t idx, const glm::vec3 &position) {
+        void edit_point(std::size_t idx, const Position &position) {
             this->mesh.get_vertices()[idx].position = position;
             this->mesh.fill_buffers();
         }

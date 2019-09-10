@@ -7,6 +7,7 @@
 #include "../gl/texture.hpp"
 #include "../color.hpp"
 #include "../mesh.hpp"
+#include "../position.hpp"
 #include "../platform.h"
 
 namespace cmw::shapes {
@@ -15,7 +16,7 @@ class Circle: public Shape {
     public:
         Circle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) { }
 
-        Circle(const glm::vec3 &position, float radius, gl::Texture2d &texture, Colorf color = colors::White, std::size_t segments = 24):
+        Circle(const Position &position, float radius, gl::Texture2d &texture, Colorf color = colors::White, std::size_t segments = 24):
                 Circle(texture, color) {
             std::vector<Mesh::Vertex> vertices;
             std::vector<Mesh::Index> indices;
@@ -35,9 +36,9 @@ class Circle: public Shape {
             this->mesh.set_data(vertices, indices);
         }
 
-        void set_position(const glm::vec3 &position) {
+        void set_position(const Position &position) {
             auto &vertices = this->get_mesh().get_vertices();
-            glm::vec3 delta = position - vertices[0].position;
+            Position delta = position - vertices[0].position;
             for (auto &vertex: vertices)
                 vertex.position += delta;
             this->get_mesh().fill_buffers();
@@ -45,8 +46,8 @@ class Circle: public Shape {
 
         void set_radius(float radius) {
             auto &vertices = this->get_mesh().get_vertices();
-            glm::vec3 &center = vertices[0].position;
-            float ratio = radius / glm::distance(vertices[0].position, vertices[1].position);
+            Position &center = vertices[0].position;
+            float ratio = radius / glm::distance((glm::vec3)vertices[0].position, (glm::vec3)vertices[1].position);
             for (auto &vertex: vertices) {
                 vertex.position.x -= (vertex.position.x - center.x) * (1.0f - ratio);
                 vertex.position.y -= (vertex.position.y - center.y) * (1.0f - ratio);

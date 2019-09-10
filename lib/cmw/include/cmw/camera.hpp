@@ -10,7 +10,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "position.hpp"
 #include "platform.h"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
 namespace cmw {
 
@@ -23,10 +27,10 @@ class PerspectiveCamera {
             Right,
         };
 
-        PerspectiveCamera(const glm::vec3 &pos = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 &front = glm::vec3(0.0f, 0.0f, -1.0f),
+        PerspectiveCamera(const Position &pos = Position(0.0f, 0.0f, 0.0f), const Position &front = Position(0.0f, 0.0f, -1.0f),
                 GLfloat fov = 45.0f, float speed = 0.2f, float sensitivity = 0.05f):
                 pos(pos), front(front), fov(fov), speed(speed), sensitivity(sensitivity) {
-            glm::vec3 n_front = glm::normalize(this->front);
+            Position n_front = glm::normalize(this->front);
             this->yaw = glm::degrees(atan2(n_front.x, n_front.z));
             this->pitch = glm::degrees(asin(-n_front.y));
             update();
@@ -85,8 +89,8 @@ class PerspectiveCamera {
         inline const glm::mat4 &get_view()      const { return this->view; }
         inline const glm::mat4 &get_view_proj() const { return this->view_proj; }
 
-        inline const glm::vec3 &get_pos()   const { return this->pos; }
-        inline const glm::vec3 &get_front() const { return this->front; }
+        inline const Position &get_pos()   const { return *reinterpret_cast<const Position *>(&this->pos); }
+        inline const Position &get_front() const { return *reinterpret_cast<const Position *>(&this->front); }
 
         void update() {
             this->proj = glm::perspective(glm::radians(this->fov), this->scr_w / this->scr_h, 0.1f, 100.0f);
@@ -110,17 +114,17 @@ class PerspectiveCamera {
 class OrthographicCamera {
     public:
         OrthographicCamera(float left, float right, float bottom, float top, float near , float far,
-                const glm::vec3 &position = {0.0f, 0.0f, 0.0f}, float rotation = 0.0f):
+                const Position &position = {0.0f, 0.0f, 0.0f}, float rotation = 0.0f):
                 position(position), rotation(rotation), proj(glm::ortho(left, right, bottom, top, near, far)) {
             this->offset = {glm::abs(left - right) / 2.0f, glm::abs(top - bottom) / 2.0f, 0.0f};
             update();
         }
 
-        inline void move(const glm::vec3 &dposition) { this->position += dposition; update(); }
+        inline void move(const Position &dposition) { this->position += (glm::vec3)dposition; update(); }
         inline void rotate(float drotation) { this->rotation += drotation; update(); }
 
-        inline const glm::vec3 &get_position() const { return this->position; }
-        inline void set_position(const glm::vec3 &position) { this->position = position; update(); }
+        inline const Position &get_position() const { return *reinterpret_cast<const Position *>(&this->position); }
+        inline void set_position(const Position &position) { this->position = position; update(); }
 
         inline float get_rotation() const { return this->rotation; }
         inline void set_rotation(float rotation) { this->rotation = rotation; update(); }
@@ -146,3 +150,5 @@ class OrthographicCamera {
 };
 
 } // namespace cmw
+
+#pragma GCC diagnostic pop
