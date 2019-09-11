@@ -12,6 +12,7 @@ class Application {
     public:
         template <typename ...Args>
         Application(Args &&...args): window(std::forward<Args>(args)...), renderer(resource_manager) {
+            this->instance = this;
             cmw::log::initialize();
             cmw::imgui::initialize(&this->window);
         }
@@ -19,7 +20,9 @@ class Application {
         ~Application() {
             cmw::imgui::finalize();
             cmw::log::finalize();
-        };
+        }
+
+        static Application &get_instance() { return *instance; }
 
         template <typename T>
         inline T get_time() const {
@@ -31,6 +34,8 @@ class Application {
         inline Window          &get_window()           { return this->window; }
 
     protected:
+        static inline Application *instance;
+
         Window window;
         ResourceManager resource_manager;
         Renderer renderer;
