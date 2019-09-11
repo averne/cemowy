@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <tuple>
 #include <memory>
 #include <stb_truetype.h>
@@ -83,7 +83,7 @@ class Font {
         unsigned char *data = nullptr;
         stbtt_fontinfo font_ctx;
         int ascender, descender, linegap;
-        std::map<char16_t, Glyph> cached_glyphs;
+        std::unordered_map<char16_t, Glyph> cached_glyphs;
 #ifdef CMW_SWITCH
         PlFontData font_data{};
 #endif

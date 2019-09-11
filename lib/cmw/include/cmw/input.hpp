@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <array>
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <utility>
 #include <glad/glad.h>
@@ -438,7 +438,7 @@ class InputManager {
 
     protected:
         std::size_t cur_handle = 0;
-        std::array<std::map<std::size_t, Callback<>>, (std::size_t)EventType::Max> callbacks;
+        std::array<std::unordered_map<std::size_t, Callback<>>, (std::size_t)EventType::Max> callbacks;
 #ifdef CMW_SWITCH
         static constexpr float key_held_threshold = 0.5f; // Time (s) a key to to be held to begin firing KeyHeldEvents
 #endif
