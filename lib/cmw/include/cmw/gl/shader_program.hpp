@@ -128,7 +128,7 @@ class ShaderProgram: public GlObject {
         }
 
         void print_log() const {
-            CMW_TRACE("%s\n", get_log());
+            CMW_ERROR("%s\n", get_log().c_str());
         }
 
     private:

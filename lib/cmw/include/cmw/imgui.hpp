@@ -133,7 +133,7 @@ static inline void initialize(Window *win) {
     auto [w, h] = window->get_size();
 
     ImGui::CreateContext();
-    ImGui::Gl3Impl::Init("#version 330");
+    ImGui::Gl3Impl::Init("#version 430");
     ImGui::StyleColorsDark();
 
     input::InputManager &in_man = window->get_input_manager();

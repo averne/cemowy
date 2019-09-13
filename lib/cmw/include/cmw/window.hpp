@@ -18,7 +18,7 @@ struct GlVersion {
 class Window {
     public:
         Window(int w, int h, const std::string &name, int x = 0, int y = 0, GLboolean resizable = GL_TRUE,
-                GlVersion ver = {3, 3, GLFW_OPENGL_CORE_PROFILE});
+                GlVersion ver = {4, 3, GLFW_OPENGL_CORE_PROFILE});
 
         ~Window() {
             CMW_TRACE("Destructing window object\n");
