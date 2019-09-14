@@ -231,7 +231,7 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
 
     // Backup GL state
     GLenum last_active_texture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&last_active_texture);
-    // glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
     GLint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
     GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 #ifdef GL_SAMPLER_BINDING
@@ -337,7 +337,7 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
 #ifdef GL_SAMPLER_BINDING
     glBindSampler(0, last_sampler);
 #endif
-    // glActiveTexture(last_active_texture);
+    glActiveTexture(last_active_texture);
 #ifndef IMGUI_IMPL_OPENGL_ES2
     glBindVertexArray(last_vertex_array_object);
 #endif
