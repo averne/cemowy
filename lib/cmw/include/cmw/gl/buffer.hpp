@@ -37,7 +37,7 @@ struct BufferElement {
 
     static constexpr std::size_t get_nb(Type type) {
         if (type & Type::_Mat)
-            return (type & Type::_Nb) * (type & Type::_Nb);
+            return __builtin_ffs(type & Type::_Nb) * __builtin_ffs(type & Type::_Nb);
         return __builtin_ffs(type & Type::_Nb);
     }
 
