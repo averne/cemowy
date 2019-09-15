@@ -9,6 +9,9 @@
 namespace cmw {
 
 class Application {
+    CMW_NON_COPYABLE(Application);
+    CMW_NON_MOVEABLE(Application);
+
     public:
         template <typename ...Args>
         Application(Args &&...args): window(std::forward<Args>(args)...), renderer(resource_manager) {
