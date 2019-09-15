@@ -73,6 +73,13 @@ class Position2X {
             return *this;                                                               \
         }
 
+#define DECL_COMP_OPERATOR(op)                                                          \
+        template <typename U = T>                                                       \
+        constexpr inline bool operator op(const Position2X<U> &rhs) const {             \
+            return this->x op rhs.x &&                                                  \
+                this->y op rhs.y;                                                       \
+        }
+
         DECL_BINARY_OPERATOR(+)
         DECL_BINARY_OPERATOR(-)
         DECL_BINARY_OPERATOR(*)
@@ -94,8 +101,16 @@ class Position2X {
         DECL_UNARY_OPERATOR(>>=)
         DECL_UNARY_OPERATOR(<<=)
 
+        DECL_COMP_OPERATOR(==)
+        DECL_COMP_OPERATOR(!=)
+        DECL_COMP_OPERATOR(>)
+        DECL_COMP_OPERATOR(<)
+        DECL_COMP_OPERATOR(>=)
+        DECL_COMP_OPERATOR(<=)
+
 #undef DECL_BINARY_OPERATOR
 #undef DECL_UNARY_OPERATOR
+#undef DECL_COMP_OPERATOR
 };
 CMW_ASSERT_STANDARD_LAYOUT(Position2X<>);
 
@@ -170,6 +185,14 @@ class Position3X {
             return *this;                                                               \
         }
 
+#define DECL_COMP_OPERATOR(op)                                                          \
+        template <typename U = T>                                                       \
+        constexpr inline bool operator op(const Position3X<U> &rhs) const {             \
+            return this->x op rhs.x &&                                                  \
+                this->y op rhs.y &&                                                     \
+                this->z op rhs.z;                                                       \
+        }
+
         DECL_BINARY_OPERATOR(+)
         DECL_BINARY_OPERATOR(-)
         DECL_BINARY_OPERATOR(*)
@@ -191,8 +214,16 @@ class Position3X {
         DECL_UNARY_OPERATOR(>>=)
         DECL_UNARY_OPERATOR(<<=)
 
+        DECL_COMP_OPERATOR(==)
+        DECL_COMP_OPERATOR(!=)
+        DECL_COMP_OPERATOR(>)
+        DECL_COMP_OPERATOR(<)
+        DECL_COMP_OPERATOR(>=)
+        DECL_COMP_OPERATOR(<=)
+
 #undef DECL_BINARY_OPERATOR
 #undef DECL_UNARY_OPERATOR
+#undef DECL_COMP_OPERATOR
 };
 CMW_ASSERT_STANDARD_LAYOUT(Position3X<>);
 
@@ -272,6 +303,15 @@ class Position4X {
             return *this;                                                               \
         }
 
+#define DECL_COMP_OPERATOR(op)                                                          \
+        template <typename U = T>                                                       \
+        constexpr inline bool operator op(const Position4X<U> &rhs) const {             \
+            return this->x op rhs.x &&                                                  \
+                this->y op rhs.y &&                                                     \
+                this->z op rhs.z &&                                                     \
+                this->w op rhs.w;                                                       \
+        }
+
         DECL_BINARY_OPERATOR(+)
         DECL_BINARY_OPERATOR(-)
         DECL_BINARY_OPERATOR(*)
@@ -293,8 +333,16 @@ class Position4X {
         DECL_UNARY_OPERATOR(>>=)
         DECL_UNARY_OPERATOR(<<=)
 
+        DECL_COMP_OPERATOR(==)
+        DECL_COMP_OPERATOR(!=)
+        DECL_COMP_OPERATOR(>)
+        DECL_COMP_OPERATOR(<)
+        DECL_COMP_OPERATOR(>=)
+        DECL_COMP_OPERATOR(<=)
+
 #undef DECL_BINARY_OPERATOR
 #undef DECL_UNARY_OPERATOR
+#undef DECL_COMP_OPERATOR
 };
 CMW_ASSERT_STANDARD_LAYOUT(Position4X<>);
 

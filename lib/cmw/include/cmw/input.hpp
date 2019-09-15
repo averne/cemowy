@@ -255,11 +255,15 @@ struct CharTypedEvent: public Event {
         unsigned int codepoint;
 };
 
-struct MouseEvent: public Event, protected Position2f {
-    inline MouseEvent(float x, float y): Position2f(x, y) { }
+struct MouseEvent: public Event {
+    inline MouseEvent(float x, float y): pos(x, y) { }
 
-    inline float get_x() const { return this->x; }
-    inline float get_y() const { return this->y; }
+    inline float get_x() const { return this->pos.x; }
+    inline float get_y() const { return this->pos.y; }
+    inline const Position2f &get_pos() const { return this->pos; }
+
+    protected:
+        Position2f pos;
 };
 
 struct MouseMovedEvent: public MouseEvent {
@@ -304,16 +308,30 @@ struct MouseButtonReleasedEvent: public KeyEvent {
     static inline constexpr EventType get_type() { return EventType::MouseButtonReleased; };
 };
 
-struct WindowResizedEvent: public Event, Area<int> {
-    inline WindowResizedEvent(int w, int h): Area(w, h) { }
+struct WindowResizedEvent: public Event {
+    inline WindowResizedEvent(int w, int h): area(w, h) { }
 
     static inline constexpr EventType get_type() { return EventType::WindowResized; }
+
+    inline int get_w() const { return this->area.get_w(); }
+    inline int get_h() const { return this->area.get_h(); }
+    inline const Area<int> &get_area() const { return this->area; }
+
+    protected:
+        Area<int> area;
 };
 
-struct WindowMovedEvent: public Event, Position2i {
-    inline WindowMovedEvent(int x, int y): Position2i(x, y) { }
+struct WindowMovedEvent: public Event {
+    inline WindowMovedEvent(int x, int y): pos(x, y) { }
+
+    inline int get_x() const { return this->pos.x; }
+    inline int get_y() const { return this->pos.y; }
+    inline const Position2i &get_pos() const { return this->pos; }
 
     static inline constexpr EventType get_type() { return EventType::WindowMoved; }
+
+    protected:
+        Position2i pos;
 };
 
 struct WindowFocusedEvent: public Event {
@@ -334,29 +352,36 @@ struct WindowClosedEvent: public Event {
     static inline constexpr EventType get_type() { return EventType::WindowClosed; }
 };
 
-struct JoystickMovedEvent: public Event, protected Position2f {
-    inline JoystickMovedEvent(float x, float y, bool is_left): Position2f(x, y), id(is_left) { }
+struct JoystickMovedEvent: public Event {
+    inline JoystickMovedEvent(float x, float y, bool is_left): pos(x, y), id(is_left) { }
 
     inline bool is_left()  const { return  this->id; }
     inline bool is_right() const { return !this->id; }
 
+    inline float get_x() const { return this->pos.x; }
+    inline float get_y() const { return this->pos.y; }
+    inline const Position2f &get_pos() const { return this->pos; }
+
     static inline constexpr EventType get_type() { return EventType::JoystickMoved; }
 
     protected:
+        Position2f pos;
         bool id;
 };
 
-struct TouchscreenEvent: public Event, protected Position2u {
+struct TouchscreenEvent: public Event {
     inline TouchscreenEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
-            Position2u(x, y), dx(dx), dy(dy), angle(angle) { }
+            pos(x, y), dx(dx), dy(dy), angle(angle) { }
 
-    inline uint32_t get_x()     const { return this->x; }
-    inline uint32_t get_y()     const { return this->y; }
+    inline int get_x() const { return this->pos.x; }
+    inline int get_y() const { return this->pos.y; }
+    inline const Position2u &get_pos() const { return this->pos; }
     inline uint32_t get_dx()    const { return this->dx; }
     inline uint32_t get_dy()    const { return this->dy; }
     inline uint32_t get_angle() const { return this->angle; }
 
     protected:
+        Position2u pos;
         uint32_t dx, dy, angle;
 };
 
