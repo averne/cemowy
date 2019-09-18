@@ -182,14 +182,14 @@ int main() {
             {{+1000.0f, +600.0f, -1.0f}, {1.0f, 1.0f}},
             {{+ 800.0f, +600.0f, -1.0f}, {0.0f, 1.0f}},
         },
-        bog_tex,
+        white_tex,
         cmw::colors::Green
     };
 
     cmw::shapes::Circle circle = {
         {+ 800.0f, +200.0f, +0.0f},
         100.0f,
-        bog_tex,
+        cube_tex,
         cmw::colors::Blue
     };
 
@@ -230,18 +230,23 @@ int main() {
 
         camera.set_rotation(glm::degrees(app->get_time<float>()));
 
-        app->get_renderer().begin_scene(camera);
+        // app->get_renderer().begin(camera);
+        // app->get_renderer().submit(point, glm::mat4(1.0f));
+        // app->get_renderer().end(GL_POINTS);
 
-        app->get_renderer().submit(line, glm::mat4(1.0f));
-        app->get_renderer().submit(point, glm::mat4(1.0f));
+        // app->get_renderer().begin(camera);
+        // app->get_renderer().submit(line, glm::mat4(1.0f));
+        // app->get_renderer().end(GL_LINES);
+
+        app->get_renderer().begin(camera);
         app->get_renderer().submit(triangle,
             glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)));
         app->get_renderer().submit(rectangle, glm::mat4(1.0f));
         app->get_renderer().submit(circle, glm::mat4(1.0f));
+        app->get_renderer().draw_string(font, u"123 Hello world\nBazinga é_è $£€",
+            {100.0f, 300.0f, 1.0f}, 0.5f, text_color);
 
-        app->get_renderer().draw_string(font, u"123 Hello world\nBazinga é_è $£€", 100.0f, 300.0f, 1.0f, 0.5f, text_color);
-
-        app->get_renderer().end_scene();
+        app->get_renderer().end();
 
         cmw::imgui::begin_frame();
 

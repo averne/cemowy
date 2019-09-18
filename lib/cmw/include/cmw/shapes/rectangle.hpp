@@ -48,12 +48,10 @@ class Rectangle: public Shape {
 
         void edit_point(std::size_t idx, const Position &position) {
             this->mesh.get_vertices()[idx].position = position;
-            this->mesh.fill_buffers();
         }
 
         void edit_point(std::size_t idx, const Mesh::Vertex &vertex) {
             this->mesh.get_vertices()[idx] = vertex;
-            this->mesh.fill_buffers();
         }
 
         virtual void on_draw() override { }

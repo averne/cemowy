@@ -41,7 +41,6 @@ class Point: public Shape {
 
         void set_position(const Position &position) {
             this->get_mesh().set_data({(Mesh::Vertex){position}});
-            this->get_mesh().fill_buffers();
         }
 
         virtual void on_draw() override {

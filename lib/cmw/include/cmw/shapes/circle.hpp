@@ -58,7 +58,6 @@ class Circle: public Shape {
             Position delta = position - vertices[0].position;
             for (auto &vertex: vertices)
                 vertex.position += delta;
-            this->get_mesh().fill_buffers();
         }
 
         void set_radius(float radius) {
@@ -69,7 +68,6 @@ class Circle: public Shape {
                 vertex.position.x -= (vertex.position.x - center.x) * (1.0f - ratio);
                 vertex.position.y -= (vertex.position.y - center.y) * (1.0f - ratio);
             }
-            this->get_mesh().fill_buffers();
         }
 
         virtual void on_draw() override { }

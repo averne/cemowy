@@ -44,7 +44,7 @@ class Glyph {
         inline int get_codepoint() const { return this->codepoint; }
         inline int get_idx()       const { return this->idx; }
 
-        inline const gl::Texture2d &get_texture() const { return this->texture; }
+        inline gl::Texture2d &get_texture() { return this->texture; }
         inline int get_width()      const { return this->x2 - this->x1; }
         inline int get_height()     const { return this->y2 - this->y1; }
         inline int get_bitmap_top() const { return this->y1; }
@@ -71,17 +71,9 @@ class Font {
         Font(const std::string &path, char16_t first_cached = ' ', char16_t last_cached = '~');
         ~Font();
 
-        const Glyph &cache_glyph(char16_t chr);
+        Glyph &cache_glyph(char16_t chr);
 
-        const Glyph &get_glyph(char16_t chr);
-
-        inline void bind() const {
-            bind_all(this->vao, this->vbo);
-        }
-
-        inline void set_vertex_data(void *vertices, std::size_t size) const {
-            this->vbo.set_sub_data(vertices, size);
-        }
+        Glyph &get_glyph(char16_t chr);
 
         inline stbtt_fontinfo *get_ctx() { return &this->font_ctx; }
 
@@ -93,9 +85,6 @@ class Font {
 
     protected:
         static constexpr float font_scale = 0.105f;
-
-        gl::VertexArray vao;
-        gl::VertexBuffer vbo;
 
         unsigned char *data = nullptr;
         stbtt_fontinfo font_ctx;

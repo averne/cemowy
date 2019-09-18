@@ -66,13 +66,10 @@ class Line: public Shape {
             for (; idx < vertices.size() - 1; ++idx)
                 indices.emplace_back(idx), indices.emplace_back(idx);
             indices.emplace_back(idx);
-
-            this->get_mesh().fill_buffers();
         }
 
         void edit_point(std::size_t idx, const Position &position) {
             this->get_mesh().get_vertices()[idx].position = position;
-            this->get_mesh().fill_buffers();
         }
 
         virtual void on_draw() override {

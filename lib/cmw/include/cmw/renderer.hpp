@@ -17,15 +17,17 @@
 
 #pragma once
 
-#include <glad/glad.h>
+#include <cstdint>
 #include <type_traits>
 #include <utility>
+#include <glad/glad.h>
 
 #include "gl/shader_program.hpp"
 #include "shapes/line.hpp"
 #include "shapes/point.hpp"
 #include "color.hpp"
 #include "mesh.hpp"
+#include "position.hpp"
 #include "resource_manager.hpp"
 #include "text.hpp"
 
@@ -33,17 +35,28 @@ namespace cmw {
 
 class Renderer {
     public:
-        Renderer(ResourceManager &resource_man): resource_man(resource_man),
-                mesh_program(resource_man.get_shader("shaders/mesh.vert", "shaders/mesh.frag")),
-                glyph_program(resource_man.get_shader("shaders/glyph.vert", "shaders/glyph.frag")) {
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(GL_LESS);
-
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-            // glEnable(GL_CULL_FACE);
+        enum class RenderingMode: std::uint8_t {
+            Default,
+            AlphaMap,
         };
+
+        struct Vertex {
+            Mesh::Vertex vertex;
+            Colorf blend_color;
+            int tex_idx;
+            std::uint8_t mode;
+        };
+
+        struct Index {
+            Mesh::Index index;
+        };
+
+    public:
+        static constexpr std::size_t max_vertices  = 1000;
+        static constexpr std::size_t max_indices   = 10000;
+        static constexpr std::size_t max_textures  = 30;
+
+        Renderer(ResourceManager &resource_man);
 
         inline void clear(int flags) const {
             glClearColor(this->clear_color.r, this->clear_color.g, this->clear_color.b, this->clear_color.a);
@@ -51,37 +64,30 @@ class Renderer {
         }
 
         template <typename T>
-        void begin_scene(T &&camera) {
+        void begin(T &&camera) {
             this->view_proj = &camera.get_view_proj();
+            bind_all(this->vbo, this->ebo);
+            this->vertex_buffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+            this->index_buffer  = (Index  *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);
         }
 
-        void end_scene() { }
+        void end(gl::ShaderProgram &program, GLenum mode = GL_TRIANGLES);
+        void end(GLenum mode = GL_TRIANGLES) { end(this->get_default_mesh_shader(), mode); }
 
         template <typename T>
-        inline void submit(T &&element, const glm::mat4 &model, gl::ShaderProgram &program) const {
+        inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
             element.on_draw();
-            using Type = std::remove_cv_t<std::remove_reference_t<T>>;
-            if constexpr (std::is_same_v<Type, shapes::Point>)
-                render_mesh(GL_POINTS, element.get_mesh(), model, program);
-            else if constexpr (std::is_same_v<Type, shapes::Line>)
-                render_mesh(GL_LINES, element.get_mesh(), model, program);
-            else
-                render_mesh(GL_TRIANGLES, element.get_mesh(), model, program);
+            add_mesh(element.get_mesh(), model, mode);
         }
 
-        template <typename T>
-        inline void submit(T &&element, const glm::mat4 &model) const {
-            submit(std::forward<T>(element), model, this->mesh_program);
-        }
-
-        void render_mesh(GLenum mode, const Mesh &mesh, const glm::mat4 &model, gl::ShaderProgram &program) const;
+        void add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default);
 
         void draw_string(cmw::Font &font, gl::ShaderProgram &program, const std::u16string &str,
-            float x = 0.0f, float y = 0.0f, float z = 0.0f, float scale = 1.0f, Colorf color = {1.0f, 1.0f, 1.0f});
+            Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f});
 
         inline void draw_string(cmw::Font &font, const std::u16string &str,
-                float x = 0.0f, float y = 0.0f, float z = 0.0f, float scale = 1.0f, Colorf color = {1.0f, 1.0f, 1.0f}) {
-            draw_string(font, this->glyph_program, str, x, y, z, scale, color);
+                Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f}) {
+            draw_string(font, this->glyph_program, str, pos, scale, color);
         }
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
@@ -95,8 +101,18 @@ class Renderer {
         gl::ShaderProgram &mesh_program;
         gl::ShaderProgram &glyph_program;
 
+        gl::VertexArray   vao;
+        gl::VertexBuffer  vbo;
+        gl::ElementBuffer ebo;
+
+        GLenum mode;
         Colorf clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
         const glm::mat4 *view_proj;
+
+        Vertex *vertex_buffer;
+        Index *index_buffer;
+        std::size_t num_vertices = 0, num_indices = 0;
+        std::vector<gl::Texture2d *> textures;
 };
 
 } // namespace cmw

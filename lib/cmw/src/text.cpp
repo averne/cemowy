@@ -53,12 +53,8 @@ Glyph::Glyph(stbtt_fontinfo *font_ctx, float scale, int codepoint, int idx, void
     stbtt_GetFontVMetrics(&this->font_ctx, &this->ascender, &this->descender, &this->linegap);                      \
     this->ascender *= this->font_scale; this->descender *= this->font_scale; this->linegap *= this->font_scale;     \
                                                                                                                     \
-    for (char16_t i=first_cached; i<=last_cached; ++i)                                                              \
+    for (char16_t i = first_cached; i <= last_cached; ++i)                                                              \
         cache_glyph(i);                                                                                             \
-                                                                                                                    \
-    this->vao.bind();                                                                                               \
-    this->vbo.set_data(nullptr, 6 * 5 * sizeof(float), GL_DYNAMIC_DRAW);                                            \
-    this->vbo.set_layout({ gl::BufferElement::Float3, gl::BufferElement::Float2 });                                                            \
 })
 
 #ifdef CMW_SWITCH
@@ -94,7 +90,7 @@ Font::~Font() {
 #endif
 }
 
-const Glyph &Font::cache_glyph(char16_t chr) {
+Glyph &Font::cache_glyph(char16_t chr) {
     int w, h, x, y;
     int idx = stbtt_FindGlyphIndex(&this->font_ctx, chr);
     void *data = stbtt_GetGlyphBitmap(&this->font_ctx, this->font_scale, this->font_scale, idx, &w, &h, &x, &y);
@@ -103,7 +99,7 @@ const Glyph &Font::cache_glyph(char16_t chr) {
     return pair.first->second;
 }
 
-const Glyph &Font::get_glyph(char16_t chr) {
+Glyph &Font::get_glyph(char16_t chr) {
     auto it = this->cached_glyphs.find(chr);
     if (it != this->cached_glyphs.end())
         return it->second;
