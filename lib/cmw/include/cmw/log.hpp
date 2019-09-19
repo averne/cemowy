@@ -179,7 +179,7 @@ static inline void enqueue(Level level, const std::string &fmt, Args &&...args) 
 
 #endif // CMW_DEBUG
 
-} // namespawe cmw::log
+} // namespace cmw::log
 
 #define CMW_TRACE(fmt, ...) ::cmw::log::enqueue(::cmw::log::Level::Trace, fmt, ##__VA_ARGS__)
 #define CMW_INFO(fmt,  ...) ::cmw::log::enqueue(::cmw::log::Level::Info,  fmt, ##__VA_ARGS__)

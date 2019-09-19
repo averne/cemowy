@@ -55,4 +55,4 @@ class VertexArrayN: public GlObject {
 
 using VertexArray = VertexArrayN<1>;
 
-} // namespace cmw
+} // namespace cmw::gl

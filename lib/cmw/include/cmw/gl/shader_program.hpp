@@ -157,4 +157,4 @@ class ShaderProgram: public GlObject {
         std::map<std::string, GLint, Comp> uniform_loc_cache;
 };
 
-} // namespace cmw
+} // namespace cmw::gl

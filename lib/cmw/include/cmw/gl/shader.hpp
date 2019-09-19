@@ -95,4 +95,4 @@ class FragmentShader: public Shader<GL_FRAGMENT_SHADER> {
         FragmentShader(const std::string &src): Shader(src) { }
 };
 
-} // namespace cmw
+} // namespace cmw::gl

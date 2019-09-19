@@ -212,6 +212,20 @@ int main() {
 
     cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h, -10.0f, 10.0f};
 
+    app->get_window().get_input_manager().register_callback<cmw::input::KeyPressedEvent>([&camera](auto &e) {
+#ifdef CMW_SWITCH
+        if (e.get_key() == cmw::input::KeySwitchDleft)
+            camera.rotate(1.0f);
+        if (e.get_key() == cmw::input::KeySwitchDright)
+            camera.rotate(-1.0f);
+#else
+        if (e.get_key() == cmw::input::KeyLeft)
+            camera.rotate(1.0f);
+        if (e.get_key() == cmw::input::KeyRight)
+            camera.rotate(-1.0f);
+#endif
+    });
+
     cmw::Colorf text_color{cmw::colors::Red};
     while (!app->get_window().get_should_close()) {
         app->get_renderer().clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -227,8 +241,6 @@ int main() {
             cube_program.set_value("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
-        camera.set_rotation(glm::degrees(app->get_time<float>()));
 
         // app->get_renderer().begin(camera);
         // app->get_renderer().submit(point, glm::mat4(1.0f));

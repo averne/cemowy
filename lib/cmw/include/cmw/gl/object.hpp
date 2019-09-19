@@ -48,4 +48,4 @@ class GlObject {
         GLuint handle = 0;
 };
 
-} // namespace cmw
+} // namespace cmw::gl

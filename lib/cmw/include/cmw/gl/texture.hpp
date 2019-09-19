@@ -159,4 +159,4 @@ using Texture1d = Texture1dN<1>;
 using Texture2d = Texture2dN<1>;
 using Texture3d = Texture3dN<1>;
 
-} // namespace cmw
+} // namespace cmw::gl

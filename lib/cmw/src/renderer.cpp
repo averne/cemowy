@@ -41,16 +41,13 @@ Renderer::Renderer(ResourceManager &resource_man): resource_man(resource_man),
     // glEnable(GL_CULL_FACE);
 
     bind_all(this->vao, this->vbo, this->ebo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (const void *)(offsetof(Vertex, vertex) + offsetof(Mesh::Vertex, position)));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(Vertex), (const void *)(offsetof(Vertex, vertex) + offsetof(Mesh::Vertex, uv)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 4, GL_FLOAT, false, sizeof(Vertex), (const void *)(offsetof(Vertex, blend_color)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribIPointer(3, 1, GL_INT, sizeof(Vertex), (const void *)offsetof(Vertex, tex_idx));
-    glEnableVertexAttribArray(3);
-    glVertexAttribIPointer(4, 1, GL_UNSIGNED_BYTE, sizeof(Vertex), (const void *)offsetof(Vertex, mode));
-    glEnableVertexAttribArray(4);
+    this->vbo.set_layout({
+        gl::BufferElement::Float3,
+        gl::BufferElement::Float2,
+        gl::BufferElement::Float4,
+        gl::BufferElement::Int,
+        gl::BufferElement::Uint, // Ubyte padded to 4 bytes
+    });
     this->vbo.set_data(nullptr, sizeof(Vertex) * this->max_indices, GL_DYNAMIC_DRAW);
     this->ebo.set_data(nullptr, sizeof(Index)  * this->max_vertices,  GL_DYNAMIC_DRAW);
 

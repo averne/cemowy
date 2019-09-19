@@ -40,6 +40,9 @@
 
 #define CMW_VEC_SIZE(x) (sizeof((x)) / sizeof(*(x)))
 
+#define CMW_PACKED     __attribute((packed))
+#define CMW_ALIGNED(n) __attribute__((aligned(n)))
+
 #define CMW_TRY_IMPL(x, cb) ({                                                                      \
     if (!(x)) {                                                                                     \
         CMW_ERROR(CMW_STRING(x) " failed\n");                                                       \
