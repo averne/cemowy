@@ -30,8 +30,7 @@
 namespace cmw {
 
 Renderer::Renderer(ResourceManager &resource_man): resource_man(resource_man),
-        mesh_program(resource_man.get_shader("shaders/mesh.vert", "shaders/mesh.frag")),
-        glyph_program(resource_man.get_shader("shaders/glyph.vert", "shaders/glyph.frag")) {
+        mesh_program(resource_man.get_shader("shaders/mesh.vert", "shaders/mesh.frag")) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -101,12 +100,7 @@ void Renderer::add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode) 
     }
 }
 
-void Renderer::draw_string(cmw::Font &font, gl::ShaderProgram &program, const std::u16string &str,
-        Position pos, float scale, const Colorf &color) {
-    program.bind();
-    program.set_value("u_blend_color", color.r, color.g, color.b);
-    program.set_value("u_view_proj_mat", *this->view_proj);
-
+void Renderer::draw_string(cmw::Font &font, const std::u16string &str, Position pos, float scale, const Colorf &color) {
     int last_codepoint = -1;
     float xpos = pos.x, ypos = pos.y;
     for (char16_t chr: str) {

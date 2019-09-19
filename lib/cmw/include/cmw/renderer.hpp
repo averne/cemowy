@@ -82,24 +82,17 @@ class Renderer {
 
         void add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default);
 
-        void draw_string(cmw::Font &font, gl::ShaderProgram &program, const std::u16string &str,
+        void draw_string(cmw::Font &font, const std::u16string &str,
             Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f});
-
-        inline void draw_string(cmw::Font &font, const std::u16string &str,
-                Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f}) {
-            draw_string(font, this->glyph_program, str, pos, scale, color);
-        }
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
         inline Colorf &get_clear_color() { return this->clear_color; }
 
         inline gl::ShaderProgram &get_default_mesh_shader()  { return this->mesh_program; }
-        inline gl::ShaderProgram &get_default_glyph_shader() { return this->glyph_program; }
 
     protected:
         ResourceManager &resource_man;
         gl::ShaderProgram &mesh_program;
-        gl::ShaderProgram &glyph_program;
 
         gl::VertexArray   vao;
         gl::VertexBuffer  vbo;
