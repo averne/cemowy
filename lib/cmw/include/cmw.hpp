@@ -19,6 +19,7 @@
 
 #include "cmw/platform.h"
 #include "cmw/application.hpp"
+#include "cmw/area.hpp"
 #include "cmw/camera.hpp"
 #include "cmw/color.hpp"
 #include "cmw/error.hpp"

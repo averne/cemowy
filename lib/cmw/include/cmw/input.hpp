@@ -25,6 +25,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "area.hpp"
 #include "position.hpp"
 #include "utils.hpp"
 #include "platform.h"
@@ -330,12 +331,12 @@ struct WindowResizedEvent: public Event {
 
     static inline constexpr EventType get_type() { return EventType::WindowResized; }
 
-    inline int get_w() const { return this->area.get_w(); }
-    inline int get_h() const { return this->area.get_h(); }
-    inline const Area<int> &get_area() const { return this->area; }
+    inline int get_w() const { return this->area.w; }
+    inline int get_h() const { return this->area.h; }
+    inline const Areai &get_area() const { return this->area; }
 
     protected:
-        Area<int> area;
+        Areai area;
 };
 
 struct WindowMovedEvent: public Event {
