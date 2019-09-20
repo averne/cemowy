@@ -22,13 +22,13 @@
 #include <memory>
 #include <stb_truetype.h>
 
-#include <cmw/gl/texture.hpp>
-#include <cmw/gl/buffer.hpp>
-#include <cmw/gl/vertex_array.hpp>
-#include <cmw/gl/shader_program.hpp>
-#include <cmw/color.hpp>
-#include <cmw/window.hpp>
-#include <cmw/platform.h>
+#include "cmw/core/window.hpp"
+#include "cmw/gl/buffer.hpp"
+#include "cmw/gl/shader_program.hpp"
+#include "cmw/gl/texture.hpp"
+#include "cmw/gl/vertex_array.hpp"
+#include "cmw/utils/color.hpp"
+#include "cmw/platform.h"
 
 namespace cmw {
 

@@ -21,10 +21,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <cmw/window.hpp>
-#include <cmw/platform.h>
-
-#include <cmw/input.hpp>
+#include "cmw/core/input.hpp"
+#include "cmw/core/window.hpp"
+#include "cmw/platform.h"
 
 namespace cmw::input {
 

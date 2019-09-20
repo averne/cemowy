@@ -18,14 +18,14 @@
 #include <cstdint>
 #include <glad/glad.h>
 
-#include <cmw/gl/shader_program.hpp>
-#include <cmw/gl/texture.hpp>
-#include <cmw/mesh.hpp>
+#include "cmw/core/mesh.hpp"
+#include "cmw/core/text.hpp"
+#include "cmw/gl/shader_program.hpp"
+#include "cmw/gl/texture.hpp"
+#include "cmw/utils/color.hpp"
+#include "cmw/utils/position.hpp"
 
-#include <cmw/renderer.hpp>
-#include <cmw/color.hpp>
-#include <cmw/position.hpp>
-#include <cmw/text.hpp>
+#include "cmw/core/renderer.hpp"
 
 namespace cmw {
 

@@ -21,13 +21,12 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "gl/buffer.hpp"
-#include "gl/texture.hpp"
-#include "gl/vertex_array.hpp"
-#include "color.hpp"
-#include "position.hpp"
-#include "utils.hpp"
-#include "platform.h"
+#include "cmw/gl/buffer.hpp"
+#include "cmw/gl/texture.hpp"
+#include "cmw/gl/vertex_array.hpp"
+#include "cmw/utils/color.hpp"
+#include "cmw/utils/position.hpp"
+#include "cmw/utils.hpp"
 
 namespace cmw {
 

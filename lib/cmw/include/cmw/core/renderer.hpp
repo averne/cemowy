@@ -22,14 +22,14 @@
 #include <utility>
 #include <glad/glad.h>
 
-#include "gl/shader_program.hpp"
-#include "shapes/line.hpp"
-#include "shapes/point.hpp"
-#include "color.hpp"
-#include "mesh.hpp"
-#include "position.hpp"
-#include "resource_manager.hpp"
-#include "text.hpp"
+#include "cmw/core/mesh.hpp"
+#include "cmw/core/resource_manager.hpp"
+#include "cmw/core/text.hpp"
+#include "cmw/gl/shader_program.hpp"
+#include "cmw/shapes/line.hpp"
+#include "cmw/shapes/point.hpp"
+#include "cmw/utils/color.hpp"
+#include "cmw/utils/position.hpp"
 
 namespace cmw {
 

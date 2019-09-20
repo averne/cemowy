@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-#include "position.hpp"
+#include "cmw/utils/position.hpp"
 
 namespace cmw {
 

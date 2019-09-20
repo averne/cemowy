@@ -23,10 +23,9 @@
 #include <stdexcept>
 #include <glad/glad.h>
 
-#include "object.hpp"
-#include "../log.hpp"
-#include "../utils.hpp"
-#include "../platform.h"
+#include "cmw/core/log.hpp"
+#include "cmw/gl/object.hpp"
+#include "cmw/utils.hpp"
 
 namespace cmw::gl {
 

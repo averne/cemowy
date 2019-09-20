@@ -21,9 +21,9 @@
 #include <string>
 #include <map>
 
-#include "gl/shader_program.hpp"
-#include "gl/texture.hpp"
-#include "log.hpp"
+#include "cmw/core/log.hpp"
+#include "cmw/gl/shader_program.hpp"
+#include "cmw/gl/texture.hpp"
 
 namespace cmw {
 

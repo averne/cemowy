@@ -20,12 +20,11 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "shape.hpp"
-#include "../gl/texture.hpp"
-#include "../color.hpp"
-#include "../mesh.hpp"
-#include "../position.hpp"
-#include "../platform.h"
+#include "cmw/utils/color.hpp"
+#include "cmw/gl/texture.hpp"
+#include "cmw/shapes/shape.hpp"
+#include "cmw/core/mesh.hpp"
+#include "cmw/utils/position.hpp"
 
 namespace cmw::shapes {
 

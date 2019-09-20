@@ -22,10 +22,10 @@
 #include <imgui.hpp>
 #include <imgui_impl_opengl3.h>
 
-#include "window.hpp"
-#include "input.hpp"
-#include "log.hpp"
-#include "platform.h"
+#include "cmw/core/input.hpp"
+#include "cmw/core/log.hpp"
+#include "cmw/core/window.hpp"
+#include "cmw/platform.h"
 
 namespace cmw::imgui {
 

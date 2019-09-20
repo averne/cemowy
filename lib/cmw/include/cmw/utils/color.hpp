@@ -20,8 +20,6 @@
 #include <cstdint>
 #include <limits>
 
-#include "platform.h"
-
 namespace cmw {
 
 template <typename T>

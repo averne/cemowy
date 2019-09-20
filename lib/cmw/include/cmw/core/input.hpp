@@ -25,10 +25,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "area.hpp"
-#include "position.hpp"
-#include "utils.hpp"
-#include "platform.h"
+#include "cmw/utils/area.hpp"
+#include "cmw/utils/position.hpp"
+#include "cmw/utils.hpp"
+#include "cmw/platform.h"
 
 namespace cmw::input {
 

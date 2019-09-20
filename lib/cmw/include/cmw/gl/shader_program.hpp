@@ -29,10 +29,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "shader.hpp"
-#include "object.hpp"
-#include "../position.hpp"
-#include "../platform.h"
+#include "cmw/gl/object.hpp"
+#include "cmw/gl/shader.hpp"
+#include "cmw/utils/position.hpp"
 
 namespace cmw::gl {
 

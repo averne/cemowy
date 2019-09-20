@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with cemowy.  If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #include <chrono>
 
 namespace cmw::time {

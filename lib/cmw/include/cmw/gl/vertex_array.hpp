@@ -19,8 +19,7 @@
 
 #include <glad/glad.h>
 
-#include "object.hpp"
-#include "../platform.h"
+#include "cmw/gl/object.hpp"
 
 namespace cmw::gl {
 

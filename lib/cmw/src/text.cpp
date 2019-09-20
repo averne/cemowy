@@ -21,13 +21,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <cmw/gl/shader_program.hpp>
-#include <cmw/error.hpp>
-#include <cmw/platform.h>
-#include <cmw/utils.hpp>
-#include <cmw/window.hpp>
+#include "cmw/core/window.hpp"
+#include "cmw/gl/shader_program.hpp"
+#include "cmw/utils/error.hpp"
+#include "cmw/utils.hpp"
+#include "cmw/platform.h"
 
-#include <cmw/text.hpp>
+#include "cmw/core/text.hpp"
 
 namespace cmw {
 

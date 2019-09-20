@@ -23,8 +23,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "input.hpp"
-#include "platform.h"
+#include "cmw/core/input.hpp"
+#include "cmw/platform.h"
 
 namespace cmw {
 

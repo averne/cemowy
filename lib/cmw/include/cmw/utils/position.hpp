@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 
-#include "utils.hpp"
+#include "cmw/utils.hpp"
 
 namespace cmw {
 

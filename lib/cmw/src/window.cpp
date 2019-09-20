@@ -21,9 +21,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <cmw/platform.h>
-
-#include <cmw/window.hpp>
+#include "cmw/core/window.hpp"
 
 namespace cmw {
 

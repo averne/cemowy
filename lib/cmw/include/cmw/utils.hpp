@@ -22,8 +22,8 @@
 #include <functional>
 #include <utility>
 
-#include "log.hpp"
-#include "platform.h"
+#include "cmw/core/log.hpp"
+#include "cmw/platform.h"
 
 #define CMW_STRING_IMPL(x)   #x
 #define CMW_STRING(x)        CMW_STRING_IMPL(x)
@@ -189,3 +189,9 @@ static inline FILE *open_asset(const std::string &path, const std::string &mode 
 }
 
 } // namespace cmw
+
+#include "cmw/utils/area.hpp"
+#include "cmw/utils/color.hpp"
+#include "cmw/utils/error.hpp"
+#include "cmw/utils/position.hpp"
+#include "cmw/utils/time.hpp"

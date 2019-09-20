@@ -17,11 +17,11 @@
 
 #pragma once
 
-#include "imgui.hpp"
-#include "log.hpp"
-#include "renderer.hpp"
-#include "resource_manager.hpp"
-#include "window.hpp"
+#include "cmw/core/imgui.hpp"
+#include "cmw/core/log.hpp"
+#include "cmw/core/renderer.hpp"
+#include "cmw/core/resource_manager.hpp"
+#include "cmw/core/window.hpp"
 
 namespace cmw {
 
