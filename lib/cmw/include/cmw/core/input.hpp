@@ -207,6 +207,7 @@ enum Keys: std::uint16_t {
 };
 
 enum class EventType: uint8_t {
+    Invalid,
     KeyPressed, KeyHeld, KeyReleased,
     CharTyped,
     MouseButtonPressed, MouseButtonHeld, MouseButtonReleased,
@@ -218,7 +219,16 @@ enum class EventType: uint8_t {
     Max,
 };
 
-struct Event { };
+#define DECL_EVENT_TYPE_GETTERS(type)                                                   \
+    public:                                                                             \
+        inline EventType get_type() const override { return EventType::type; }          \
+        static inline constexpr EventType get_static_type() { return EventType::type; }
+
+struct Event {
+    virtual ~Event() = default;
+    virtual inline EventType get_type() const { return EventType::Invalid; }
+    static inline constexpr EventType get_static_type() { return EventType::Invalid; }
+};
 
 struct KeyEvent: public Event {
     inline KeyEvent(int key, int mods): key(key), mods(mods) { }
@@ -233,12 +243,14 @@ struct KeyEvent: public Event {
 };
 
 struct KeyPressedEvent: public KeyEvent {
-    inline KeyPressedEvent(int key, int mods): KeyEvent(key, mods) { }
+    DECL_EVENT_TYPE_GETTERS(KeyPressed)
 
-    static inline constexpr EventType get_type() { return EventType::KeyPressed; };
+    inline KeyPressedEvent(int key, int mods): KeyEvent(key, mods) { }
 };
 
 struct KeyHeldEvent: public KeyEvent {
+    DECL_EVENT_TYPE_GETTERS(KeyHeld)
+
     inline KeyHeldEvent(int key, int mods): KeyEvent(key, mods) {
         ++this->key_cnts[key];
     }
@@ -248,26 +260,24 @@ struct KeyHeldEvent: public KeyEvent {
 
     static inline void reset_key(int key) { key_cnts[key] = 0; }
 
-    static inline constexpr EventType get_type() { return EventType::KeyHeld; };
-
     protected:
         static inline std::array<std::uint32_t, Keys::KeyLast> key_cnts;
 };
 
 struct KeyReleasedEvent: public KeyEvent {
+    DECL_EVENT_TYPE_GETTERS(KeyReleased)
+
     inline KeyReleasedEvent(int key, int mods): KeyEvent(key, mods) {
         KeyHeldEvent::reset_key(key);
     }
-
-    static inline constexpr EventType get_type() { return EventType::KeyReleased; };
 };
 
 struct CharTypedEvent: public Event {
+    DECL_EVENT_TYPE_GETTERS(CharTyped)
+
     inline CharTypedEvent(unsigned int codepoint): codepoint(codepoint) { }
 
     inline unsigned int get_codepoint() const { return this->codepoint; }
-
-    static inline constexpr EventType get_type() { return EventType::CharTyped; };
 
     protected:
         unsigned int codepoint;
@@ -285,24 +295,26 @@ struct MouseEvent: public Event {
 };
 
 struct MouseMovedEvent: public MouseEvent {
-    inline MouseMovedEvent(float x, float y): MouseEvent(x, y) { }
+    DECL_EVENT_TYPE_GETTERS(MouseMoved)
 
-    static inline constexpr EventType get_type() { return EventType::MouseMoved; };
+    inline MouseMovedEvent(float x, float y): MouseEvent(x, y) { }
 };
 
 struct MouseScrolledEvent: public MouseEvent {
-    inline MouseScrolledEvent(float x, float y): MouseEvent(x, y) { } // Cheat, x and y aren't actually mouse coordinates
+    DECL_EVENT_TYPE_GETTERS(MouseScrolled)
 
-    static inline constexpr EventType get_type() { return EventType::MouseScrolled; };
+    inline MouseScrolledEvent(float x, float y): MouseEvent(x, y) { } // Cheat, x and y aren't actually mouse coordinates
 };
 
 struct MouseButtonPressedEvent: public KeyEvent {
-    inline MouseButtonPressedEvent(int key, int mods): KeyEvent(key, mods) { }
+    DECL_EVENT_TYPE_GETTERS(MouseButtonPressed)
 
-    static inline constexpr EventType get_type() { return EventType::MouseButtonPressed; };
+    inline MouseButtonPressedEvent(int key, int mods): KeyEvent(key, mods) { }
 };
 
 struct MouseButtonHeldEvent: public KeyEvent {
+    DECL_EVENT_TYPE_GETTERS(MouseButtonHeld)
+
     inline MouseButtonHeldEvent(int key, int mods): KeyEvent(key, mods) {
         ++this->key_cnts[key];
     }
@@ -312,24 +324,22 @@ struct MouseButtonHeldEvent: public KeyEvent {
 
     static inline void reset_key(int key) { key_cnts[key] = 0; }
 
-    static inline constexpr EventType get_type() { return EventType::MouseButtonHeld; };
-
     protected:
         static inline std::array<std::uint32_t, MouseButtons::Last> key_cnts;
 };
 
 struct MouseButtonReleasedEvent: public KeyEvent {
+    DECL_EVENT_TYPE_GETTERS(MouseButtonReleased)
+
     inline MouseButtonReleasedEvent(int key, int mods): KeyEvent(key, mods) {
         MouseButtonHeldEvent::reset_key(key);
     }
-
-    static inline constexpr EventType get_type() { return EventType::MouseButtonReleased; };
 };
 
 struct WindowResizedEvent: public Event {
-    inline WindowResizedEvent(int w, int h): area(w, h) { }
+    DECL_EVENT_TYPE_GETTERS(WindowResized)
 
-    static inline constexpr EventType get_type() { return EventType::WindowResized; }
+    inline WindowResizedEvent(int w, int h): area(w, h) { }
 
     inline int get_w() const { return this->area.w; }
     inline int get_h() const { return this->area.h; }
@@ -340,37 +350,39 @@ struct WindowResizedEvent: public Event {
 };
 
 struct WindowMovedEvent: public Event {
+    DECL_EVENT_TYPE_GETTERS(WindowMoved)
+
     inline WindowMovedEvent(int x, int y): pos(x, y) { }
 
     inline int get_x() const { return this->pos.x; }
     inline int get_y() const { return this->pos.y; }
     inline const Position2i &get_pos() const { return this->pos; }
 
-    static inline constexpr EventType get_type() { return EventType::WindowMoved; }
-
     protected:
         Position2i pos;
 };
 
 struct WindowFocusedEvent: public Event {
-    inline WindowFocusedEvent() = default;
+    DECL_EVENT_TYPE_GETTERS(WindowFocused)
 
-    static inline constexpr EventType get_type() { return EventType::WindowFocused; }
+    inline WindowFocusedEvent() = default;
 };
 
 struct WindowDefocusedEvent: public Event {
-    WindowDefocusedEvent() = default;
+    DECL_EVENT_TYPE_GETTERS(WindowDefocused)
 
-    static inline constexpr EventType get_type() { return EventType::WindowDefocused; }
+    WindowDefocusedEvent() = default;
 };
 
 struct WindowClosedEvent: public Event {
-    inline WindowClosedEvent() = default;
+    DECL_EVENT_TYPE_GETTERS(WindowClosed)
 
-    static inline constexpr EventType get_type() { return EventType::WindowClosed; }
+    inline WindowClosedEvent() = default;
 };
 
 struct JoystickMovedEvent: public Event {
+    DECL_EVENT_TYPE_GETTERS(JoystickMoved)
+
     inline JoystickMovedEvent(float x, float y, bool is_left): pos(x, y), id(is_left) { }
 
     inline bool is_left()  const { return  this->id; }
@@ -379,8 +391,6 @@ struct JoystickMovedEvent: public Event {
     inline float get_x() const { return this->pos.x; }
     inline float get_y() const { return this->pos.y; }
     inline const Position2f &get_pos() const { return this->pos; }
-
-    static inline constexpr EventType get_type() { return EventType::JoystickMoved; }
 
     protected:
         Position2f pos;
@@ -404,25 +414,27 @@ struct TouchscreenEvent: public Event {
 };
 
 struct ScreenPressedEvent: public TouchscreenEvent {
+    DECL_EVENT_TYPE_GETTERS(ScreenPressed)
+
     inline ScreenPressedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
             TouchscreenEvent(x, y, dx, dy, angle) { }
-
-    static inline constexpr EventType get_type() { return EventType::ScreenPressed; }
 };
 
 struct ScreenTouchedEvent: public TouchscreenEvent {
+    DECL_EVENT_TYPE_GETTERS(ScreenTouched)
+
     inline ScreenTouchedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
             TouchscreenEvent(x, y, dx, dy, angle) { }
-
-    static inline constexpr EventType get_type() { return EventType::ScreenTouched; }
 };
 
 struct ScreenReleasedEvent: public TouchscreenEvent {
+    DECL_EVENT_TYPE_GETTERS(ScreenReleased)
+
     inline ScreenReleasedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
             TouchscreenEvent(x, y, dx, dy, angle) { }
-
-    static inline constexpr EventType get_type() { return EventType::ScreenReleased; }
 };
+
+#undef DECL_EVENT_TYPE_GETTERS
 
 class InputManager {
     public:
@@ -445,13 +457,13 @@ class InputManager {
 
         template <typename T>
         std::size_t register_callback(Callback<T> cb) {
-            this->callbacks[(int)T::get_type()].insert({this->cur_handle, *(Callback<> *)&cb});
+            this->callbacks[(int)T::get_static_type()].insert({this->cur_handle, *(Callback<> *)&cb});
             return this->cur_handle++;
         }
 
         template <typename T>
         void remove_callback(std::size_t handle) {
-            this->callbacks[(int)T::get_type()].erase(handle);
+            this->callbacks[(int)T::get_static_type()].erase(handle);
         }
 
         template <typename T>
