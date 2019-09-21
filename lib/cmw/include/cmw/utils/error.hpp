@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-#include "cmw/utils.hpp"
+#include "cmw/utils/result.hpp"
 
 namespace cmw::err {
 

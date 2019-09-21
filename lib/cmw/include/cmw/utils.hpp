@@ -30,7 +30,7 @@
 #define CMW_CAT_IMPL(x1, x2) x1##x2
 #define CMW_CAT(x1, x2)      CMW_CAT_IMPL(x1, x2)
 
-#define CMW_ANONYMOUS_VAR CMW_CAT(var_, __LINE__)
+#define CMW_ANONYMOUS_VAR CMW_CAT(var_, __COUNTER__)
 
 #define CMW_MAX(x, y) (((x) > (y)) ? (x) :  (y))
 #define CMW_MIN(x, y) (((x) < (y)) ? (x) :  (y))
@@ -91,80 +91,6 @@
 
 namespace cmw {
 
-class ScopeGuard {
-    CMW_NON_COPYABLE(ScopeGuard);
-    CMW_NON_MOVEABLE(ScopeGuard);
-
-    public:
-        template <typename T>
-        [[nodiscard]] static ScopeGuard create(T &&f) {
-            return ScopeGuard(std::forward<T>(f));
-        }
-
-        ~ScopeGuard() {
-            if (this->f)
-                run();
-        }
-
-        void run() {
-            this->f();
-            dismiss();
-        }
-
-        void dismiss() {
-            f = nullptr;
-        }
-
-    private:
-        template<class T>
-        ScopeGuard(T &&f): f(std::forward<T>(f)) { }
-
-    private:
-        std::function<void()> f;
-};
-
-#define CMW_SCOPE_GUARD(x) auto CMW_ANONYMOUS_VAR = ::cmw::ScopeGuard::create(x)
-
-class Result {
-    public:
-        constexpr Result() = default;
-        constexpr Result(uint32_t code): res(code) { }
-        constexpr Result(uint32_t module, uint32_t desc): res((module & 0x1ff) | ((desc & 0x1fff) << 9)) { }
-
-        explicit operator uint32_t() const { return this->res; }
-
-        inline uint32_t code()   const { return  this->res;}
-        inline uint32_t module() const { return  (this->res & 0x1ff) | 2000; }
-        inline uint32_t desc()   const { return (this->res >> 9) & 0x3fff; }
-
-        inline bool operator==(const Result &rhs) const {
-            return this->res == rhs.code();
-        }
-
-        inline bool operator!=(const Result &rhs) const {
-            return !(*this == rhs);
-        }
-
-        inline bool operator==(const uint32_t &rhs) const {
-            return this->res == rhs;
-        }
-
-        inline bool operator!=(const uint32_t &rhs) const {
-            return !(*this == rhs);
-        }
-
-        inline bool succeeded() const {
-            return this->res == 0;
-        }
-
-        inline bool failed() const {
-            return this->res != 0;
-        }
-
-    protected:
-        uint32_t res = 0;
-};
-
 template <typename ...Args>
 static inline void bind_all(Args &&...args) {
     (args.bind(), ...);
@@ -194,4 +120,6 @@ static inline FILE *open_asset(const std::string &path, const std::string &mode 
 #include "cmw/utils/color.hpp"
 #include "cmw/utils/error.hpp"
 #include "cmw/utils/position.hpp"
+#include "cmw/utils/result.hpp"
+#include "cmw/utils/scope_guard.hpp"
 #include "cmw/utils/time.hpp"
