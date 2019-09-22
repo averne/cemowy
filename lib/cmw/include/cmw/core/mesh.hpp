@@ -54,13 +54,16 @@ class Mesh {
             set_data(vertices, indices);
         }
 
-        inline std::vector<Vertex> &get_vertices() { return this->vertices; }
-        inline std::vector<Index>  &get_indices()  { return this->indices; }
+        inline std::vector<Vertex>       &get_vertices()       { return this->vertices; }
+        inline const std::vector<Vertex> &get_vertices() const { return this->vertices; }
+        inline std::vector<Index>        &get_indices()        { return this->indices; }
+        inline const std::vector<Index>  &get_indices()  const { return this->indices; }
         inline void set_data(const std::vector<Vertex> &vertices) { this->vertices = vertices; }
         inline void set_data(const std::vector<Index> &indices)   { this->indices = indices; }
         inline void set_data(const std::vector<Vertex> &vertices, const std::vector<Index> &indices) { this->vertices = vertices; this->indices = indices; }
 
-        inline gl::Texture2d &get_texture() { return this->texture; }
+        inline       gl::Texture2d &get_texture()       { return this->texture; }
+        inline const gl::Texture2d &get_texture() const { return this->texture; }
 
         inline bool is_indexed() const { return !!this->indices.size(); }
         inline std::size_t get_size() const { return std::max(this->vertices.size(), this->indices.size()); }

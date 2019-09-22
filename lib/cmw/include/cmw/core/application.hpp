@@ -49,9 +49,12 @@ class Application {
             return (T)glfwGetTime();
         }
 
-        inline Renderer        &get_renderer()         { return this->renderer; }
-        inline ResourceManager &get_resource_manager() { return this->resource_manager; }
-        inline Window          &get_window()           { return this->window; }
+        inline Renderer       &get_renderer()       { return this->renderer; }
+        inline const Renderer &get_renderer() const { return this->renderer; }
+        inline ResourceManager       &get_resource_manager()       { return this->resource_manager; }
+        inline const ResourceManager &get_resource_manager() const { return this->resource_manager; }
+        inline Window       &get_window()       { return this->window; }
+        inline const Window &get_window() const { return this->window; }
 
     protected:
         static inline Application *instance;

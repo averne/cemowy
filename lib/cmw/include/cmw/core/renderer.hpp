@@ -92,9 +92,11 @@ class Renderer {
             Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f});
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
-        inline Colorf &get_clear_color() { return this->clear_color; }
+        inline       Colorf &get_clear_color()       { return this->clear_color; }
+        inline const Colorf &get_clear_color() const { return this->clear_color; }
 
-        inline gl::ShaderProgram &get_default_mesh_shader()  { return this->mesh_program; }
+        inline       gl::ShaderProgram &get_default_mesh_shader()       { return this->mesh_program; }
+        inline const gl::ShaderProgram &get_default_mesh_shader() const { return this->mesh_program; }
 
     protected:
         ResourceManager &resource_man;
