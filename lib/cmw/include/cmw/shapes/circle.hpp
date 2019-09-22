@@ -69,7 +69,7 @@ class Circle: public Shape {
             }
         }
 
-        virtual void on_draw() override { }
+        virtual void on_draw(Renderer &renderer) override { }
 };
 
 } // namespace cmw::shapes

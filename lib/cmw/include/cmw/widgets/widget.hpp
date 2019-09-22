@@ -17,34 +17,39 @@
 
 #pragma once
 
-#include <utility>
+#include <vector>
 
-#include "cmw/core/mesh.hpp"
-#include "cmw/utils/color.hpp"
+#include "cmw/core/input.hpp"
+#include "cmw/utils/position.hpp"
 
 namespace cmw {
 
 class Renderer;
 
-namespace shapes {
+namespace widgets {
 
-class Shape {
+class Widget {
     public:
-        template <typename ...Args>
-        Shape(Args &&...args): mesh(std::forward<Args>(args)...) { }
+        Widget(Widget *parent): parent(parent) {
+            if (parent)
+                parent->add_child(this);
+        }
 
-        virtual ~Shape() = default;
+        virtual ~Widget() = default;
+
+        inline void add_child(Widget *child) { this->children.push_back(child); }
+
+        virtual void draw(Renderer &renderer) = 0;
+        virtual bool collides(const Position2f &position) const = 0;
 
         virtual void on_draw(Renderer &renderer) = 0;
-
-        inline Mesh &get_mesh() { return this->mesh; }
-
-        inline Colorf get_blend_color() const { return this->mesh.get_blend_color(); }
-        inline void set_blend_color(Colorf color) { this->get_mesh().get_blend_color() = color; }
+        virtual void on_hover(input::MouseMovedEvent &event) = 0;
+        virtual void on_click(input::MouseButtonPressedEvent &event) = 0;
 
     protected:
-        Mesh mesh;
+        Widget *parent;
+        std::vector<Widget *> children;
 };
 
-} // namespace shapes
+} // namespace widgets
 } // namespace cmw

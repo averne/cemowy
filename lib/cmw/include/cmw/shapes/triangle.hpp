@@ -56,7 +56,7 @@ class Triangle: public Shape {
             this->mesh.get_vertices()[idx] = vertex;
         }
 
-        virtual void on_draw() override { }
+        virtual void on_draw(Renderer &renderer) override { }
 };
 
 } // namespace cmw::shapes

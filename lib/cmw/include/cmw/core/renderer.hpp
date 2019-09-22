@@ -26,10 +26,10 @@
 #include "cmw/core/resource_manager.hpp"
 #include "cmw/core/text.hpp"
 #include "cmw/gl/shader_program.hpp"
-#include "cmw/shapes/line.hpp"
-#include "cmw/shapes/point.hpp"
+#include "cmw/shapes/shape.hpp"
 #include "cmw/utils/color.hpp"
 #include "cmw/utils/position.hpp"
+#include "cmw/widgets/widget.hpp"
 
 namespace cmw {
 
@@ -76,8 +76,14 @@ class Renderer {
 
         template <typename T>
         inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
-            element.on_draw();
-            add_mesh(element.get_mesh(), model, mode);
+            element.on_draw(*this);
+            using Type = std::remove_cv_t<std::remove_reference_t<T>>;
+            if constexpr (std::is_base_of_v<shapes::Shape, Type>)
+                add_mesh(element.get_mesh(), model, mode);
+            else if constexpr (std::is_base_of_v<widgets::Widget, T>)
+                element.draw(*this);
+            else
+                throw std::runtime_error("Wrong type for Renderer::submit");
         }
 
         void add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default);
