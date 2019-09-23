@@ -45,6 +45,8 @@ class Rectangle: public Shape {
             this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
         }
 
+        Rectangle(Colorf color = colors::White):
+            Rectangle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }
         Rectangle(const std::vector<Position> &positions, Colorf color = colors::White):
             Rectangle(positions, Application::get_instance().get_resource_manager().get_white_texture(), color) { }
         Rectangle(const std::vector<Mesh::Vertex> &vertices, Colorf color = colors::White):

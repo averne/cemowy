@@ -58,6 +58,8 @@ class Circle: public Shape {
             this->mesh.set_data(vertices, indices);
         }
 
+        Circle(Colorf color = colors::White):
+            Circle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }
         Circle(const Position &position, float radius, Colorf color = colors::White, std::size_t segments = 24):
             Circle(position, radius, Application::get_instance().get_resource_manager().get_white_texture(), color, segments) { }
         Circle(const std::vector<Mesh::Vertex> &vertices, const std::vector<Mesh::Index> &indices, Colorf color = colors::White):

@@ -48,6 +48,8 @@ class Triangle: public Shape {
             this->mesh.set_data(vertices);
         }
 
+        Triangle(Colorf color = colors::White):
+            Triangle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }
         Triangle(const std::vector<Position> &positions, Colorf color = colors::White):
             Triangle(positions, Application::get_instance().get_resource_manager().get_white_texture(), color) { }
         Triangle(const std::vector<Mesh::Vertex> &vertices, Colorf color = colors::White):
