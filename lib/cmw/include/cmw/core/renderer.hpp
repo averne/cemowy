@@ -64,8 +64,10 @@ class Renderer {
         }
 
         template <typename T>
-        void begin(T &&camera) {
+        void begin(T &&camera, float dt) {
             this->view_proj = &camera.get_view_proj();
+            this->dt = dt;
+            CMW_TRACE("dt: %.3f\n", dt);
             bind_all(this->vbo, this->ebo);
             this->vertex_buffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
             this->index_buffer  = (Index  *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);
@@ -76,12 +78,12 @@ class Renderer {
 
         template <typename T>
         inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
-            element.on_draw(*this);
+            element.on_draw(*this, this->dt);
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
             if constexpr (std::is_base_of_v<shapes::Shape, Type>)
                 add_mesh(element.get_mesh(), model, mode);
-            else if constexpr (std::is_base_of_v<widgets::Widget, T>)
-                element.draw(*this);
+            else if constexpr (std::is_base_of_v<widgets::Widget, Type>)
+                element.draw(*this, this->dt);
             else
                 throw std::runtime_error("Wrong type for Renderer::submit");
         }
@@ -106,9 +108,9 @@ class Renderer {
         gl::VertexBuffer  vbo;
         gl::ElementBuffer ebo;
 
-        GLenum mode;
         Colorf clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
         const glm::mat4 *view_proj;
+        float dt;
 
         Vertex *vertex_buffer;
         Index *index_buffer;

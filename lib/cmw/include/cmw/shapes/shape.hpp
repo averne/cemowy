@@ -35,7 +35,7 @@ class Shape {
 
         virtual ~Shape() = default;
 
-        virtual void on_draw(Renderer &renderer) = 0;
+        virtual void on_draw(Renderer &renderer, float dt) = 0;
 
         inline Mesh &get_mesh() { return this->mesh; }
         inline const Mesh &get_mesh() const { return this->mesh; }

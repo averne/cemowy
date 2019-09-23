@@ -42,7 +42,7 @@ class Point: public Shape {
             this->get_mesh().set_data({(Mesh::Vertex){position}});
         }
 
-        virtual void on_draw(Renderer &renderer) override {
+        virtual void on_draw(Renderer &renderer, float dt) override {
             glPointSize(this->width);
         }
 

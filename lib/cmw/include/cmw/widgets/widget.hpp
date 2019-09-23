@@ -39,10 +39,11 @@ class Widget {
 
         inline void add_child(Widget *child) { this->children.push_back(child); }
 
-        virtual void draw(Renderer &renderer) = 0;
-        virtual bool collides(const Position2f &position) const = 0;
+        virtual void draw(Renderer &renderer, float dt) = 0;
 
-        virtual void on_draw(Renderer &renderer) = 0;
+        virtual bool collides(const Position &position) const = 0;
+
+        virtual void on_draw(Renderer &renderer, float dt) = 0;
         virtual void on_hover(input::MouseMovedEvent &event) = 0;
         virtual void on_click(input::MouseButtonPressedEvent &event) = 0;
 
