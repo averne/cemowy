@@ -67,7 +67,6 @@ class Renderer {
         void begin(T &&camera, float dt) {
             this->view_proj = &camera.get_view_proj();
             this->dt = dt;
-            CMW_TRACE("dt: %.3f\n", dt);
             bind_all(this->vbo, this->ebo);
             this->vertex_buffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
             this->index_buffer  = (Index  *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);

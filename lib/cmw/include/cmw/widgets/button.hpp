@@ -31,7 +31,7 @@ class Button: public Widget {
 
         ~Button() = default;
 
-        void draw(Renderer &renderer, float dt) override { CMW_TRACE("Button::draw\n"); }
+        void draw(Renderer &renderer, float dt) override { }
 
         bool collides(const Position &position) const override {
             auto &vertices = this->inner.get_mesh().get_vertices();
@@ -41,10 +41,14 @@ class Button: public Widget {
         void on_draw(Renderer &renderer, float dt) override { }
 
         void on_hover(input::MouseMovedEvent &event) override {
+            if (!collides({event.get_x(), event.get_y(), 0.0f}))
+                return;
+            CMW_TRACE("Button hovered\n");
             // this->inner.set_blend_color({1.0f, 0.0f, 0.0f, 1.0f});
         }
 
         void on_click(input::MouseButtonPressedEvent &event) override {
+            CMW_TRACE("Button pressed\n");
             // this->outer.set_blend_color({0.0f, 1.0f, 0.0f, 1.0f});
         }
 

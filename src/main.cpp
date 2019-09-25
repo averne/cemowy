@@ -212,6 +212,9 @@ int main() {
 
     cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h, -10.0f, 10.0f};
 
+    cmw::widgets::Scene my_scene({0, 0}, {window_w, window_h});
+    cmw::widgets::Button button(&my_scene, {{10, 10}, {100, 100}}, "test");
+
     app->get_window().get_input_manager().register_callback<cmw::input::KeyPressedEvent>([&camera](auto &e) {
 #ifdef CMW_SWITCH
         if (e.get_key() == cmw::input::KeySwitchDleft)
@@ -261,6 +264,8 @@ int main() {
         app->get_renderer().submit(circle, glm::mat4(1.0f));
         app->get_renderer().draw_string(font, u"123 Hello world\nBazinga é_è $£€",
             {100.0f, 300.0f, 1.0f}, 0.5f, text_color);
+
+        app->get_renderer().submit(my_scene, glm::mat4(1.0f));
 
         app->get_renderer().end();
 
