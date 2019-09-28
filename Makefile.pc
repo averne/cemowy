@@ -4,7 +4,7 @@ OUT               =    out
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-CUSTOM_LIBS       =    lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
+CUSTOM_LIBS       =    lib/glfw lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
 
 DEFINES           =    CMW_LOG_BACKEND=CMW_LOG_BACKEND_STDOUT
 ARCH              =    -march=native -fpie
@@ -13,7 +13,7 @@ CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie
-LINKS             =    -lglfw -lglad-pc -lcmw-pc -limgui-pc -lstbi-pc -lstbtt-pc
+LINKS             =    -lglfw-pc -lglad-pc -lcmw-pc -limgui-pc -lstbi-pc -lstbtt-pc -ldl -lX11 -lpthread
 
 RELEASE_DEFINES   =    $(DEFINES) NDEBUG=1
 RELEASE_FLAGS     =    $(FLAGS) -O2 -ffunction-sections -fdata-sections -flto

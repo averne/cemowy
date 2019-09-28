@@ -1,26 +1,25 @@
-ifeq ($(strip $(DEVKITPRO)),)
-    $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
-endif
-
-# -----------------------------------------------
-
 TARGET            =    lib$(notdir $(CURDIR))
 EXTENSION         =    a
 OUT               =    lib
 BUILD             =    build
-SOURCES           =    src
+SOURCES           =    glfw/src
 INCLUDES          =    include
-LIBS              =    ../glfw ../glad ../imgui ../stb_image ../stb_truetype
+LIBS              =
 
-DEFINES           =    __SWITCH__ DEBUG GLM_FORCE_PURE
-ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
-FLAGS             =    -Wall -Wno-unused-function -pipe -g -O2 -ffunction-sections -fdata-sections
+COMMON_CFILES     =    context.c init.c input.c monitor.c vulkan.c window.c
+X11_CFILES        =    x11_init.c x11_monitor.c x11_window.c \
+                       xkb_unicode.c posix_time.c posix_thread.c glx_context.c \
+                       egl_context.c osmesa_context.c linux_joystick.c
+
+DEFINES           =    _GLFW_X11=1
+ARCH              =    -march=native
+FLAGS             =    -Wall -g -pipe -O2 -ffunction-sections -fdata-sections -flto -ffat-lto-objects
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
-ARFLAGS           =    -rc
+ARFLAGS           =    -qc
 
-PREFIX            =    aarch64-none-elf-
+PREFIX            =
 CC                =    $(PREFIX)gcc
 CXX               =    $(PREFIX)g++
 AS                =    $(PREFIX)as
@@ -29,24 +28,17 @@ RANLIB            =    $(PREFIX)gcc-ranlib
 
 # -----------------------------------------------
 
-CFILES            =    $(shell find $(SOURCES) -name *.c)
+CFILES            =    $(COMMON_CFILES:%=$(SOURCES)/%)
+CFILES           +=    $(X11_CFILES:%=$(SOURCES)/%)
 CPPFILES          =    $(shell find $(SOURCES) -name *.cpp)
 SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
-OFILES            =    $(CFILES:%=$(BUILD)/%.nx.o) $(CPPFILES:%=$(BUILD)/%.nx.o) $(SFILES:%=$(BUILD)/%.nx.o)
+OFILES            =    $(CFILES:%=$(BUILD)/%.pc.o) $(CPPFILES:%=$(BUILD)/%.pc.o) $(SFILES:%=$(BUILD)/%.pc.o)
 DFILES            =    $(OFILES:.o=.d)
 
-LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.$(EXTENSION), .$(OUT)/$(TARGET)-nx.$(EXTENSION))
-
 DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
+LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
+
 INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
-
-# -----------------------------------------------
-
-export PATH      :=    $(DEVKITPRO)/tools/bin:$(DEVKITPRO)/devkitA64/bin:$(PORTLIBS)/bin:$(PATH)
-
-PORTLIBS          =    $(DEVKITPRO)/portlibs/switch
-LIBNX             =    $(DEVKITPRO)/libnx
-LIBS             :=    $(LIBS) $(LIBNX) $(PORTLIBS)
 
 # -----------------------------------------------
 
@@ -61,25 +53,26 @@ $(LIB_TARGET): $(OFILES)
 	@mkdir -p $(dir $@)
 	@rm -f $@
 	@$(AR) $(ARFLAGS) $@ $^
+	@$(RANLIB) $@
 	@echo "Built" $(notdir $@)
 
-$(BUILD)/%.c.nx.o: %.c
+$(BUILD)/%.c.pc.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
 	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(BUILD)/%.cpp.nx.o: %.cpp
+$(BUILD)/%.cpp.pc.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
 	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-$(BUILD)/%.s.nx.o: %.s %.S
+$(BUILD)/%.s.pc.o: %.s %.S
 	@echo " AS  " $@
 	@mkdir -p $(dir $@)
 	@$(AS) -MMD -MP -x assembler-with-cpp $(ARCH) $(FLAGS) $(ASFLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 clean:
 	@echo Cleaning...
-	@rm -rf $(shell find $(BUILD) $(OUT) -name "*nx*")
+	@rm -rf $(shell find $(BUILD) $(OUT) -name "*pc*")
 
 -include $(DFILES)

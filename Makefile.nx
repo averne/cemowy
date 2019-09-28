@@ -16,7 +16,7 @@ OUT               =    out
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-CUSTOM_LIBS       =    lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
+CUSTOM_LIBS       =    lib/glfw lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
 ROMFS             =    res
 
 DEFINES           =    __SWITCH__ DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI GLM_FORCE_PURE
@@ -26,7 +26,7 @@ CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17 -fno-rtti
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie -specs=$(DEVKITPRO)/libnx/switch.specs -g
-LINKS             =    -lglfw3 -lEGL -lglapi -ldrm_nouveau -lm \
+LINKS             =    -lglfw-nx -lEGL -lglapi -ldrm_nouveau -lm \
                        -lglad-nx -lcmw-nx -limgui-nx -lstbi-nx -lstbtt-nx -lnx
 
 PREFIX            =    aarch64-none-elf-

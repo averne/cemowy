@@ -8,13 +8,17 @@ TARGET            =    lib$(notdir $(CURDIR))
 EXTENSION         =    a
 OUT               =    lib
 BUILD             =    build
-SOURCES           =    src
+SOURCES           =    glfw/src
 INCLUDES          =    include
-LIBS              =    ../glfw ../glad ../imgui ../stb_image ../stb_truetype
+LIBS              =
 
-DEFINES           =    __SWITCH__ DEBUG GLM_FORCE_PURE
+COMMON_CFILES     =    context.c init.c input.c monitor.c vulkan.c window.c
+SWITCH_CFILES     =    switch_init.c switch_monitor.c switch_window.c \
+                       switch_joystick.c switch_context.c switch_time.c posix_thread.c egl_context.c
+
+DEFINES           =    __SWITCH__ _GLFW_SWITCH=1 _GLFW_VULKAN_STATIC=1 _GLFW_EGL_STATIC=1
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
-FLAGS             =    -Wall -Wno-unused-function -pipe -g -O2 -ffunction-sections -fdata-sections
+FLAGS             =    -Wall -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17
 ASFLAGS           =
@@ -29,7 +33,8 @@ RANLIB            =    $(PREFIX)gcc-ranlib
 
 # -----------------------------------------------
 
-CFILES            =    $(shell find $(SOURCES) -name *.c)
+CFILES            =    $(COMMON_CFILES:%=$(SOURCES)/%)
+CFILES           +=    $(SWITCH_CFILES:%=$(SOURCES)/%)
 CPPFILES          =    $(shell find $(SOURCES) -name *.cpp)
 SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
 OFILES            =    $(CFILES:%=$(BUILD)/%.nx.o) $(CPPFILES:%=$(BUILD)/%.nx.o) $(SFILES:%=$(BUILD)/%.nx.o)

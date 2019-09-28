@@ -3,6 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "${workspaceFolder}/lib/glfw/glfw/include",
                 "${workspaceFolder}/lib/imgui/include",
                 "${workspaceFolder}/lib/stb_image/include",
                 "${workspaceFolder}/lib/stb_truetype/include",

@@ -4,7 +4,7 @@ OUT               =    lib
 BUILD             =    build
 SOURCES           =    src
 INCLUDES          =    include
-LIBS              =    ../glad ../imgui ../stb_image ../stb_truetype
+LIBS              =    ../glfw ../glad ../imgui ../stb_image ../stb_truetype
 
 DEFINES           =
 ARCH              =    -march=native
