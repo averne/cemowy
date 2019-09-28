@@ -34,14 +34,14 @@ namespace cmw::input {
 
 // Same as GLFW's
 enum MouseButtons: std::uint16_t {
-    Button1              = 0,
-    Button2              = 1,
-    Button3              = 2,
-    Button4              = 3,
-    Button5              = 4,
-    Button6              = 5,
-    Button7              = 6,
-    Button8              = 7,
+    Button1              = GLFW_MOUSE_BUTTON_1,
+    Button2              = GLFW_MOUSE_BUTTON_2,
+    Button3              = GLFW_MOUSE_BUTTON_3,
+    Button4              = GLFW_MOUSE_BUTTON_4,
+    Button5              = GLFW_MOUSE_BUTTON_5,
+    Button6              = GLFW_MOUSE_BUTTON_6,
+    Button7              = GLFW_MOUSE_BUTTON_7,
+    Button8              = GLFW_MOUSE_BUTTON_8,
 
     Left                 = Button1,
     Right                = Button2,
@@ -54,156 +54,156 @@ enum MouseButtons: std::uint16_t {
 enum Keys: std::uint16_t {
     KeyUnknown           = std::numeric_limits<std::uint16_t>::max(),
 
-    KeySpace             = 32,
-    KeyApostrophe        = 39,  /* ' */
-    KeyComma             = 44,  /* , */
-    KeyMinus             = 45,  /* - */
-    KeyPeriod            = 46,  /* . */
-    KeySlash             = 47,  /* / */
-    Key0                 = 48,
-    Key1                 = 49,
-    Key2                 = 50,
-    Key3                 = 51,
-    Key4                 = 52,
-    Key5                 = 53,
-    Key6                 = 54,
-    Key7                 = 55,
-    Key8                 = 56,
-    Key9                 = 57,
-    KeySemicolon         = 59,  /* ; */
-    KeyEqual             = 61,  /* = */
-    KeyA                 = 65,
-    KeyB                 = 66,
-    KeyC                 = 67,
-    KeyD                 = 68,
-    KeyE                 = 69,
-    KeyF                 = 70,
-    KeyG                 = 71,
-    KeyH                 = 72,
-    KeyI                 = 73,
-    KeyJ                 = 74,
-    KeyK                 = 75,
-    KeyL                 = 76,
-    KeyM                 = 77,
-    KeyN                 = 78,
-    KeyO                 = 79,
-    KeyP                 = 80,
-    KeyQ                 = 81,
-    KeyR                 = 82,
-    KeyS                 = 83,
-    KeyT                 = 84,
-    KeyU                 = 85,
-    KeyV                 = 86,
-    KeyW                 = 87,
-    KeyX                 = 88,
-    KeyY                 = 89,
-    KeyZ                 = 90,
-    KeyLeftBracket       = 91,  /* [ */
-    KeyBackslash         = 92,  /* \ */
-    KeyRightBracket      = 93,  /* ] */
-    KeyGraveAccent       = 96,  /* ` */
-    KeyWorld1            = 161, /* non-US #1 */
-    KeyWorld2            = 162, /* non-US #2 */
-    KeyEscape            = 256,
-    KeyEnter             = 257,
-    KeyTab               = 258,
-    KeyBackspace         = 259,
-    KeyInsert            = 260,
-    KeyDelete            = 261,
-    KeyRight             = 262,
-    KeyLeft              = 263,
-    KeyDown              = 264,
-    KeyUp                = 265,
-    KeyPageUp            = 266,
-    KeyPageDown          = 267,
-    KeyHome              = 268,
-    KeyEnd               = 269,
-    KeyCapsLock          = 280,
-    KeyScrollLock        = 281,
-    KeyNumLock           = 282,
-    KeyPrintScreen       = 283,
-    KeyPause             = 284,
-    KeyF1                = 290,
-    KeyF2                = 291,
-    KeyF3                = 292,
-    KeyF4                = 293,
-    KeyF5                = 294,
-    KeyF6                = 295,
-    KeyF7                = 296,
-    KeyF8                = 297,
-    KeyF9                = 298,
-    KeyF10               = 299,
-    KeyF11               = 300,
-    KeyF12               = 301,
-    KeyF13               = 302,
-    KeyF14               = 303,
-    KeyF15               = 304,
-    KeyF16               = 305,
-    KeyF17               = 306,
-    KeyF18               = 307,
-    KeyF19               = 308,
-    KeyF20               = 309,
-    KeyF21               = 310,
-    KeyF22               = 311,
-    KeyF23               = 312,
-    KeyF24               = 313,
-    KeyF25               = 314,
-    KeyKp0               = 320,
-    KeyKp1               = 321,
-    KeyKp2               = 322,
-    KeyKp3               = 323,
-    KeyKp4               = 324,
-    KeyKp5               = 325,
-    KeyKp6               = 326,
-    KeyKp7               = 327,
-    KeyKp8               = 328,
-    KeyKp9               = 329,
-    KeyKpDecimal         = 330,
-    KeyKpDivide          = 331,
-    KeyKpMultiply        = 332,
-    KeyKpSubstract       = 333,
-    KeyKpAdd             = 334,
-    KeyKpEnter           = 335,
-    KeyKpEqual           = 336,
-    KeyLeftShift         = 340,
-    KeyLeftControl       = 341,
-    KeyLeftAlt           = 342,
-    KeyLeftSuper         = 343,
-    KeyRightShift        = 344,
-    KeyRightControl      = 345,
-    KeyRightAlt          = 346,
-    KeyRightSuper        = 347,
-    KeyMenu              = 348,
+    KeySpace             = GLFW_KEY_SPACE,
+    KeyApostrophe        = GLFW_KEY_APOSTROPHE,  /* ' */
+    KeyComma             = GLFW_KEY_COMMA,  /* , */
+    KeyMinus             = GLFW_KEY_MINUS,  /* - */
+    KeyPeriod            = GLFW_KEY_PERIOD,  /* . */
+    KeySlash             = GLFW_KEY_SLASH,  /* / */
+    Key0                 = GLFW_KEY_0,
+    Key1                 = GLFW_KEY_1,
+    Key2                 = GLFW_KEY_2,
+    Key3                 = GLFW_KEY_3,
+    Key4                 = GLFW_KEY_4,
+    Key5                 = GLFW_KEY_5,
+    Key6                 = GLFW_KEY_6,
+    Key7                 = GLFW_KEY_7,
+    Key8                 = GLFW_KEY_8,
+    Key9                 = GLFW_KEY_9,
+    KeySemicolon         = GLFW_KEY_SEMICOLON,  /* ; */
+    KeyEqual             = GLFW_KEY_EQUAL,  /* = */
+    KeyA                 = GLFW_KEY_A,
+    KeyB                 = GLFW_KEY_B,
+    KeyC                 = GLFW_KEY_C,
+    KeyD                 = GLFW_KEY_D,
+    KeyE                 = GLFW_KEY_E,
+    KeyF                 = GLFW_KEY_F,
+    KeyG                 = GLFW_KEY_G,
+    KeyH                 = GLFW_KEY_H,
+    KeyI                 = GLFW_KEY_I,
+    KeyJ                 = GLFW_KEY_J,
+    KeyK                 = GLFW_KEY_K,
+    KeyL                 = GLFW_KEY_L,
+    KeyM                 = GLFW_KEY_M,
+    KeyN                 = GLFW_KEY_N,
+    KeyO                 = GLFW_KEY_O,
+    KeyP                 = GLFW_KEY_P,
+    KeyQ                 = GLFW_KEY_Q,
+    KeyR                 = GLFW_KEY_R,
+    KeyS                 = GLFW_KEY_S,
+    KeyT                 = GLFW_KEY_T,
+    KeyU                 = GLFW_KEY_U,
+    KeyV                 = GLFW_KEY_V,
+    KeyW                 = GLFW_KEY_W,
+    KeyX                 = GLFW_KEY_X,
+    KeyY                 = GLFW_KEY_Y,
+    KeyZ                 = GLFW_KEY_Z,
+    KeyLeftBracket       = GLFW_KEY_LEFT_BRACKET,  /* [ */
+    KeyBackslash         = GLFW_KEY_BACKSLASH,  /* \ */
+    KeyRightBracket      = GLFW_KEY_RIGHT_BRACKET,  /* ] */
+    KeyGraveAccent       = GLFW_KEY_GRAVE_ACCENT,  /* ` */
+    KeyWorld1            = GLFW_KEY_WORLD_1, /* non-US #1 */
+    KeyWorld2            = GLFW_KEY_WORLD_2, /* non-US #2 */
+    KeyEscape            = GLFW_KEY_ESCAPE,
+    KeyEnter             = GLFW_KEY_ENTER,
+    KeyTab               = GLFW_KEY_TAB,
+    KeyBackspace         = GLFW_KEY_BACKSPACE,
+    KeyInsert            = GLFW_KEY_INSERT,
+    KeyDelete            = GLFW_KEY_DELETE,
+    KeyRight             = GLFW_KEY_RIGHT,
+    KeyLeft              = GLFW_KEY_LEFT,
+    KeyDown              = GLFW_KEY_DOWN,
+    KeyUp                = GLFW_KEY_UP,
+    KeyPageUp            = GLFW_KEY_PAGE_UP,
+    KeyPageDown          = GLFW_KEY_PAGE_DOWN,
+    KeyHome              = GLFW_KEY_HOME,
+    KeyEnd               = GLFW_KEY_END,
+    KeyCapsLock          = GLFW_KEY_CAPS_LOCK,
+    KeyScrollLock        = GLFW_KEY_SCROLL_LOCK,
+    KeyNumLock           = GLFW_KEY_NUM_LOCK,
+    KeyPrintScreen       = GLFW_KEY_PRINT_SCREEN,
+    KeyPause             = GLFW_KEY_PAUSE,
+    KeyF1                = GLFW_KEY_F1,
+    KeyF2                = GLFW_KEY_F2,
+    KeyF3                = GLFW_KEY_F3,
+    KeyF4                = GLFW_KEY_F4,
+    KeyF5                = GLFW_KEY_F5,
+    KeyF6                = GLFW_KEY_F6,
+    KeyF7                = GLFW_KEY_F7,
+    KeyF8                = GLFW_KEY_F8,
+    KeyF9                = GLFW_KEY_F9,
+    KeyF10               = GLFW_KEY_F10,
+    KeyF11               = GLFW_KEY_F11,
+    KeyF12               = GLFW_KEY_F12,
+    KeyF13               = GLFW_KEY_F13,
+    KeyF14               = GLFW_KEY_F14,
+    KeyF15               = GLFW_KEY_F15,
+    KeyF16               = GLFW_KEY_F16,
+    KeyF17               = GLFW_KEY_F17,
+    KeyF18               = GLFW_KEY_F18,
+    KeyF19               = GLFW_KEY_F19,
+    KeyF20               = GLFW_KEY_F20,
+    KeyF21               = GLFW_KEY_F21,
+    KeyF22               = GLFW_KEY_F22,
+    KeyF23               = GLFW_KEY_F23,
+    KeyF24               = GLFW_KEY_F24,
+    KeyF25               = GLFW_KEY_F25,
+    KeyKp0               = GLFW_KEY_KP_0,
+    KeyKp1               = GLFW_KEY_KP_1,
+    KeyKp2               = GLFW_KEY_KP_2,
+    KeyKp3               = GLFW_KEY_KP_3,
+    KeyKp4               = GLFW_KEY_KP_4,
+    KeyKp5               = GLFW_KEY_KP_5,
+    KeyKp6               = GLFW_KEY_KP_6,
+    KeyKp7               = GLFW_KEY_KP_7,
+    KeyKp8               = GLFW_KEY_KP_8,
+    KeyKp9               = GLFW_KEY_KP_9,
+    KeyKpDecimal         = GLFW_KEY_KP_DECIMAL,
+    KeyKpDivide          = GLFW_KEY_KP_DIVIDE,
+    KeyKpMultiply        = GLFW_KEY_KP_MULTIPLY,
+    KeyKpSubstract       = GLFW_KEY_KP_SUBTRACT,
+    KeyKpAdd             = GLFW_KEY_KP_ADD,
+    KeyKpEnter           = GLFW_KEY_KP_ENTER,
+    KeyKpEqual           = GLFW_KEY_KP_EQUAL,
+    KeyLeftShift         = GLFW_KEY_LEFT_SHIFT,
+    KeyLeftControl       = GLFW_KEY_LEFT_CONTROL,
+    KeyLeftAlt           = GLFW_KEY_LEFT_ALT,
+    KeyLeftSuper         = GLFW_KEY_LEFT_SUPER,
+    KeyRightShift        = GLFW_KEY_RIGHT_SHIFT,
+    KeyRightControl      = GLFW_KEY_RIGHT_CONTROL,
+    KeyRightAlt          = GLFW_KEY_RIGHT_ALT,
+    KeyRightSuper        = GLFW_KEY_RIGHT_SUPER,
+    KeyMenu              = GLFW_KEY_MENU,
 
-    // Switch-specific codes (important -- same order as libnx)
-    KeySwitchA           = 400,
-    KeySwitchB           = 401,
-    KeySwitchX           = 402,
-    KeySwitchY           = 403,
-    KeySwitchLstick      = 404,
-    KeySwitchRstick      = 405,
-    KeySwitchL           = 406,
-    KeySwitchR           = 407,
-    KeySwitchZl          = 408,
-    KeySwitchZr          = 409,
-    KeySwitchPlus        = 410,
-    KeySwitchMinus       = 411,
-    KeySwitchDleft       = 412,
-    KeySwitchDup         = 413,
-    KeySwitchDright      = 414,
-    KeySwitchDdown       = 415,
+    // Switch keys
+    KeySwitchA           = GLFW_NX_KEY_A,
+    KeySwitchB           = GLFW_NX_KEY_B,
+    KeySwitchX           = GLFW_NX_KEY_X,
+    KeySwitchY           = GLFW_NX_KEY_Y,
+    KeySwitchLstick      = GLFW_NX_KEY_LSTICK,
+    KeySwitchRstick      = GLFW_NX_KEY_RSTICK,
+    KeySwitchL           = GLFW_NX_KEY_L,
+    KeySwitchR           = GLFW_NX_KEY_R,
+    KeySwitchZl          = GLFW_NX_KEY_ZL,
+    KeySwitchZr          = GLFW_NX_KEY_ZR,
+    KeySwitchPlus        = GLFW_NX_KEY_PLUS,
+    KeySwitchMinus       = GLFW_NX_KEY_MINUS,
+    KeySwitchDleft       = GLFW_NX_KEY_DLEFT,
+    KeySwitchDup         = GLFW_NX_KEY_DUP,
+    KeySwitchDright      = GLFW_NX_KEY_DRIGHT,
+    KeySwitchDdown       = GLFW_NX_KEY_DDOWN,
 
     KeyFirst             = KeySpace,
     KeyLast              = KeySwitchDdown,
     KeySwitchFirst       = KeySwitchA,
     KeySwitchLast        = KeySwitchDdown,
 
-    ModShift             = CMW_BIT(0),
-    ModControl           = CMW_BIT(1),
-    ModAlt               = CMW_BIT(2),
-    ModSuper             = CMW_BIT(3),
-    ModCapsLock          = CMW_BIT(4),
-    ModNumLock           = CMW_BIT(5),
+    ModShift             = GLFW_MOD_SHIFT,
+    ModControl           = GLFW_MOD_CONTROL,
+    ModAlt               = GLFW_MOD_ALT,
+    ModSuper             = GLFW_MOD_SUPER,
+    ModCapsLock          = GLFW_MOD_CAPS_LOCK,
+    ModNumLock           = GLFW_MOD_NUM_LOCK,
 };
 
 enum class EventType: uint8_t {
@@ -395,43 +395,6 @@ struct JoystickMovedEvent: public Event {
     protected:
         Position2f pos;
         bool id;
-};
-
-struct TouchscreenEvent: public Event {
-    inline TouchscreenEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
-            pos(x, y), dx(dx), dy(dy), angle(angle) { }
-
-    inline int get_x() const { return this->pos.x; }
-    inline int get_y() const { return this->pos.y; }
-    inline const Position2u &get_pos() const { return this->pos; }
-    inline uint32_t get_dx()    const { return this->dx; }
-    inline uint32_t get_dy()    const { return this->dy; }
-    inline uint32_t get_angle() const { return this->angle; }
-
-    protected:
-        Position2u pos;
-        uint32_t dx, dy, angle;
-};
-
-struct ScreenPressedEvent: public TouchscreenEvent {
-    DECL_EVENT_TYPE_GETTERS(ScreenPressed)
-
-    inline ScreenPressedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
-            TouchscreenEvent(x, y, dx, dy, angle) { }
-};
-
-struct ScreenTouchedEvent: public TouchscreenEvent {
-    DECL_EVENT_TYPE_GETTERS(ScreenTouched)
-
-    inline ScreenTouchedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
-            TouchscreenEvent(x, y, dx, dy, angle) { }
-};
-
-struct ScreenReleasedEvent: public TouchscreenEvent {
-    DECL_EVENT_TYPE_GETTERS(ScreenReleased)
-
-    inline ScreenReleasedEvent(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, uint32_t angle):
-            TouchscreenEvent(x, y, dx, dy, angle) { }
 };
 
 #undef DECL_EVENT_TYPE_GETTERS

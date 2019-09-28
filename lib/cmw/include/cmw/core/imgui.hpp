@@ -36,53 +36,9 @@ namespace {
 float g_last_time = 0.0f;
 Window *window = nullptr;
 
-#ifdef CMW_SWITCH
-
-static void touchscreen_press_cb(input::ScreenPressedEvent &e) {
-    ImGuiIO &io = ImGui::GetIO();
-    io.MousePos = ImVec2(e.get_x(), e.get_y());
-    io.MouseDown[0] = true;
-}
-
-static void touchscreen_touch_cb(input::ScreenTouchedEvent &e) {
-    ImGuiIO &io = ImGui::GetIO();
-    io.MousePos = ImVec2(e.get_x(), e.get_y());
-    io.MouseDown[0] = true;
-}
-
-static void touchscreen_release_cb(input::ScreenReleasedEvent &e) {
-    ImGuiIO &io = ImGui::GetIO();
-    io.MousePos = ImVec2(e.get_x(), e.get_y());
-    io.MouseDown[0] = false;
-}
-
-static void key_press_cb(input::KeyPressedEvent &e) {
-    ImGuiIO &io = ImGui::GetIO();
-    io.KeysDown[e.get_key()] = true;
-    if      (e.get_key() == input::KeySwitchL)  io.KeyCtrl  = true;
-    else if (e.get_key() == input::KeySwitchZl) io.KeyShift = true;
-    else if (e.get_key() == input::KeySwitchR)  io.KeyAlt   = true;
-}
-
-static void key_release_cb(input::KeyReleasedEvent &e) {
-    ImGuiIO &io = ImGui::GetIO();
-    io.KeysDown[e.get_key()] = false;
-    if      (e.get_key() == input::KeySwitchL)  io.KeyCtrl  = false;
-    else if (e.get_key() == input::KeySwitchZl) io.KeyShift = false;
-    else if (e.get_key() == input::KeySwitchR)  io.KeyAlt   = false;
-}
-
-#else // CMW_SWITCH
-
 static void mouse_pos_cb(input::MouseMovedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.MousePos = ImVec2(e.get_x(), e.get_y());
-}
-
-static void mouse_scroll_cb(input::MouseScrolledEvent &e) {
-    ImGuiIO &io = ImGui::GetIO();
-    io.MouseWheelH += e.get_x();
-    io.MouseWheel  += e.get_y();
 }
 
 static void mouse_button_press_cb(input::MouseButtonPressedEvent &e) {
@@ -100,19 +56,33 @@ static void mouse_button_release_cb(input::MouseButtonReleasedEvent &e) {
 static void keyboard_key_press_cb(input::KeyPressedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = true;
+#ifdef CMW_SWITCH // Emulate mod keys
+    if      (e.get_key() == input::KeySwitchL)  io.KeyCtrl  = true;
+    else if (e.get_key() == input::KeySwitchZl) io.KeyShift = true;
+    else if (e.get_key() == input::KeySwitchR)  io.KeyAlt   = true;
+#endif
 }
 
 static void keyboard_key_release_cb(input::KeyReleasedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[e.get_key()] = false;
+#ifdef CMW_SWITCH // Emulate mod keys
+    if      (e.get_key() == input::KeySwitchL)  io.KeyCtrl  = false;
+    else if (e.get_key() == input::KeySwitchZl) io.KeyShift = false;
+    else if (e.get_key() == input::KeySwitchR)  io.KeyAlt   = false;
+#endif
+}
+
+static void mouse_scroll_cb(input::MouseScrolledEvent &e) {
+    ImGuiIO &io = ImGui::GetIO();
+    io.MouseWheelH += e.get_x();
+    io.MouseWheel  += e.get_y();
 }
 
 static void keyboard_char_cb(input::CharTypedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
     io.AddInputCharacter(e.get_codepoint());
 }
-
-#endif // CMW_SWITCH
 
 #if CMW_LOG_BACKEND_IS_IMGUI
 
@@ -154,13 +124,6 @@ static inline void initialize(Window *win) {
     ImGui::StyleColorsDark();
 
     input::InputManager &in_man = window->get_input_manager();
-#ifdef CMW_SWITCH
-    in_man.register_callback<input::ScreenPressedEvent>(touchscreen_press_cb);
-    in_man.register_callback<input::ScreenTouchedEvent>(touchscreen_touch_cb);
-    in_man.register_callback<input::ScreenReleasedEvent>(touchscreen_release_cb);
-    in_man.register_callback<input::KeyPressedEvent>(key_press_cb);
-    in_man.register_callback<input::KeyReleasedEvent>(key_release_cb);
-#else
     in_man.register_callback<input::MouseMovedEvent>(mouse_pos_cb);
     in_man.register_callback<input::MouseScrolledEvent>(mouse_scroll_cb);
     in_man.register_callback<input::MouseButtonPressedEvent>(mouse_button_press_cb);
@@ -168,7 +131,6 @@ static inline void initialize(Window *win) {
     in_man.register_callback<input::KeyPressedEvent>(keyboard_key_press_cb);
     in_man.register_callback<input::KeyReleasedEvent>(keyboard_key_release_cb);
     in_man.register_callback<input::CharTypedEvent>(keyboard_char_cb);
-#endif
 
     ImGuiIO &io = ImGui::GetIO();
 

@@ -28,12 +28,12 @@
 namespace cmw::input {
 
 void InputManager::set_window(GLFWwindow *window) {
-#ifndef CMW_SWITCH
     glfwSetKeyCallback(window, keys_cb);
-    glfwSetCharCallback(window, char_cb);
     glfwSetCursorPosCallback(window, cursor_cb);
-    glfwSetScrollCallback(window, scroll_cb);
     glfwSetMouseButtonCallback(window, click_cb);
+    glfwSetCharCallback(window, char_cb);
+    glfwSetScrollCallback(window, scroll_cb);
+#ifdef CMW_PC
     glfwSetWindowPosCallback(window, window_pos_cb);
     glfwSetWindowSizeCallback(window, window_size_cb);
     glfwSetWindowFocusCallback(window, window_focus_cb);
@@ -43,42 +43,6 @@ void InputManager::set_window(GLFWwindow *window) {
 
 #ifdef CMW_SWITCH
 void InputManager::process_nx_events(GLFWwindow *window) const {
-    static std::array<float, Keys::KeySwitchLast - Keys::KeySwitchFirst + 1> nx_keys_time; // The rest are supported by glfw
-    float time = glfwGetTime();
-    u64 keys_down = hidKeysDown(CONTROLLER_P1_AUTO) | hidKeysHeld(CONTROLLER_P1_AUTO); // glfw internally calls hidScanInput
-
-    // Buttons
-    for (uint32_t key = Keys::KeySwitchFirst; key <= Keys::KeySwitchLast; ++key) {
-        const uint32_t idx       = key - Keys::KeySwitchFirst;
-        const uint32_t libnx_key = CMW_BIT(idx);
-
-        if ((keys_down & libnx_key) && (nx_keys_time[idx] == 0.0f)) {
-            this->process(KeyPressedEvent(key, 0));       // Key pressed for the first time
-            nx_keys_time[idx] = time;
-        } else if ((keys_down & libnx_key) && (time - nx_keys_time[idx] >= key_held_threshold)) {
-            this->process(KeyHeldEvent(key, 0));          // Key held for over min_held_time seconds
-        } else if (!(keys_down & libnx_key) && (nx_keys_time[idx] > 0.0f)) {
-            this->process(KeyReleasedEvent(key, 0));      // Key released
-            nx_keys_time[idx] = 0.0f;
-        }
-    }
-
-    // Touchscreen
-    static bool had_touch_last_frame;
-    static touchPosition pos;
-    if (keys_down & KEY_TOUCH) {
-        hidTouchRead(&pos, 0); // TODO: support multiple touch points
-        if (!had_touch_last_frame)
-            this->process(ScreenPressedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
-        else
-            this->process(ScreenTouchedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
-        had_touch_last_frame = true;
-    } else {
-        if (had_touch_last_frame)
-            this->process(ScreenReleasedEvent(pos.px, pos.py, pos.dx, pos.dy, pos.angle));
-        had_touch_last_frame = false;
-    }
-
     // Joysticks
     constexpr float joystick_max = (float)std::numeric_limits<int16_t>::max();
     {
