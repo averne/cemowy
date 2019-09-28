@@ -17,10 +17,6 @@
 
 #pragma once
 
-#include "cmw/platform.h"
-
-#include "cmw/core.hpp"
-#include "cmw/gl.hpp"
-#include "cmw/shapes.hpp"
-#include "cmw/widgets.hpp"
-#include "cmw/utils.hpp"
+#include "cmw/widgets/button.hpp"
+#include "cmw/widgets/scene.hpp"
+#include "cmw/widgets/widget.hpp"

@@ -32,6 +32,12 @@ class Circle: public Shape {
     public:
         Circle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) { }
 
+        Circle(const std::vector<Mesh::Vertex> &vertices, const std::vector<Mesh::Index> &indices,
+                gl::Texture2d &texture, Colorf color = colors::White):
+                Circle(texture, color) {
+            this->mesh.set_data(vertices, indices);
+        }
+
         Circle(const Position &position, float radius, gl::Texture2d &texture, Colorf color = colors::White, std::size_t segments = 24):
                 Circle(texture, color) {
             std::vector<Mesh::Vertex> vertices;
@@ -52,6 +58,13 @@ class Circle: public Shape {
             this->mesh.set_data(vertices, indices);
         }
 
+        Circle(Colorf color = colors::White):
+            Circle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }
+        Circle(const Position &position, float radius, Colorf color = colors::White, std::size_t segments = 24):
+            Circle(position, radius, Application::get_instance().get_resource_manager().get_white_texture(), color, segments) { }
+        Circle(const std::vector<Mesh::Vertex> &vertices, const std::vector<Mesh::Index> &indices, Colorf color = colors::White):
+            Circle(vertices, indices, Application::get_instance().get_resource_manager().get_white_texture(), color) { }
+
         void set_position(const Position &position) {
             auto &vertices = this->get_mesh().get_vertices();
             Position delta = position - vertices[0].position;
@@ -69,7 +82,7 @@ class Circle: public Shape {
             }
         }
 
-        virtual void on_draw() override { }
+        virtual void on_draw(Renderer &renderer, float dt) override { }
 };
 
 } // namespace cmw::shapes

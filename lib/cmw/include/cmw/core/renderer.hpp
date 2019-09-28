@@ -26,10 +26,10 @@
 #include "cmw/core/resource_manager.hpp"
 #include "cmw/core/text.hpp"
 #include "cmw/gl/shader_program.hpp"
-#include "cmw/shapes/line.hpp"
-#include "cmw/shapes/point.hpp"
+#include "cmw/shapes/shape.hpp"
 #include "cmw/utils/color.hpp"
 #include "cmw/utils/position.hpp"
+#include "cmw/widgets/widget.hpp"
 
 namespace cmw {
 
@@ -64,8 +64,9 @@ class Renderer {
         }
 
         template <typename T>
-        void begin(T &&camera) {
+        void begin(T &&camera, float dt) {
             this->view_proj = &camera.get_view_proj();
+            this->dt = dt;
             bind_all(this->vbo, this->ebo);
             this->vertex_buffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
             this->index_buffer  = (Index  *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);
@@ -76,8 +77,14 @@ class Renderer {
 
         template <typename T>
         inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
-            element.on_draw();
-            add_mesh(element.get_mesh(), model, mode);
+            element.on_draw(*this, this->dt);
+            using Type = std::remove_cv_t<std::remove_reference_t<T>>;
+            if constexpr (std::is_base_of_v<shapes::Shape, Type>)
+                add_mesh(element.get_mesh(), model, mode);
+            else if constexpr (std::is_base_of_v<widgets::Widget, Type>)
+                element.draw(*this, this->dt);
+            else
+                throw std::runtime_error("Wrong type for Renderer::submit");
         }
 
         void add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default);
@@ -86,9 +93,11 @@ class Renderer {
             Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f});
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
-        inline Colorf &get_clear_color() { return this->clear_color; }
+        inline       Colorf &get_clear_color()       { return this->clear_color; }
+        inline const Colorf &get_clear_color() const { return this->clear_color; }
 
-        inline gl::ShaderProgram &get_default_mesh_shader()  { return this->mesh_program; }
+        inline       gl::ShaderProgram &get_default_mesh_shader()       { return this->mesh_program; }
+        inline const gl::ShaderProgram &get_default_mesh_shader() const { return this->mesh_program; }
 
     protected:
         ResourceManager &resource_man;
@@ -98,9 +107,9 @@ class Renderer {
         gl::VertexBuffer  vbo;
         gl::ElementBuffer ebo;
 
-        GLenum mode;
         Colorf clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
         const glm::mat4 *view_proj;
+        float dt;
 
         Vertex *vertex_buffer;
         Index *index_buffer;

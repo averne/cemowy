@@ -71,7 +71,7 @@ class Line: public Shape {
             this->get_mesh().get_vertices()[idx].position = position;
         }
 
-        virtual void on_draw() override {
+        virtual void on_draw(Renderer &renderer, float dt) override {
             glLineWidth(this->width); // Doesn't seem to work on Switch
         }
 

@@ -45,6 +45,13 @@ class Rectangle: public Shape {
             this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
         }
 
+        Rectangle(Colorf color = colors::White):
+            Rectangle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }
+        Rectangle(const std::vector<Position> &positions, Colorf color = colors::White):
+            Rectangle(positions, Application::get_instance().get_resource_manager().get_white_texture(), color) { }
+        Rectangle(const std::vector<Mesh::Vertex> &vertices, Colorf color = colors::White):
+            Rectangle(vertices,  Application::get_instance().get_resource_manager().get_white_texture(), color) { }
+
         void edit_point(std::size_t idx, const Position &position) {
             this->mesh.get_vertices()[idx].position = position;
         }
@@ -53,7 +60,7 @@ class Rectangle: public Shape {
             this->mesh.get_vertices()[idx] = vertex;
         }
 
-        virtual void on_draw() override { }
+        virtual void on_draw(Renderer &renderer, float dt) override { }
 };
 
 } // namespace cmw::shapes

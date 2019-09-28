@@ -98,7 +98,8 @@ class Window {
 
         inline GLFWwindow *get_window() const { return this->window; }
 
-        inline input::InputManager &get_input_manager() { return this->input_manager; }
+        inline       input::InputManager &get_input_manager()       { return this->input_manager; }
+        inline const input::InputManager &get_input_manager() const { return this->input_manager; }
 
         template <typename T> std::size_t register_callback(input::InputManager::Callback<T> cb) {
             return get_input_manager().register_callback<T>(cb);
