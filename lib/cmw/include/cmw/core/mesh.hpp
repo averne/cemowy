@@ -68,7 +68,8 @@ class Mesh {
         inline bool is_indexed() const { return !!this->indices.size(); }
         inline std::size_t get_size() const { return std::max(this->vertices.size(), this->indices.size()); }
 
-        inline Colorf get_blend_color() const { return this->blend_color; }
+        inline       Colorf &get_blend_color()       { return this->blend_color; }
+        inline const Colorf &get_blend_color() const { return this->blend_color; }
         inline void set_blend_color(Colorf color) { this->blend_color = color; }
 
     protected:

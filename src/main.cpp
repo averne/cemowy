@@ -124,7 +124,7 @@ int main() {
 #ifdef CMW_SWITCH
         if (e.get_key() == cmw::input::KeySwitchPlus)
 #else
-        if ((e.get_key() == cmw::input::KeyEnter) && (e.get_mods() & GLFW_MOD_CONTROL))
+        if ((e.get_key() == cmw::input::KeyEnter) && e.has_mod(cmw::input::ModControl))
 #endif
             window.set_should_close(true);
     });

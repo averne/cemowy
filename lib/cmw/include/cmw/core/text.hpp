@@ -35,7 +35,6 @@ namespace cmw {
 class Glyph {
     public:
         Glyph(stbtt_fontinfo *font_ctx, float scale, int codepoint, int idx, void *data, int width, int height, int off_x, int off_y);
-        ~Glyph() = default;
 
         inline void bind() const {
             this->texture.bind();

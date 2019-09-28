@@ -29,8 +29,6 @@ class Button: public Widget {
 
         }
 
-        ~Button() = default;
-
         void draw(Renderer &renderer, float dt) override { }
 
         bool collides(const Position &position) const override {

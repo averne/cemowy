@@ -35,6 +35,10 @@ class GlObject {
 
         inline GLuint get_handle() const { return this->handle; }
 
+        explicit operator bool() const {
+            return this->handle != 0;
+        }
+
         inline bool operator==(GlObject &rhs) const {
             return get_handle() == rhs.get_handle();
         }

@@ -38,8 +38,6 @@ class ResourceManager {
             this->white_texture->generate_mipmap();
         }
 
-        ~ResourceManager() = default;
-
         gl::Texture2d &get_texture(const std::string &path) {
             auto it = this->textures.find(path);
             if (it != this->textures.end())
