@@ -24,6 +24,7 @@
 #include <stb_image.h>
 
 #include "cmw/core/log.hpp"
+#include "cmw/core/resource_manager.hpp"
 #include "cmw/gl/object.hpp"
 #include "cmw/utils.hpp"
 
@@ -112,7 +113,7 @@ class Texture2dN: public TextureN<GL_TEXTURE_2D, N> {
                 GLenum load_data_fmt = GL_UNSIGNED_BYTE, GLuint mipmap_lvl = 0): Texture2dN(idx) {
             int w, h, nchan, fmt;
             stbi_set_flip_vertically_on_load(true);
-            stbi_uc *data = stbi_load_from_file(open_asset(path), &w, &h, &nchan, 0);
+            stbi_uc *data = stbi_load_from_file(ResourceManager::open_asset(path), &w, &h, &nchan, 0);
             if (!data) {
                 CMW_ERROR("%s", stbi_failure_reason());
                 throw std::runtime_error("Could not load texture file");

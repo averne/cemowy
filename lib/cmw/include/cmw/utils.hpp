@@ -101,19 +101,6 @@ static inline void unbind_all(Args &&...args) {
     (args.unbind(), ...);
 }
 
-static inline FILE *open_asset(const std::string &path, const std::string &mode = "r") {
-#ifdef CMW_SWITCH
-    std::string asset_path = "romfs:/" + path;
-#else
-    std::string asset_path = "res/"    + path;
-#endif
-    FILE *fp = fopen(asset_path.c_str(), mode.c_str());
-    if (!fp)
-        CMW_ERROR("Failed to open %s\n", asset_path.c_str());
-    CMW_TRACE("Loaded %s\n", asset_path.c_str());
-    return fp;
-}
-
 } // namespace cmw
 
 #include "cmw/utils/area.hpp"

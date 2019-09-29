@@ -70,20 +70,11 @@ Font::Font(void *data, char16_t first_cached, char16_t last_cached) {
 }
 
 Font::Font(const std::string &path, char16_t first_cached, char16_t last_cached) {
-    FILE *fp = open_asset(path, "rb");
-    CMW_TRY_THROW(fp, std::runtime_error("Failed to open font file"));
-    fseek(fp, 0, SEEK_END);
-    std::size_t size = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    this->data = new unsigned char[size];
-    fread(this->data, size, 1, fp);
-    INIT_FONT(this->data);
+    this->data = ResourceManager::read_asset<std::vector<uint8_t>>(path);
+    INIT_FONT(this->data.data());
 }
 
 Font::~Font() {
-    if (this->data)
-        delete[] this->data;
 #ifdef CMW_SWITCH
     if (this->font_data.address)
         plExit();

@@ -24,6 +24,7 @@
 #include <glad/glad.h>
 
 #include "cmw/core/log.hpp"
+#include "cmw/core/resource_manager.hpp"
 #include "cmw/gl/object.hpp"
 #include "cmw/utils.hpp"
 
@@ -38,13 +39,7 @@ class Shader: public GlObject {
         }
 
         Shader(const std::string &path): Shader() {
-            FILE *fp = open_asset(path);
-            CMW_TRY_THROW(fp, std::runtime_error("Could not open shader file"));
-            fseek(fp, 0, SEEK_END);
-            std::size_t size = ftell(fp);
-            fseek(fp, 0, SEEK_SET);
-            std::string src(size + 1, '\0');
-            fread(src.data(), size, 1, fp);
+            auto src = ResourceManager::read_asset<std::string>(path);
             set_source(src);
             if (!compile()) {
                 print_log();

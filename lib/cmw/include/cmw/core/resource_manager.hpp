@@ -18,43 +18,62 @@
 #pragma once
 
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <map>
 
 #include "cmw/core/log.hpp"
-#include "cmw/gl/shader_program.hpp"
-#include "cmw/gl/texture.hpp"
+#include "cmw/platform.h"
 
 namespace cmw {
+
+// Forward declarations
+namespace gl {
+    class ShaderProgram;
+
+    template <std::size_t N>
+    class Texture2dN;
+    using Texture2d = Texture2dN<1>;
+}
 
 class ResourceManager {
     public:
         static inline std::string WhiteTexture = "";
 
-        ResourceManager() {
-            auto pair = this->textures.try_emplace(WhiteTexture);
-            this->white_texture = &pair.first->second;
-            this->white_texture->set_blank_data(10, 10);
-            this->white_texture->generate_mipmap();
-        }
+        ResourceManager();
 
-        gl::Texture2d &get_texture(const std::string &path) {
-            auto it = this->textures.find(path);
-            if (it != this->textures.end())
-                return it->second;
-            auto pair = this->textures.try_emplace(path, path);
-            return pair.first->second;
-        }
+        gl::Texture2d &get_texture(const std::string &path);
+        gl::ShaderProgram &get_shader(const std::string &vert_path, const std::string &frag_path);
 
         gl::Texture2d &get_white_texture() const { return *this->white_texture; }
 
-        gl::ShaderProgram &get_shader(const std::string &vert_path, const std::string &frag_path) {
-            std::string key = vert_path + frag_path;
-            auto it = this->shader_programs.find(key);
-            if (it != this->shader_programs.end())
-                return it->second;
-            auto pair = this->shader_programs.try_emplace(key, gl::VertexShader{vert_path}, gl::FragmentShader{frag_path});
-            return pair.first->second;
+        static inline FILE *open_asset(const std::string &path, const std::string &mode = "r") {
+#ifdef CMW_SWITCH
+            std::string asset_path = "romfs:/" + path;
+#else
+            std::string asset_path = "res/"    + path;
+#endif
+            FILE *fp = fopen(asset_path.c_str(), mode.c_str());
+            if (!fp)
+                CMW_ERROR("Failed to open %s\n", asset_path.c_str());
+            CMW_TRACE("Loaded %s\n", asset_path.c_str());
+            return fp;
+        }
+
+        template <typename T>
+        static inline T read_asset(const std::string &path) {
+            FILE *fp = open_asset(path);
+            fseek(fp, 0, SEEK_END);
+            std::size_t size = ftell(fp);
+            fseek(fp, 0, SEEK_SET);
+
+            T container;
+            container.reserve(size);
+            if (fread(container.data(), 1, size, fp) != size)
+                CMW_ERROR("Failed to read %s\n", path.c_str());
+            container[size] = 0; // Ensure null termination
+
+            return container;
         }
 
     private:

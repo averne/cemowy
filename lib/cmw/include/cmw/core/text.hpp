@@ -85,7 +85,7 @@ class Font {
     protected:
         static constexpr float font_scale = 0.105f;
 
-        unsigned char *data = nullptr;
+        std::vector<std::uint8_t> data;
         stbtt_fontinfo font_ctx;
         int ascender, descender, linegap;
         std::unordered_map<char16_t, Glyph> cached_glyphs;
