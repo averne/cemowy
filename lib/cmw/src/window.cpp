@@ -30,6 +30,7 @@ Window::Window(int w, int h, const std::string &name, int x, int y, GLboolean re
     glfwInit();
     set_gl_version(ver);
     hint(std::pair{GLFW_RESIZABLE, resizable});
+    hint(std::pair{GLFW_SAMPLES, 4});
 
     CMW_TRY_THROW((this->window = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr)),
         std::runtime_error("Could not create window object"));

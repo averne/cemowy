@@ -39,6 +39,8 @@ Renderer::Renderer(ResourceManager &resource_man): resource_man(resource_man),
 
     // glEnable(GL_CULL_FACE);
 
+    glEnable(GL_MULTISAMPLE);
+
     bind_all(this->vao, this->vbo, this->ebo);
     this->vbo.set_layout({
         gl::BufferElement::Float3,
