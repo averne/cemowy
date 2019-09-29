@@ -59,17 +59,17 @@ $(LIB_TARGET): $(OFILES)
 $(BUILD)/%.c.pc.o: %.c
 	@echo " CC  " $@
 	@mkdir -p $(dir $@)
-	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CC) -MMD -MP $(ARCH) $(FLAGS) $(CFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $(CURDIR)/$< -o $@
 
 $(BUILD)/%.cpp.pc.o: %.cpp
 	@echo " CXX " $@
 	@mkdir -p $(dir $@)
-	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(CXX) -MMD -MP $(ARCH) $(FLAGS) $(CXXFLAGS) $(DEFINE_FLAGS) $(INCLUDE_FLAGS) -c $(CURDIR)/$< -o $@
 
 $(BUILD)/%.s.pc.o: %.s %.S
 	@echo " AS  " $@
 	@mkdir -p $(dir $@)
-	@$(AS) -MMD -MP -x assembler-with-cpp $(ARCH) $(FLAGS) $(ASFLAGS) $(INCLUDE_FLAGS) -c $< -o $@
+	@$(AS) -MMD -MP -x assembler-with-cpp $(ARCH) $(FLAGS) $(ASFLAGS) $(INCLUDE_FLAGS) -c $(CURDIR)/$< -o $@
 
 clean:
 	@echo Cleaning...

@@ -16,10 +16,7 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": [
-                    "relative",
-                    "${workspaceFolder}"
-                ]
+                "fileLocation": "absolute"
             }
         },
         {
@@ -40,10 +37,7 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": [
-                    "relative",
-                    "${workspaceFolder}"
-                ]
+                "fileLocation": "absolute"
             }
         },
         {
@@ -61,10 +55,7 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": [
-                    "relative",
-                    "${workspaceFolder}"
-                ]
+                "fileLocation": "absolute"
             }
         },
         {
