@@ -29,21 +29,9 @@ namespace cmw::shapes {
 
 class Rectangle: public Shape {
     public:
-        Rectangle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) { }
-
-        Rectangle(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White):
-                Rectangle(texture, color) {
-            std::vector<Mesh::Vertex> vertices;
-            vertices.reserve(4);
-            for (std::size_t i = 0; i <= 4; ++i)
-                vertices.emplace_back(positions[i]);
-            this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
-        }
-
-        Rectangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White):
-                Rectangle(texture, color) {
-            this->mesh.set_data(vertices, {0, 1, 2, 2, 3, 0});
-        }
+        Rectangle(gl::Texture2d &texture, Colorf color = colors::White);
+        Rectangle(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White);
+        Rectangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White);
 
         Rectangle(Colorf color = colors::White):
             Rectangle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }

@@ -44,62 +44,15 @@ class PerspectiveCamera {
         };
 
         PerspectiveCamera(const Position &pos = Position(0.0f, 0.0f, 0.0f), const Position &front = Position(0.0f, 0.0f, -1.0f),
-                GLfloat fov = 45.0f, float speed = 0.2f, float sensitivity = 0.05f):
-                pos(pos), front(front), fov(fov), speed(speed), sensitivity(sensitivity) {
-            Position n_front = glm::normalize(this->front);
-            this->yaw = glm::degrees(atan2(n_front.x, n_front.z));
-            this->pitch = glm::degrees(asin(-n_front.y));
-            update();
-        }
+                GLfloat fov = 45.0f, float speed = 0.2f, float sensitivity = 0.05f);
 
         PerspectiveCamera(GLfloat pos_x, GLfloat pos_y, GLfloat pos_z,
                 GLfloat front_x, GLfloat front_y, GLfloat front_z, GLfloat fov = 45.0f,
-                float speed = 0.2f, float sensitivity = 0.05f):
-                PerspectiveCamera({pos_x, pos_y, pos_z}, {front_x, front_y, front_z}, fov, speed, sensitivity) { }
+                float speed = 0.2f, float sensitivity = 0.05f);
 
-        void move(Movement direction) {
-            switch (direction) {
-                case Movement::Forward:
-                    this->pos += this->speed * this->front;
-                    break;
-                case Movement::Backward:
-                    this->pos -= this->speed * this->front;
-                    break;
-                case Movement::Left:
-                    this->pos -= glm::normalize(glm::cross(this->front, glm::vec3(0.0f, 1.0f, 0.0f))) * this->speed;
-                    break;
-                case Movement::Right:
-                    this->pos += glm::normalize(glm::cross(this->front, glm::vec3(0.0f, 1.0f, 0.0f))) * this->speed;
-                    break;
-            }
-            this->pos.y = 0.0f;
-            update();
-        }
-
-        void rotate(float x, float y) {
-            if (std::isnan(this->mouse_x) && std::isnan(this->mouse_y))
-                this->mouse_x = x, this->mouse_y = y;
-
-            this->yaw   -= (x - this->mouse_x) * this->sensitivity;
-            this->pitch += (this->mouse_y - y) * this->sensitivity;
-            this->pitch  = std::clamp(this->pitch, -89.0f, 89.0f);
-
-            this->mouse_x = x, this->mouse_y = y;
-
-            this->front = glm::normalize(glm::vec3(
-                std::sin(glm::radians(this->yaw)) * std::cos(glm::radians(this->pitch)),
-                std::sin(glm::radians(this->pitch)),
-                std::cos(glm::radians(this->yaw)) * std::cos(glm::radians(this->pitch))
-            ));
-
-            update();
-        }
-
-        void zoom(float z) {
-            this->fov -= z;
-            this->fov = std::clamp(this->fov, 1.0f, 45.0f);
-            update();
-        }
+        void move(Movement direction);
+        void rotate(float x, float y);
+        void zoom(float z);
 
         inline const glm::mat4 &get_proj()      const { return this->proj; }
         inline const glm::mat4 &get_view()      const { return this->view; }
@@ -108,7 +61,7 @@ class PerspectiveCamera {
         inline const Position &get_pos()   const { return *reinterpret_cast<const Position *>(&this->pos); }
         inline const Position &get_front() const { return *reinterpret_cast<const Position *>(&this->front); }
 
-        void update() {
+        inline void update() {
             this->proj = glm::perspective(glm::radians(this->fov), this->scr_w / this->scr_h, 0.1f, 100.0f);
             this->view = glm::lookAt(this->pos, this->pos + this->front, glm::vec3(0.0f, 1.0f, 0.0f));
             this->view_proj = this->proj * this->view;
@@ -130,11 +83,7 @@ class PerspectiveCamera {
 class OrthographicCamera {
     public:
         OrthographicCamera(float left, float right, float bottom, float top, float near , float far,
-                const Position &position = {0.0f, 0.0f, 0.0f}, float rotation = 0.0f):
-                position(position), rotation(rotation), proj(glm::ortho(left, right, bottom, top, near, far)) {
-            this->offset = {glm::abs(left - right) / 2.0f, glm::abs(top - bottom) / 2.0f, 0.0f};
-            update();
-        }
+                const Position &position = {0.0f, 0.0f, 0.0f}, float rotation = 0.0f);
 
         inline void move(const Position &dposition) { this->position += (glm::vec3)dposition; update(); }
         inline void rotate(float drotation) { this->rotation += drotation; update(); }
@@ -149,7 +98,7 @@ class OrthographicCamera {
         inline const glm::mat4 &get_proj()      const { return this->proj; }
         inline const glm::mat4 &get_view_proj() const { return this->view_proj; }
 
-        void update() {
+        inline void update() {
             this->view = glm::translate(glm::mat4(1.0f), this->offset);
             this->view = glm::rotate(this->view, glm::radians(this->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
             this->view = glm::translate(this->view, this->position - this->offset);

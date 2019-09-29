@@ -30,23 +30,9 @@ namespace cmw::shapes {
 
 class Triangle: public Shape {
     public:
-        Triangle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) {
-            this->mesh.set_data(std::vector<Mesh::Index>{0, 1, 2});
-        }
-
-        Triangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White):
-                Shape(vertices, texture, color) {
-            this->mesh.set_data(std::vector<Mesh::Index>{0, 1, 2});
-        }
-
-        Triangle(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White):
-                Triangle(texture, color) {
-            std::vector<Mesh::Vertex> vertices;
-            vertices.reserve(3);
-            for (std::size_t i = 0; i <= 3; ++i)
-                vertices.emplace_back(positions[i]);
-            this->mesh.set_data(vertices);
-        }
+        Triangle(gl::Texture2d &texture, Colorf color = colors::White);
+        Triangle(const std::vector<Mesh::Vertex> &vertices, gl::Texture2d &texture, Colorf color = colors::White);
+        Triangle(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White);
 
         Triangle(Colorf color = colors::White):
             Triangle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }

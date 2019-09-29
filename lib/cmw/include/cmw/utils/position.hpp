@@ -20,8 +20,6 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 
-#include "cmw/utils.hpp"
-
 namespace cmw {
 
 template <typename T = float>
@@ -122,7 +120,7 @@ struct Position2X {
 #undef DECL_UNARY_OPERATOR
 #undef DECL_COMP_OPERATOR
 };
-CMW_ASSERT_STANDARD_LAYOUT(Position2X<>);
+static_assert(std::is_standard_layout_v<Position2X<>>, "Position2X is not standard layout");
 
 template <typename T = float>
 struct Position3X {
@@ -228,7 +226,7 @@ struct Position3X {
 #undef DECL_UNARY_OPERATOR
 #undef DECL_COMP_OPERATOR
 };
-CMW_ASSERT_STANDARD_LAYOUT(Position3X<>);
+static_assert(std::is_standard_layout_v<Position3X<>>, "Position3X is not standard layout");
 
 template <typename T = float>
 struct Position4X {
@@ -340,7 +338,7 @@ struct Position4X {
 #undef DECL_UNARY_OPERATOR
 #undef DECL_COMP_OPERATOR
 };
-CMW_ASSERT_STANDARD_LAYOUT(Position4X<>);
+static_assert(std::is_standard_layout_v<Position4X<>>, "Position4X is not standard layout");
 
 using Position2i = Position2X<std::int32_t>;
 using Position2u = Position2X<std::uint32_t>;

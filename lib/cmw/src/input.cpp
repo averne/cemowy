@@ -23,6 +23,7 @@
 
 #include "cmw/core/input.hpp"
 #include "cmw/core/window.hpp"
+#include "cmw/utils/position.hpp"
 #include "cmw/platform.h"
 
 namespace cmw::input {

@@ -30,26 +30,8 @@ namespace cmw::shapes {
 
 class Line: public Shape {
     public:
-        Line(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): Shape(texture, color), width(width) { }
-
-        Line(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
-                Line(texture, color, width) {
-            Mesh::Index idx = 1;
-            std::vector<Mesh::Vertex> vertices;
-            std::vector<Mesh::Index> indices;
-
-            vertices.reserve(positions.size());
-            for (auto &pos: positions)
-                vertices.emplace_back(pos);
-
-            indices.reserve(2 * positions.size() - 2);
-            indices.emplace_back(idx - 1);
-            for (; idx < vertices.size() - 2; ++idx)
-                indices.emplace_back(idx), indices.emplace_back(idx);
-            indices.emplace_back(idx);
-
-            this->get_mesh().set_data(vertices, indices);
-        }
+        Line(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f);
+        Line(const std::vector<Position> &positions, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f);
 
         template <typename ...Args>
         void add_points(Args &&...positions) {

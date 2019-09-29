@@ -123,7 +123,7 @@ struct AreaX {
 #undef DECL_UNARY_OPERATOR
 #undef DECL_COMP_OPERATOR
 };
-CMW_ASSERT_STANDARD_LAYOUT(AreaX<>);
+static_assert(std::is_standard_layout_v<AreaX<>>, "AreaX is not standard layout");
 
 using Areai = AreaX<std::int32_t>;
 using Areau = AreaX<std::uint32_t>;

@@ -30,33 +30,11 @@ namespace cmw::shapes {
 
 class Circle: public Shape {
     public:
-        Circle(gl::Texture2d &texture, Colorf color = colors::White): Shape(texture, color) { }
-
+        Circle(gl::Texture2d &texture, Colorf color = colors::White);
         Circle(const std::vector<Mesh::Vertex> &vertices, const std::vector<Mesh::Index> &indices,
-                gl::Texture2d &texture, Colorf color = colors::White):
-                Circle(texture, color) {
-            this->mesh.set_data(vertices, indices);
-        }
-
-        Circle(const Position &position, float radius, gl::Texture2d &texture, Colorf color = colors::White, std::size_t segments = 24):
-                Circle(texture, color) {
-            std::vector<Mesh::Vertex> vertices;
-            std::vector<Mesh::Index> indices;
-            Mesh::Index idx = 1;
-
-            vertices.reserve(segments + 1);
-            indices.reserve(3 * segments);
-
-            vertices.push_back(position);
-            for (float angle = 0; angle < glm::two_pi<float>(); angle += glm::two_pi<float>() / segments, ++idx) {
-                float x = glm::cos(angle), y = glm::sin(angle);
-                vertices.push_back({{position.x + x * radius, position.y + y * radius, position.z}, {(x + 1) / 2, (y + 1) / 2}});
-                indices.insert(indices.end(), {0, idx, idx + 1});
-            }
-            indices.back() = 1; // Set last point to beginning of circle
-
-            this->mesh.set_data(vertices, indices);
-        }
+            gl::Texture2d &texture, Colorf color = colors::White);
+        Circle(const Position &position, float radius, gl::Texture2d &texture, Colorf color = colors::White, 
+            std::size_t segments = 24);
 
         Circle(Colorf color = colors::White):
             Circle(Application::get_instance().get_resource_manager().get_white_texture(), color) { }

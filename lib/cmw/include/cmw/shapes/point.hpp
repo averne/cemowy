@@ -31,12 +31,8 @@ namespace cmw::shapes {
 
 class Point: public Shape {
     public:
-        Point(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f): Shape(texture, color), width(width) { }
-
-        Point(const Position &position, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f):
-                Point(texture, color, width) {
-            set_position(position);
-        }
+        Point(gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f);
+        Point(const Position &position, gl::Texture2d &texture, Colorf color = colors::White, GLfloat width = 1.0f);
 
         void set_position(const Position &position) {
             this->get_mesh().set_data({(Mesh::Vertex){position}});
