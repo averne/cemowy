@@ -40,22 +40,12 @@ class Renderer {
             AlphaMap,
         };
 
-        struct Vertex {
-            Mesh::Vertex vertex;
-            Colorf blend_color;
-            int tex_idx;
-            std::uint8_t mode;
-        };
-
-        struct Index {
-            Mesh::Index index;
-        };
-
     public:
         static constexpr std::size_t max_vertices  = 1000;
         static constexpr std::size_t max_indices   = 10000;
         static constexpr std::size_t max_textures  = 30;
 
+    public:
         Renderer(ResourceManager &resource_man);
 
         inline void clear(int flags) const {
@@ -67,9 +57,6 @@ class Renderer {
         void begin(T &&camera, float dt) {
             this->view_proj = &camera.get_view_proj();
             this->dt = dt;
-            bind_all(this->vbo, this->ebo);
-            this->vertex_buffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
-            this->index_buffer  = (Index  *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);
         }
 
         void end(gl::ShaderProgram &program, GLenum mode = GL_TRIANGLES);
@@ -100,6 +87,21 @@ class Renderer {
         inline const gl::ShaderProgram &get_default_mesh_shader() const { return this->mesh_program; }
 
     protected:
+        struct Vertex {
+            Mesh::Vertex vertex;
+            Colorf blend_color;
+            int tex_idx;
+            std::uint8_t mode;
+        };
+
+        struct Index {
+            Mesh::Index index;
+            constexpr inline Index(const Mesh::Index &i): index(i) { }
+        };
+
+    public:
+
+    protected:
         ResourceManager &resource_man;
         gl::ShaderProgram &mesh_program;
 
@@ -111,9 +113,8 @@ class Renderer {
         const glm::mat4 *view_proj;
         float dt;
 
-        Vertex *vertex_buffer;
-        Index *index_buffer;
-        std::size_t num_vertices = 0, num_indices = 0;
+        std::vector<Vertex>          vertex_buffer;
+        std::vector<Index>           index_buffer;
         std::vector<gl::Texture2d *> textures;
 };
 

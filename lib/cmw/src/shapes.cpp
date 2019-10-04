@@ -70,7 +70,9 @@ Line::Line(const std::vector<Position> &positions, gl::Texture2d &texture, Color
     this->get_mesh().set_data(vertices, indices);
 }
 
-Point::Point(gl::Texture2d &texture, Colorf color, GLfloat width): Shape(texture, color), width(width) { }
+Point::Point(gl::Texture2d &texture, Colorf color, GLfloat width): Shape(texture, color), width(width) {
+    this->get_mesh().set_data(std::vector<Mesh::Index>{0});
+}
 
 Point::Point(const Position &position, gl::Texture2d &texture, Colorf color, GLfloat width):
         Point(texture, color, width) {

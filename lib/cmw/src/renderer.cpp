@@ -49,17 +49,16 @@ Renderer::Renderer(ResourceManager &resource_man): resource_man(resource_man),
         gl::BufferElement::Int,
         gl::BufferElement::Uint, // Ubyte padded to 4 bytes
     });
-    this->vbo.set_data(nullptr, sizeof(Vertex) * this->max_indices, GL_DYNAMIC_DRAW);
-    this->ebo.set_data(nullptr, sizeof(Index)  * this->max_vertices,  GL_DYNAMIC_DRAW);
+    this->vbo.set_data(nullptr, sizeof(Vertex) * this->max_vertices, GL_DYNAMIC_DRAW);
+    this->ebo.set_data(nullptr, sizeof(Index)  * this->max_indices,  GL_DYNAMIC_DRAW);
 
     this->textures.reserve(this->max_textures);
 }
 
 void Renderer::end(gl::ShaderProgram &program, GLenum mode) {
-    glUnmapBuffer(GL_ARRAY_BUFFER);
-    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
-    bind_all(this->vao, program);
+    bind_all(this->vao, this->ebo, this->vbo, program);
+    this->vbo.set_sub_data(this->vertex_buffer.data(), this->vertex_buffer.size() * sizeof(Vertex));
+    this->ebo.set_sub_data(this->index_buffer.data(),  this->index_buffer.size()  * sizeof(Index));
 
     for (std::size_t i = 0; i < this->textures.size(); ++i) {
         this->mesh_program.set_value("u_textures[" + std::to_string(i) + "]", (int)i);
@@ -68,15 +67,18 @@ void Renderer::end(gl::ShaderProgram &program, GLenum mode) {
     }
 
     program.set_value("u_view_proj", *this->view_proj);
-    glDrawElements(mode, this->num_indices, GL_UNSIGNED_INT, 0);
+    glDrawElements(mode, this->index_buffer.size(), GL_UNSIGNED_INT, 0);
 
+    this->vertex_buffer.clear();
+    this->index_buffer.clear();
     this->textures.clear();
-    this->num_vertices = this->num_indices = 0;
 }
 
 void Renderer::add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode) {
-    if (this->textures.size() > this->max_textures) // Force flush. We assume vertices and indices will stays in bounds
-        end(GL_TRIANGLES);
+    if ((this->textures.size() >= this->max_textures)
+            || (this->vertex_buffer.size() >= this->max_vertices)
+            || (this->index_buffer.size() >= this->max_indices)) // Don't accept new data
+        return;
 
     int tex_idx;
     auto it = std::find(this->textures.begin(), this->textures.end(), &mesh.get_texture());
@@ -87,18 +89,21 @@ void Renderer::add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode) 
         tex_idx = this->textures.size() - 1;
     }
 
-    for (const auto &index: mesh.get_indices()) {
-        this->index_buffer[this->num_indices].index = (std::uint32_t)(this->num_vertices + index);
-        this->num_indices++;
-    }
+    auto &vertices = mesh.get_vertices();
+    auto &indices  = mesh.get_indices();
+    auto vbo_sz = this->vertex_buffer.size();
+    auto ebo_sz = this->index_buffer.size();
 
-    for (const auto &vertex: mesh.get_vertices()) {
+    this->index_buffer.reserve(ebo_sz + indices.size());
+    for (const auto &index: indices)
+        this->index_buffer.emplace_back(vbo_sz + index);
+
+    this->vertex_buffer.reserve(vbo_sz + vertices.size());
+    for (const auto &vertex: vertices) {
         glm::vec3 position = glm::vec3(model * glm::vec4((glm::vec3)vertex.position, 1.0f)); // Apply model matrix
-        this->vertex_buffer[this->num_vertices].vertex       = {position, vertex.uv};
-        this->vertex_buffer[this->num_vertices].blend_color  = mesh.get_blend_color();
-        this->vertex_buffer[this->num_vertices].tex_idx      = tex_idx;
-        this->vertex_buffer[this->num_vertices].mode         = (std::uint8_t)mode;
-        this->num_vertices++;
+        Vertex vert{Mesh::Vertex{position, vertex.uv}, mesh.get_blend_color(), tex_idx, 0};
+        vert.mode = (std::uint8_t)mode; // FIXME: for some reason the mode is not correctly set when using emplace_back, or when directly passing it to the constructor
+        this->vertex_buffer.push_back(vert);
     }
 }
 
