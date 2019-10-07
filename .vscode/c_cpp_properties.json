@@ -8,8 +8,8 @@
                 "${workspaceFolder}/lib/stb_image/include",
                 "${workspaceFolder}/lib/stb_truetype/include",
                 "${workspaceFolder}/**",
-                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.1.0/include/",
-                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.1.0/include-fixed/"
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.2.0/include/",
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.2.0/include-fixed/"
             ],
             "defines": [
                 "DEBUG",
@@ -38,7 +38,7 @@
                 "${DEVKITPRO}/portlibs/switch/include",
 
                 "/usr/include",
-                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.1.0/include/"
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/9.2.0/include/"
             ],
             "defines": [
                 "__SWITCH__",
