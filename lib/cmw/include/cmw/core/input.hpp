@@ -431,7 +431,7 @@ class InputManager {
 
         template <typename T>
         void process(T event) const {
-            for (auto &[id, cb]: this->callbacks[(int)event.get_type()])
+            for (const auto &[id, cb]: this->callbacks[(int)event.get_type()])
                 cb(event);
         }
 

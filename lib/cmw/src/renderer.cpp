@@ -89,8 +89,8 @@ void Renderer::add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode) 
         tex_idx = this->textures.size() - 1;
     }
 
-    auto &vertices = mesh.get_vertices();
-    auto &indices  = mesh.get_indices();
+    const auto &vertices = mesh.get_vertices();
+    const auto &indices  = mesh.get_indices();
     auto vbo_sz = this->vertex_buffer.size();
     auto ebo_sz = this->index_buffer.size();
 

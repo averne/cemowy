@@ -79,7 +79,7 @@ struct BufferLayout {
 
     static constexpr std::size_t get_stride(std::initializer_list<BufferElement> &&elements) {
         std::size_t stride = 0;
-        for (auto &element: elements)
+        for (const auto &element: elements)
             stride += element.size;
         return stride;
     }
@@ -137,7 +137,7 @@ class VertexBufferN: public BufferN<GL_ARRAY_BUFFER, N> {
     public:
         static void set_layout(BufferLayout &&layout) {
             std::size_t i = 0, off = 0;
-            for (auto &element: layout.elements) {
+            for (const auto &element: layout.elements) {
                 if (element.type & (BufferElement::_Byte | BufferElement::_Ubyte | BufferElement::_Int | BufferElement::_Uint))
                     set_attrib_iptr(i, element.nb, element.gl_type, layout.stride, (GLvoid *)off);
                 else

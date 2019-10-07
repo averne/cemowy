@@ -32,7 +32,7 @@ class Button: public Widget {
         void draw(Renderer &renderer, float dt) override { }
 
         bool collides(const Position &position) const override {
-            auto &vertices = this->inner.get_mesh().get_vertices();
+            const auto &vertices = this->inner.get_mesh().get_vertices();
             return vertices[0].position <= position && position <= vertices[1].position;
         }
 

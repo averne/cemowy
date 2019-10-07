@@ -120,7 +120,7 @@ int main() {
     CMW_TRACE("Vendor: %s, GL version: %s, GLSL version: %s\n",
         glGetString(GL_VENDOR), glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    app->get_window().register_callback<cmw::input::KeyPressedEvent>([&window = app->get_window()](auto &e) {
+    app->get_window().register_callback<cmw::input::KeyPressedEvent>([&window = app->get_window()](const auto &e) {
 #ifdef CMW_SWITCH
         if (e.get_key() == cmw::input::KeySwitchPlus)
 #else
@@ -215,7 +215,7 @@ int main() {
     cmw::widgets::Scene my_scene({0, 0}, {window_w, window_h});
     cmw::widgets::Button button(&my_scene, {{10, 10}, {100, 100}}, "test");
 
-    app->get_window().get_input_manager().register_callback<cmw::input::KeyPressedEvent>([&camera](auto &e) {
+    app->get_window().get_input_manager().register_callback<cmw::input::KeyPressedEvent>([&camera](const auto &e) {
 #ifdef CMW_SWITCH
         if (e.get_key() == cmw::input::KeySwitchDleft)
             camera.rotate(1.0f);

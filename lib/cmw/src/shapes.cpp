@@ -23,7 +23,7 @@ namespace cmw::shapes {
 
 Circle::Circle(gl::Texture2d &texture, Colorf color): Shape(texture, color) { }
 
-Circle::Circle(const std::vector<Mesh::Vertex> &vertices, const std::vector<Mesh::Index> &indices, 
+Circle::Circle(const std::vector<Mesh::Vertex> &vertices, const std::vector<Mesh::Index> &indices,
         gl::Texture2d &texture, Colorf color):
         Circle(texture, color) {
     this->mesh.set_data(vertices, indices);
@@ -58,7 +58,7 @@ Line::Line(const std::vector<Position> &positions, gl::Texture2d &texture, Color
     std::vector<Mesh::Index> indices;
 
     vertices.reserve(positions.size());
-    for (auto &pos: positions)
+    for (const auto &pos: positions)
         vertices.emplace_back(pos);
 
     indices.reserve(2 * positions.size() - 2);
