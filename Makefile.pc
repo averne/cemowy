@@ -54,7 +54,8 @@ DEBUG_TARGET      =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc-dbg.$(EXTENSION), .$(O
 REL_DEFINES_FLAGS =    $(addprefix -D,$(RELEASE_DEFINES))
 DBG_DEFINES_FLAGS =    $(addprefix -D,$(DEBUG_DEFINES))
 
-INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
+INCLUDE_FLAGS     =    $(addprefix -I$(CURDIR)/,$(INCLUDES)) $(foreach dir,$(CUSTOM_LIBS),-I$(CURDIR)/$(dir)/include) \
+					   $(foreach dir,$(filter-out $(CUSTOM_LIBS),$(LIBS)),-I$(dir)/include)
 LIB_FLAGS         =    $(foreach dir,$(LIBS),-L$(dir)/lib)
 
 # -----------------------------------------------
@@ -68,24 +69,24 @@ all: release debug
 libs:
 	@for dir in $(CUSTOM_LIBS); do $(MAKE) --no-print-directory -C $$dir -f Makefile.pc; done
 
-release: libs $(RELEASE_TARGET)
+release: $(RELEASE_TARGET)
 
-debug: libs $(DEBUG_TARGET)
+debug: $(DEBUG_TARGET)
 
 run: debug
 	@echo "Running" $(DEBUG_TARGET)
 	@$(DEBUG_TARGET)
 
-$(RELEASE_TARGET): $(LIBS_TARGET) $(RELEASE_OFILES)
+$(RELEASE_TARGET): $(RELEASE_OFILES) | libs
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
-	@$(LD) $(ARCH) $(RELEASE_LDFLAGS) $(LIB_FLAGS) $^ -o $@ $(LINKS)
+	@$(LD) $(ARCH) $(RELEASE_LDFLAGS) $(LIB_FLAGS) $(RELEASE_OFILES) -o $@ $(LINKS)
 	@echo "Built" $(notdir $@)
 
-$(DEBUG_TARGET): $(LIBS_TARGET) $(DEBUG_OFILES)
+$(DEBUG_TARGET): $(DEBUG_OFILES) | libs
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
-	@$(LD) $(ARCH) $(DEBUG_LDFLAGS) $(LIB_FLAGS) $^ -o $@ $(LINKS)
+	@$(LD) $(ARCH) $(DEBUG_LDFLAGS) $(LIB_FLAGS) $(DEBUG_OFILES) -o $@ $(LINKS)
 	@echo "Built" $(notdir $@)
 
 $(BUILD)/%.c.pc-rel.o: %.c

@@ -33,6 +33,14 @@ RANLIB            =    $(PREFIX)gcc-ranlib
 
 # -----------------------------------------------
 
+export PATH      :=    $(DEVKITPRO)/tools/bin:$(DEVKITPRO)/devkitA64/bin:$(PORTLIBS)/bin:$(PATH)
+
+PORTLIBS          =    $(DEVKITPRO)/portlibs/switch
+LIBNX             =    $(DEVKITPRO)/libnx
+LIBS             :=    $(LIBS) $(LIBNX) $(PORTLIBS)
+
+# -----------------------------------------------
+
 CFILES            =    $(COMMON_CFILES:%=$(SOURCES)/%)
 CFILES           +=    $(SWITCH_CFILES:%=$(SOURCES)/%)
 CPPFILES          =    $(shell find $(SOURCES) -name *.cpp)
@@ -43,15 +51,8 @@ DFILES            =    $(OFILES:.o=.d)
 LIB_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.$(EXTENSION), .$(OUT)/$(TARGET)-nx.$(EXTENSION))
 
 DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
-INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
-
-# -----------------------------------------------
-
-export PATH      :=    $(DEVKITPRO)/tools/bin:$(DEVKITPRO)/devkitA64/bin:$(PORTLIBS)/bin:$(PATH)
-
-PORTLIBS          =    $(DEVKITPRO)/portlibs/switch
-LIBNX             =    $(DEVKITPRO)/libnx
-LIBS             :=    $(LIBS) $(LIBNX) $(PORTLIBS)
+INCLUDE_FLAGS     =    $(addprefix -I$(CURDIR)/,$(INCLUDES)) $(foreach dir,$(CUSTOM_LIBS),-I$(CURDIR)/$(dir)/include) \
+					   $(foreach dir,$(filter-out $(CUSTOM_LIBS),$(LIBS)),-I$(dir)/include)
 
 # -----------------------------------------------
 

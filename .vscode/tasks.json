@@ -7,7 +7,8 @@
             "command": "make",
             "args": [
                 "pc",
-                "release"
+                "release",
+                "-j$(nproc)"
             ],
             "presentation": {
                 "reveal": "always",
@@ -25,7 +26,8 @@
             "command": "make",
             "args": [
                 "pc",
-                "debug"
+                "debug",
+                "-j$(nproc)"
             ],
             "group": {
                 "kind": "build",
@@ -46,7 +48,8 @@
             "command": "make",
             "args": [
                 "nx",
-                "all"
+                "all",
+                "-j$(nproc)"
             ],
             "presentation": {
                 "reveal": "always",
@@ -65,7 +68,8 @@
             "args": [
                 "pc",
                 "nx",
-                "all"
+                "all",
+                "-j$(nproc)"
             ],
             "presentation": {
                 "reveal": "always",

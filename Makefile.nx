@@ -38,6 +38,14 @@ NM                =    $(PREFIX)gcc-nm
 
 # -----------------------------------------------
 
+export PATH      :=    $(DEVKITPRO)/tools/bin:$(DEVKITPRO)/devkitA64/bin:$(PORTLIBS)/bin:$(PATH)
+
+PORTLIBS          =    $(DEVKITPRO)/portlibs/switch
+LIBNX             =    $(DEVKITPRO)/libnx
+LIBS              =    $(CUSTOM_LIBS) $(LIBNX) $(PORTLIBS)
+
+# -----------------------------------------------
+
 CFILES            =    $(shell find $(SOURCES) -name *.c)
 CPPFILES          =    $(shell find $(SOURCES) -name *.cpp)
 SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
@@ -51,16 +59,11 @@ NACP_TARGET       =    $(if $(OUT:=), $(OUT)/$(TARGET).nacp, .$(OUT)/$(TARGET).n
 NRO_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET).nro, .$(OUT)/$(TARGET).nro)
 
 DEFINE_FLAGS      =    $(addprefix -D,$(DEFINES))
-INCLUDE_FLAGS     =    $(addprefix -I,$(INCLUDES)) $(foreach dir,$(LIBS),-I$(dir)/include)
+INCLUDE_FLAGS     =    $(addprefix -I$(CURDIR)/,$(INCLUDES)) $(foreach dir,$(CUSTOM_LIBS),-I$(CURDIR)/$(dir)/include) \
+					   $(foreach dir,$(filter-out $(CUSTOM_LIBS),$(LIBS)),-I$(dir)/include)
 LIB_FLAGS         =    $(foreach dir,$(LIBS),-L$(dir)/lib)
 
 # -----------------------------------------------
-
-export PATH      :=    $(DEVKITPRO)/tools/bin:$(DEVKITPRO)/devkitA64/bin:$(PORTLIBS)/bin:$(PATH)
-
-PORTLIBS          =    $(DEVKITPRO)/portlibs/switch
-LIBNX             =    $(DEVKITPRO)/libnx
-LIBS              =    $(CUSTOM_LIBS) $(LIBNX) $(PORTLIBS)
 
 ifeq ($(strip $(APP_TITLE)),)
     APP_TITLE     =    $(TARGET)
@@ -94,7 +97,7 @@ endif
 
 .PHONY: all libs run clean mrproper
 
-all: libs $(NX_TARGET)
+all: $(NX_TARGET)
 
 run: all
 	@echo "Running" $(NX_TARGET)
@@ -106,13 +109,13 @@ libs:
 $(NX_TARGET): $(ELF_TARGET) $(NACP_TARGET)
 	@echo " NRO " $@
 	@mkdir -p $(dir $@)
-	@elf2nro $< $@ $(NROFLAGS)
+	@elf2nro $< $@ $(NROFLAGS) > /dev/null
 	@echo "Built" $(notdir $@)
 
-$(ELF_TARGET): $(LIBS_TARGET) $(OFILES)
+$(ELF_TARGET): $(OFILES) | libs
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
-	@$(LD) $(ARCH) $(LDFLAGS) -Wl,-Map,$(BUILD)/$(TARGET)-nx.map $(LIB_FLAGS) $^ $(LINKS) -o $@
+	@$(LD) $(ARCH) $(LDFLAGS) -Wl,-Map,$(BUILD)/$(TARGET)-nx.map $(LIB_FLAGS) $(OFILES) $(LINKS) -o $@
 	@$(NM) -CSn $@ > $(BUILD)/$(TARGET)-nx.lst
 
 $(BUILD)/%.c.nx.o: %.c
