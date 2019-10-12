@@ -18,6 +18,8 @@
 #pragma once
 
 #include <cstdint>
+#include <algorithm>
+#include <initializer_list>
 #include <glm/glm.hpp>
 
 namespace cmw {
@@ -132,6 +134,8 @@ struct Position3X {
     constexpr inline Position3X(std::initializer_list<T> list) {
         std::copy_n(list.begin(), 3, &this->x);
     }
+    template <typename U> constexpr inline Position3X(const Position2X<U> &pos, T z = 0):
+        x(static_cast<T>(pos.x)), y(static_cast<T>(pos.y)), z(z) { }
 
     constexpr inline operator glm::vec<3, T, glm::defaultp>() const {
         return *reinterpret_cast<const glm::vec<3, T, glm::defaultp> *>(this);
@@ -238,6 +242,10 @@ struct Position4X {
     constexpr inline Position4X(std::initializer_list<T> list) {
         std::copy_n(list.begin(), 4, &this->x);
     }
+    template <typename U> constexpr inline Position4X(const Position2X<U> &pos, T z = 0, T w = 0):
+        x(static_cast<T>(pos.x)), y(static_cast<T>(pos.y)), z(z), w(w) { }
+    template <typename U> constexpr inline Position4X(const Position3X<U> &pos, T w = 0):
+        x(static_cast<T>(pos.x)), y(static_cast<T>(pos.y)), z(static_cast<T>(pos.z)), w(w) { }
 
     constexpr inline operator glm::vec<3, T, glm::defaultp>() const {
         return *reinterpret_cast<const glm::vec<4, T, glm::defaultp> *>(this);

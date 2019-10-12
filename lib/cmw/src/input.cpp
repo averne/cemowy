@@ -21,6 +21,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "cmw/core/application.hpp"
 #include "cmw/core/input.hpp"
 #include "cmw/core/window.hpp"
 #include "cmw/utils/position.hpp"
@@ -74,8 +75,9 @@ void InputManager::char_cb(GLFWwindow *window, unsigned int codepoint) {
 }
 
 void InputManager::cursor_cb(GLFWwindow *window, double x, double y) {
+    auto [w, h] = Application::get_instance().get_window().get_size();
     InputManager &tmp_this = ((Window *)glfwGetWindowUserPointer(window))->get_input_manager();
-    tmp_this.process(MouseMovedEvent(x, y));
+    tmp_this.process(MouseMovedEvent(x, h - y));
 }
 
 void InputManager::scroll_cb(GLFWwindow *window, double x, double y) {

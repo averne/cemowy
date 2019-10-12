@@ -38,7 +38,8 @@ Window *window = nullptr;
 
 static void mouse_pos_cb(input::MouseMovedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
-    io.MousePos = ImVec2(e.get_x(), e.get_y());
+    auto [w, h] = window->get_size();
+    io.MousePos = ImVec2(e.get_x(), h - e.get_y());
 }
 
 static void mouse_button_press_cb(input::MouseButtonPressedEvent &e) {
