@@ -129,6 +129,10 @@ int main() {
             window.set_should_close(true);
     });
 
+    app->get_window().register_callback<cmw::input::MouseMovedEvent>([](const auto &e) {
+        CMW_TRACE("x: %.3f, y: %.3f\n", e.get_x(), e.get_y());
+    });
+
 #ifdef CMW_SWITCH
     cmw::Font font{PlSharedFontType_Standard};
 #else
@@ -213,7 +217,7 @@ int main() {
     cmw::OrthographicCamera camera = {0.0f, (float)window_w, 0.0f, (float)window_h, -10.0f, 10.0f};
 
     cmw::widgets::Scene my_scene({0, 0}, {window_w, window_h});
-    cmw::widgets::Button button(&my_scene, {{10, 10}, {100, 100}}, "test");
+    cmw::widgets::Button button(&my_scene, {{10, 10}, {100, 10}, {100, 100}, {10, 100}}, "test");
 
     app->get_window().get_input_manager().register_callback<cmw::input::KeyPressedEvent>([&camera](const auto &e) {
 #ifdef CMW_SWITCH

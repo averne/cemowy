@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "cmw/core/renderer.hpp"
 #include "cmw/utils/position.hpp"
 #include "cmw/widgets/widget.hpp"
@@ -43,9 +45,12 @@ class Scene: public Widget {
             im.remove_callback<input::MouseButtonPressedEvent>(this->click_cb);
         }
 
-        void draw(Renderer &renderer, float dt) override {
-            for (auto &child: this->children)
-                child->draw(renderer, dt);
+        void draw(Renderer &renderer, const glm::mat4 &model, float dt) override {
+            this->on_draw(renderer, dt);
+            for (auto &child: this->children) {
+                child->on_draw(renderer, dt);
+                child->draw(renderer, model, dt);
+            }
         }
 
         bool collides(const Position &position) const override {
@@ -55,14 +60,12 @@ class Scene: public Widget {
         void on_draw(Renderer &renderer, float dt) override { }
 
         void on_hover(input::MouseMovedEvent &event) override {
-            CMW_TRACE("x: %.3f, y: %.3f\n", event.get_x(), event.get_y());
-            if (!collides({event.get_x(), event.get_y(), 0.0f})){
-                this->hovered = false;
+            if (!collides(event.get_pos()))
                 return;
-            }
-            this->hovered = true;
+
             for (auto &child: this->children)
-                child->on_hover(event);
+                if (child->collides(event.get_pos()))
+                    child->on_hover(event);
         }
 
         void on_click(input::MouseButtonPressedEvent &event) override {

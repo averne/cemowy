@@ -26,21 +26,25 @@ class Button: public Widget {
     public:
         Button(Widget *parent, const std::vector<Position> &positions, const std::string &text):
                 Widget(parent), text(text), inner(positions), outer(positions) {
-
+            this->inner.set_blend_color(Colorf{0.0f, 0.0f, 1.0f, 1.0f});
+            this->outer.set_blend_color(Colorf{1.0f, 0.0f, 0.0f, 1.0f});
         }
 
-        void draw(Renderer &renderer, float dt) override { }
+        void draw(Renderer &renderer, const glm::mat4 &model, float dt) override {
+            renderer.submit(this->inner, model);
+            renderer.submit(this->outer, model);
+        }
 
         bool collides(const Position &position) const override {
             const auto &vertices = this->inner.get_mesh().get_vertices();
             return vertices[0].position <= position && position <= vertices[1].position;
         }
 
-        void on_draw(Renderer &renderer, float dt) override { }
+        void on_draw(Renderer &renderer, float dt) override {
+
+        }
 
         void on_hover(input::MouseMovedEvent &event) override {
-            if (!collides({event.get_x(), event.get_y(), 0.0f}))
-                return;
             CMW_TRACE("Button hovered\n");
             // this->inner.set_blend_color({1.0f, 0.0f, 0.0f, 1.0f});
         }

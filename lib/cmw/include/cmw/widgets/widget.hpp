@@ -39,7 +39,7 @@ class Widget {
 
         inline void add_child(Widget *child) { this->children.push_back(child); }
 
-        virtual void draw(Renderer &renderer, float dt) = 0;
+        virtual void draw(Renderer &renderer, const glm::mat4 &model, float dt) = 0;
 
         virtual bool collides(const Position &position) const = 0;
 

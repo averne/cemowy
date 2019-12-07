@@ -54,7 +54,7 @@ class Renderer {
         }
 
         template <typename T>
-        void begin(T &&camera, float dt) {
+        inline void begin(T &&camera, float dt) {
             this->view_proj = &camera.get_view_proj();
             this->dt = dt;
         }
@@ -63,13 +63,13 @@ class Renderer {
         void end(GLenum mode = GL_TRIANGLES) { end(this->get_default_mesh_shader(), mode); }
 
         template <typename T>
-        inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
+        inline void submit(T &&element, const glm::mat4 &model = glm::mat4(1.0f), RenderingMode mode = RenderingMode::Default) {
             element.on_draw(*this, this->dt);
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
             if constexpr (std::is_base_of_v<shapes::Shape, Type>)
                 add_mesh(element.get_mesh(), model, mode);
             else if constexpr (std::is_base_of_v<widgets::Widget, Type>)
-                element.draw(*this, this->dt);
+                element.draw(*this, model, this->dt);
             else
                 throw std::runtime_error("Wrong type for Renderer::submit");
         }
@@ -98,8 +98,6 @@ class Renderer {
             Mesh::Index index;
             constexpr inline Index(const Mesh::Index &i): index(i) { }
         };
-
-    public:
 
     protected:
         ResourceManager &resource_man;
