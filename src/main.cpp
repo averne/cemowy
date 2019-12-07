@@ -137,8 +137,8 @@ int main() {
 
     app->get_renderer().set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
 
-    cmw::gl::Texture2d &cube_tex  = app->get_resource_manager().get_texture("textures/191407_1308820425_orig.jpg");
-    cmw::gl::Texture2d &bog_tex   = app->get_resource_manager().get_texture("textures/bog.jpg");
+    cmw::gl::Texture2d &cube_tex  = app->get_resource_manager().get_texture("textures/rectangle.jpg");
+    cmw::gl::Texture2d &bog_tex   = app->get_resource_manager().get_texture("textures/triangle.jpg");
     cmw::gl::Texture2d &white_tex = app->get_resource_manager().get_white_texture();
 
     cmw::gl::ShaderProgram &cube_program = app->get_resource_manager().get_shader("shaders/cube.vert", "shaders/cube.frag");
