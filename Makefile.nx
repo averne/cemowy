@@ -95,7 +95,7 @@ endif
 
 .SUFFIXES:
 
-.PHONY: all libs run clean mrproper
+.PHONY: all libs run clean mrproper $(CUSTOM_LIBS)
 
 all: $(NX_TARGET)
 
@@ -103,8 +103,10 @@ run: all
 	@echo "Running" $(NX_TARGET)
 	@nxlink -s $(NX_TARGET)
 
-libs:
-	@for dir in $(CUSTOM_LIBS); do $(MAKE) --no-print-directory -C $$dir -f Makefile.nx; done
+libs: $(CUSTOM_LIBS)
+
+$(CUSTOM_LIBS):
+	@$(MAKE) -s --no-print-directory -C $@ -f Makefile.nx
 
 $(NX_TARGET): $(ELF_TARGET) $(NACP_TARGET)
 	@echo " NRO " $@

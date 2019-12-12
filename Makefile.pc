@@ -62,12 +62,14 @@ LIB_FLAGS         =    $(foreach dir,$(LIBS),-L$(dir)/lib)
 
 .SUFFIXES:
 
-.PHONY: all libs release debug run clean mrproper
+.PHONY: all libs release debug run clean mrproper $(CUSTOM_LIBS)
 
 all: release debug
 
-libs:
-	@for dir in $(CUSTOM_LIBS); do $(MAKE) --no-print-directory -C $$dir -f Makefile.pc; done
+libs: $(CUSTOM_LIBS)
+
+$(CUSTOM_LIBS):
+	@$(MAKE) -s --no-print-directory -C $@ -f Makefile.pc
 
 release: $(RELEASE_TARGET)
 
