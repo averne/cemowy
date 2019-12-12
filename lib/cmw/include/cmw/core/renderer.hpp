@@ -99,8 +99,6 @@ class Renderer {
             constexpr inline Index(const Mesh::Index &i): index(i) { }
         };
 
-    public:
-
     protected:
         ResourceManager &resource_man;
         gl::ShaderProgram &mesh_program;
