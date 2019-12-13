@@ -47,7 +47,7 @@ RELEASE_OFILES    =    $(CFILES:%=$(BUILD)/%.pc-rel.o) $(CPPFILES:%=$(BUILD)/%.p
 DEBUG_OFILES      =    $(CFILES:%=$(BUILD)/%.pc-dbg.o) $(CPPFILES:%=$(BUILD)/%.pc-dbg.o) $(SFILES:%=$(BUILD)/%.pc-dbg.o)
 DFILES            =    $(RELEASE_OFILES:.o=.d) $(DEBUG_OFILES:.o=.d)
 
-LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS) -name "*-pc.a")
+LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS)/lib -name "*-pc.a")
 RELEASE_TARGET    =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
 DEBUG_TARGET      =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc-dbg.$(EXTENSION), .$(OUT)/$(TARGET)-pc-dbg.$(EXTENSION))
 
@@ -79,13 +79,13 @@ run: debug
 	@echo "Running" $(DEBUG_TARGET)
 	@$(DEBUG_TARGET)
 
-$(RELEASE_TARGET): $(RELEASE_OFILES) | libs
+$(RELEASE_TARGET): $(RELEASE_OFILES) $(LIBS_TARGET) | libs
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
 	@$(LD) $(ARCH) $(RELEASE_LDFLAGS) $(LIB_FLAGS) $(RELEASE_OFILES) -o $@ $(LINKS)
 	@echo "Built" $(notdir $@)
 
-$(DEBUG_TARGET): $(DEBUG_OFILES) | libs
+$(DEBUG_TARGET): $(DEBUG_OFILES) $(LIBS_TARGET) | libs
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
 	@$(LD) $(ARCH) $(DEBUG_LDFLAGS) $(LIB_FLAGS) $(DEBUG_OFILES) -o $@ $(LINKS)

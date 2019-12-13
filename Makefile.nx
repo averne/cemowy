@@ -52,7 +52,7 @@ SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
 OFILES            =    $(CFILES:%=$(BUILD)/%.nx.o) $(CPPFILES:%=$(BUILD)/%.nx.o) $(SFILES:%=$(BUILD)/%.nx.o)
 DFILES            =    $(OFILES:.o=.d)
 
-LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS) -name "*-nx.a")
+LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS)/lib -name "*-nx.a")
 NX_TARGET         =    $(if $(OUT:=), $(OUT)/$(TARGET).$(EXTENSION), .$(OUT)/$(TARGET).$(EXTENSION))
 ELF_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.elf, .$(OUT)/$(TARGET)-nx.elf)
 NACP_TARGET       =    $(if $(OUT:=), $(OUT)/$(TARGET).nacp, .$(OUT)/$(TARGET).nacp)
@@ -114,7 +114,7 @@ $(NX_TARGET): $(ELF_TARGET) $(NACP_TARGET)
 	@elf2nro $< $@ $(NROFLAGS) > /dev/null
 	@echo "Built" $(notdir $@)
 
-$(ELF_TARGET): $(OFILES) | libs
+$(ELF_TARGET): $(OFILES) $(LIBS_TARGET) | libs
 	@echo " LD  " $@
 	@mkdir -p $(dir $@)
 	@$(LD) $(ARCH) $(LDFLAGS) -Wl,-Map,$(BUILD)/$(TARGET)-nx.map $(LIB_FLAGS) $(OFILES) $(LINKS) -o $@
