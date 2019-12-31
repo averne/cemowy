@@ -23,21 +23,15 @@
 #include <map>
 
 #include "cmw/core/log.hpp"
+#include "cmw/gl/shader_program.hpp"
+#include "cmw/gl/texture.hpp"
 #include "cmw/platform.h"
 
 namespace cmw {
 
-// Forward declarations
-namespace gl {
-    class ShaderProgram;
-
-    template <std::size_t N>
-    class Texture2dN;
-    using Texture2d = Texture2dN<1>;
-}
-
 class ResourceManager {
     public:
+        // Dummy path for white (empty) texture
         static inline std::string WhiteTexture = "";
 
         ResourceManager();
@@ -47,6 +41,15 @@ class ResourceManager {
 
         gl::Texture2d &get_white_texture() const { return *this->white_texture; }
 
+        template <typename ...Args>
+        Font &load_font(Args &&...args) {
+            return this->fonts.emplace_back(std::forward<Args>(args)...);
+        }
+
+        inline std::vector<Font> &get_fonts() { return this->fonts; }
+        inline const std::vector<Font> &get_fonts() const { return this->fonts; }
+
+        // Asset reading helpers
         static inline FILE *open_asset(const std::string &path, const std::string &mode = "r") {
 #ifdef CMW_SWITCH
             std::string asset_path = "romfs:/" + path;
@@ -81,5 +84,14 @@ class ResourceManager {
         std::map<std::string, gl::Texture2d> textures;
         std::map<std::string, gl::ShaderProgram> shader_programs;
 };
+
+template <typename T>
+inline T read_asset(const std::string &path) {
+    return ResourceManager::read_asset<T>(path);
+}
+
+inline FILE *open_asset(const std::string &path, const std::string &mode) {
+    return ResourceManager::open_asset(path, mode);
+}
 
 } // namespace cmw

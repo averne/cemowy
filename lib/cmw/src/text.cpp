@@ -21,6 +21,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "cmw/core/resource_manager.hpp"
 #include "cmw/core/window.hpp"
 #include "cmw/gl/shader_program.hpp"
 #include "cmw/utils/error.hpp"
@@ -53,7 +54,7 @@ Glyph::Glyph(stbtt_fontinfo *font_ctx, float scale, int codepoint, int idx, void
     stbtt_GetFontVMetrics(&this->font_ctx, &this->ascender, &this->descender, &this->linegap);                      \
     this->ascender *= this->font_scale; this->descender *= this->font_scale; this->linegap *= this->font_scale;     \
                                                                                                                     \
-    for (char16_t i = first_cached; i <= last_cached; ++i)                                                              \
+    for (char16_t i = first_cached; i <= last_cached; ++i)                                                          \
         cache_glyph(i);                                                                                             \
 })
 

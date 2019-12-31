@@ -24,7 +24,6 @@
 #include <glad/glad.h>
 
 #include "cmw/core/log.hpp"
-#include "cmw/core/resource_manager.hpp"
 #include "cmw/gl/object.hpp"
 #include "cmw/utils.hpp"
 
@@ -39,7 +38,7 @@ class Shader: public GlObject {
         }
 
         Shader(const std::string &path): Shader() {
-            auto src = ResourceManager::read_asset<std::string>(path);
+            auto src = read_asset<std::string>(path);
             set_source(src);
             if (!compile()) {
                 print_log();

@@ -104,6 +104,7 @@ static inline void unbind_all(Args &&...args) {
 } // namespace cmw
 
 #include "cmw/utils/area.hpp"
+#include "cmw/utils/asset.hpp"
 #include "cmw/utils/color.hpp"
 #include "cmw/utils/error.hpp"
 #include "cmw/utils/position.hpp"
