@@ -19,15 +19,15 @@ INCLUDES          =    include
 CUSTOM_LIBS       =    lib/glfw lib/glad lib/imgui lib/stb_image lib/stb_truetype lib/cmw
 ROMFS             =    res
 
-DEFINES           =    __SWITCH__ DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI GLM_FORCE_PURE
+DEFINES           =    __SWITCH__ GLM_FORCE_PURE DEBUG CMW_LOG_BACKEND=CMW_LOG_BACKEND_IMGUI
 ARCH              =    -march=armv8-a+crc+crypto+simd -mtune=cortex-a57 -mtp=soft -fpie
 FLAGS             =    -Wall -pipe -g -O2 -ffunction-sections -fdata-sections
 CFLAGS            =    -std=gnu11
 CXXFLAGS          =    -std=gnu++17 -fno-rtti
 ASFLAGS           =
 LDFLAGS           =    -Wl,-pie -specs=$(DEVKITPRO)/libnx/switch.specs -g
-LINKS             =    -lglfw-nx -lEGL -lglapi -ldrm_nouveau -lm \
-                       -lglad-nx -lcmw-nx -limgui-nx -lstbi-nx -lstbtt-nx -lnx
+LINKS             =    -lglfw-nx -lglad-nx -lcmw-nx -limgui-nx -lstbi-nx -lstbtt-nx \
+                       -lEGL -lglapi -ldrm_nouveau -lm -lnx
 
 PREFIX            =    aarch64-none-elf-
 CC                =    $(PREFIX)gcc
