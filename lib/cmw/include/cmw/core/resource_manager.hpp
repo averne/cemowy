@@ -21,7 +21,10 @@
 #include <cstring>
 #include <string>
 #include <map>
+#include <vector>
+#include <memory>
 
+#include "cmw/core/text.hpp"
 #include "cmw/core/log.hpp"
 #include "cmw/gl/shader_program.hpp"
 #include "cmw/gl/texture.hpp"
@@ -42,12 +45,20 @@ class ResourceManager {
         gl::Texture2d &get_white_texture() const { return *this->white_texture; }
 
         template <typename ...Args>
-        Font &load_font(Args &&...args) {
-            return this->fonts.emplace_back(std::forward<Args>(args)...);
+        inline Font *load_font(Args &&...args) {
+            return &*this->fonts.emplace_back(std::make_unique<Font>(std::forward<Args>(args)...));
         }
 
-        inline std::vector<Font> &get_fonts() { return this->fonts; }
-        inline const std::vector<Font> &get_fonts() const { return this->fonts; }
+        inline Font *get_font(char16_t chr) {
+            for (auto &font: this->fonts)
+                if (font->has_glyph(chr))
+                    return &*font;
+            CMW_ERROR("Failed to find glyph %c (%#x)\n", chr, chr);
+            return nullptr;
+        }
+
+        inline std::vector<std::unique_ptr<Font>> &get_fonts() { return this->fonts; }
+        inline const std::vector<std::unique_ptr<Font>> &get_fonts() const { return this->fonts; }
 
         // Asset reading helpers
         static inline FILE *open_asset(const std::string &path, const std::string &mode = "r") {
@@ -81,6 +92,7 @@ class ResourceManager {
 
     private:
         gl::Texture2d *white_texture;
+        std::vector<std::unique_ptr<Font>> fonts;
         std::map<std::string, gl::Texture2d> textures;
         std::map<std::string, gl::ShaderProgram> shader_programs;
 };

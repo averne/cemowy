@@ -76,7 +76,10 @@
                 "panel": "shared",
                 "clear": true
             },
-            "problemMatcher": []
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": "absolute"
+            }
         },
         {
             "label": "pc clean",
@@ -140,6 +143,9 @@
         },
         {
             "label": "nx run",
+            "dependsOn": [
+                "nx"
+            ],
             "type": "shell",
             "command": "make",
             "args": [

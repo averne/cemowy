@@ -76,8 +76,22 @@ class Renderer {
 
         void add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default);
 
-        void draw_string(cmw::Font &font, const std::u16string &str,
-            Position pos = {0, 0, 0}, float scale = 1.0f, const Colorf &color = {1.0f, 1.0f, 1.0f});
+        void draw_glyph(Glyph &glyph, const Position &pos = {0, 0, 0}, float scale = 1.0f,
+            const Colorf &color = {1.0f, 1.0f, 1.0f});
+
+        inline void draw_char(Font &font, char16_t chr, const Position &pos = {0, 0, 0}, float scale = 1.0f,
+                const Colorf &color = {1.0f, 1.0f, 1.0f}) {
+            if (font.has_glyph(chr))
+                draw_glyph(font.get_glyph(chr), pos, scale, color);
+        }
+        inline void draw_char(char16_t chr, const Position &pos = {0, 0, 0}, float scale = 1.0f,
+                const Colorf &color = {1.0f, 1.0f, 1.0f}) {
+            if (auto *font = this->resource_man.get_font(chr); font)
+                draw_char(*font, chr, pos, scale, color);
+        }
+
+        void draw_string(const std::u16string &str, const Position &pos = {0, 0, 0}, float scale = 1.0f,
+            const Colorf &color = {1.0f, 1.0f, 1.0f});
 
         inline void set_clear_color(Colorf clear_color) { this->clear_color = clear_color; }
         inline       Colorf &get_clear_color()       { return this->clear_color; }

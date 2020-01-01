@@ -22,11 +22,7 @@
 #include <memory>
 #include <stb_truetype.h>
 
-#include "cmw/core/window.hpp"
-#include "cmw/gl/buffer.hpp"
-#include "cmw/gl/shader_program.hpp"
 #include "cmw/gl/texture.hpp"
-#include "cmw/gl/vertex_array.hpp"
 #include "cmw/utils/color.hpp"
 #include "cmw/platform.h"
 
@@ -70,6 +66,10 @@ class Font {
         Font(const std::string &path, char16_t first_cached = ' ', char16_t last_cached = '~');
         ~Font();
 
+        inline bool has_glyph(char16_t chr) const {
+            return (bool)stbtt_FindGlyphIndex(&this->font_ctx, chr);
+        }
+
         Glyph &cache_glyph(char16_t chr);
 
         Glyph &get_glyph(char16_t chr);
@@ -79,6 +79,10 @@ class Font {
         inline int get_ascender()  const { return this->ascender; }
         inline int get_descender() const { return this->descender; }
         inline int get_linegap()   const { return this->linegap; }
+
+        inline int get_kerning(int ch1, int ch2) const {
+            return stbtt_GetCodepointKernAdvance(&this->font_ctx, ch1, ch2);
+        }
 
         static constexpr float get_font_scale() { return font_scale; }
 

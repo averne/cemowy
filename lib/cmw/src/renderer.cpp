@@ -107,35 +107,44 @@ void Renderer::add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode) 
     }
 }
 
-void Renderer::draw_string(cmw::Font &font, const std::u16string &str, Position pos, float scale, const Colorf &color) {
-    int last_codepoint = -1;
-    float xpos = pos.x, ypos = pos.y;
-    for (char16_t chr: str) {
-        if (chr == u'\n') {
-            pos.y -= (font.get_ascender() + font.get_descender() + 40.0f) * scale; // ??? font.linegap == 0
-            xpos = pos.x;
-            continue;
-        }
-
-        auto &glyph = font.get_glyph(chr);
-
-        float w = (float)glyph.get_width() * scale, h = (float)glyph.get_height() * scale;
-        xpos += glyph.get_bearing() * scale;
-        ypos = pos.y - h - glyph.get_bitmap_top() * scale;
+void Renderer::draw_glyph(Glyph &glyph, const Position &pos, float scale, const Colorf &color) {
+        float chr_w = (float)glyph.get_width() * scale, chr_h = (float)glyph.get_height() * scale;
+        float chr_x = pos.x + glyph.get_bearing() * scale;
+        float chr_y = pos.y - chr_h - glyph.get_bitmap_top() * scale;
 
         std::vector<Mesh::Vertex> vertices = {
-            { {xpos,     ypos + h, pos.z}, {0.0, 0.0} },
-            { {xpos + w, ypos + h, pos.z}, {1.0, 0.0} },
-            { {xpos + w, ypos,     pos.z}, {1.0, 1.0} },
-            { {xpos,     ypos,     pos.z}, {0.0, 1.0} },
+            { {chr_x,         chr_y + chr_h, pos.z}, {0.0, 0.0} },
+            { {chr_x + chr_w, chr_y + chr_h, pos.z}, {1.0, 0.0} },
+            { {chr_x + chr_w, chr_y,         pos.z}, {1.0, 1.0} },
+            { {chr_x,         chr_y,         pos.z}, {0.0, 1.0} },
         };
 
         auto mesh = Mesh(vertices, std::vector<Mesh::Index>{0, 1, 2, 2, 3, 0}, glyph.get_texture(), color);
         add_mesh(mesh, glm::mat4(1.0f), RenderingMode::AlphaMap);
+}
 
-        xpos += glyph.get_advance() * scale;
+void Renderer::draw_string(const std::u16string &str, const Position &pos, float scale, const Colorf &color) {
+    int last_codepoint = 0;
+    Position cur_pos = pos;
+    Font *font = nullptr;
+
+    for (char16_t chr: str) {
+        // XXX: Should max(ascender/descender) of fonts present in the line
+        if (chr == u'\n') {
+            cur_pos.y -= (font->get_ascender() + font->get_descender() + 40.0f) * scale; // ??? font->linegap == 0
+            cur_pos.x = pos.x;
+            continue;
+        }
+
+        if (!(font = this->resource_man.get_font(chr)))
+            continue;
+
+        auto &glyph = font->get_glyph(chr);
+        draw_glyph(glyph, cur_pos, scale, color);
+
+        cur_pos.x += glyph.get_advance() * scale;
         if (last_codepoint)
-            xpos += stbtt_GetCodepointKernAdvance(font.get_ctx(), last_codepoint, glyph.get_codepoint()) * scale;
+            cur_pos.x += font->get_kerning(last_codepoint, glyph.get_codepoint()) * scale;
         last_codepoint = glyph.get_codepoint();
     }
 }

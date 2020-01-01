@@ -73,9 +73,11 @@ int main() {
     });
 
 #ifdef CMW_SWITCH
-    cmw::Font font{PlSharedFontType_Standard};
+    app->get_resource_manager().load_font(PlSharedFontType_Standard);
+    app->get_resource_manager().load_font(PlSharedFontType_NintendoExt);
 #else
-    cmw::Font font{"fonts/FontStandard.ttf"};
+    app->get_resource_manager().load_font("fonts/FontStandard.ttf");
+    app->get_resource_manager().load_font("fonts/FontNintendoExtended.ttf");
 #endif
 
     app->get_renderer().set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
@@ -205,8 +207,8 @@ int main() {
             glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)));
         app->get_renderer().submit(rectangle, glm::mat4(1.0f));
         app->get_renderer().submit(circle, glm::mat4(1.0f));
-        app->get_renderer().draw_string(font, u"123 Hello world\nBazinga é_è $£€",
-            {100.0f, 300.0f, 1.0f}, 0.5f, text_color);
+        app->get_renderer().draw_string(u"\ue000\ue044\ue122\n", {300.0f, 550.0f, 1.0f}, 0.5f, text_color);
+        app->get_renderer().draw_string(u"\ue121 123 Hello world\nBazinga é_è $£€", {100.0f, 300.0f, 1.0f}, 0.5f, text_color);
 
         app->get_renderer().submit(my_scene, glm::mat4(1.0f));
 
