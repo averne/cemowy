@@ -31,10 +31,10 @@ namespace cmw::imgui {
 
 #ifdef CMW_DEBUG
 
-namespace {
+namespace impl {
 
-float g_last_time = 0.0f;
-Window *window = nullptr;
+inline float g_last_time = 0.0f;
+inline Window *window = nullptr;
 
 static void mouse_pos_cb(input::MouseMovedEvent &e) {
     ImGuiIO &io = ImGui::GetIO();
@@ -114,24 +114,24 @@ static void draw_log_window(std::vector<char> &logs) {
 
 #endif // CMW_LOG_BACKEND_IS_IMGUI
 
-} // namespace
+} // namespace impl
 
 static inline void initialize(Window *win) {
-    window = win;
-    auto [w, h] = window->get_size();
+    impl::window = win;
+    auto [w, h] = impl::window->get_size();
 
     ImGui::CreateContext();
     ImGui::Gl3Impl::Init("#version 430");
     ImGui::StyleColorsDark();
 
-    input::InputManager &in_man = window->get_input_manager();
-    in_man.register_callback<input::MouseMovedEvent>(mouse_pos_cb);
-    in_man.register_callback<input::MouseScrolledEvent>(mouse_scroll_cb);
-    in_man.register_callback<input::MouseButtonPressedEvent>(mouse_button_press_cb);
-    in_man.register_callback<input::MouseButtonReleasedEvent>(mouse_button_release_cb);
-    in_man.register_callback<input::KeyPressedEvent>(keyboard_key_press_cb);
-    in_man.register_callback<input::KeyReleasedEvent>(keyboard_key_release_cb);
-    in_man.register_callback<input::CharTypedEvent>(keyboard_char_cb);
+    input::InputManager &in_man = impl::window->get_input_manager();
+    in_man.register_callback<input::MouseMovedEvent>(impl::mouse_pos_cb);
+    in_man.register_callback<input::MouseScrolledEvent>(impl::mouse_scroll_cb);
+    in_man.register_callback<input::MouseButtonPressedEvent>(impl::mouse_button_press_cb);
+    in_man.register_callback<input::MouseButtonReleasedEvent>(impl::mouse_button_release_cb);
+    in_man.register_callback<input::KeyPressedEvent>(impl::keyboard_key_press_cb);
+    in_man.register_callback<input::KeyReleasedEvent>(impl::keyboard_key_release_cb);
+    in_man.register_callback<input::CharTypedEvent>(impl::keyboard_char_cb);
 
     ImGuiIO &io = ImGui::GetIO();
 
@@ -181,7 +181,7 @@ static inline void initialize(Window *win) {
 static inline void finalize() {
     ImGui::Gl3Impl::Shutdown();
     ImGui::DestroyContext();
-    window = nullptr;
+    impl::window = nullptr;
 }
 
 static inline void begin_frame() {
@@ -191,8 +191,8 @@ static inline void begin_frame() {
     ImGuiIO &io = ImGui::GetIO();
 
     float time = (float)glfwGetTime();
-    io.DeltaTime = g_last_time > 0.0f ? (time - g_last_time) : (float)(1.0f / 60.0f);
-    g_last_time = time;
+    io.DeltaTime = impl::g_last_time > 0.0f ? (time - impl::g_last_time) : (float)(1.0f / 60.0f);
+    impl::g_last_time = time;
 
     // Modifiers are not reliable across systems
 #ifndef CMW_SWITCH
@@ -203,7 +203,7 @@ static inline void begin_frame() {
 #endif
 
 #if CMW_LOG_BACKEND_IS_IMGUI
-    draw_log_window(log::get_logs());
+    impl::draw_log_window(log::get_logs());
 #endif
 }
 
