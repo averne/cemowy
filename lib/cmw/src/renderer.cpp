@@ -127,17 +127,20 @@ void Renderer::draw_string(const std::u16string &str, const Position &pos, float
     int last_codepoint = 0;
     Position cur_pos = pos;
     Font *font = nullptr;
+    int ascender = 0, descender = 0;
 
     for (char16_t chr: str) {
-        // XXX: Should max(ascender/descender) of fonts present in the line
         if (chr == u'\n') {
-            cur_pos.y -= (font->get_ascender() + font->get_descender() + 40.0f) * scale; // ??? font->linegap == 0
+            cur_pos.y -= (ascender + descender + 40.0f) * scale; // ??? font->linegap == 0
             cur_pos.x = pos.x;
             continue;
         }
 
-        if (!(font = this->resource_man.get_font(chr)))
+        if (!(font = find_font(chr)))
             continue;
+
+        ascender  = std::max(ascender,  font->get_ascender());
+        descender = std::max(descender, font->get_descender());
 
         auto &glyph = font->get_glyph(chr);
         draw_glyph(glyph, cur_pos, scale, color);

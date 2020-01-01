@@ -45,6 +45,15 @@ class Renderer {
         static constexpr std::size_t max_indices   = 10000;
         static constexpr std::size_t max_textures  = 30;
 
+    private:
+        inline Font *find_font(char16_t chr) {
+            for (auto &font: this->resource_man.get_fonts())
+                if (font->has_glyph(chr))
+                    return font.get();
+            CMW_ERROR("Failed to find glyph %c (%#x)\n", chr, chr);
+            return nullptr;
+        }
+
     public:
         Renderer(ResourceManager &resource_man);
 
@@ -86,7 +95,7 @@ class Renderer {
         }
         inline void draw_char(char16_t chr, const Position &pos = {0, 0, 0}, float scale = 1.0f,
                 const Colorf &color = {1.0f, 1.0f, 1.0f}) {
-            if (auto *font = this->resource_man.get_font(chr); font)
+            if (auto *font = find_font(chr); font)
                 draw_char(*font, chr, pos, scale, color);
         }
 

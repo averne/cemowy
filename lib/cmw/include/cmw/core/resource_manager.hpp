@@ -49,14 +49,6 @@ class ResourceManager {
             return &*this->fonts.emplace_back(std::make_unique<Font>(std::forward<Args>(args)...));
         }
 
-        inline Font *get_font(char16_t chr) {
-            for (auto &font: this->fonts)
-                if (font->has_glyph(chr))
-                    return &*font;
-            CMW_ERROR("Failed to find glyph %c (%#x)\n", chr, chr);
-            return nullptr;
-        }
-
         inline std::vector<std::unique_ptr<Font>> &get_fonts() { return this->fonts; }
         inline const std::vector<std::unique_ptr<Font>> &get_fonts() const { return this->fonts; }
 
