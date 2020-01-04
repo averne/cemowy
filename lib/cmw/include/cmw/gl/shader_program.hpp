@@ -37,13 +37,13 @@ namespace cmw::gl {
 
 class ShaderProgram: public GlObject {
     public:
-        ShaderProgram(): GlObject(glCreateProgram()) {
+        inline ShaderProgram(): GlObject(glCreateProgram()) {
             CMW_TRACE("Creating shader program object\n");
             CMW_TRY_THROW(get_handle(), std::runtime_error("Could not create shader program object"));
         }
 
         template <typename ...Shaders>
-        ShaderProgram(Shaders &&...shaders): ShaderProgram() {
+        inline ShaderProgram(Shaders &&...shaders): ShaderProgram() {
             attach_shaders(std::forward<Shaders>(shaders)...);
             if (!link()) {
                 print_log();
@@ -52,39 +52,39 @@ class ShaderProgram: public GlObject {
             detach_shaders(std::forward<Shaders>(shaders)...);
         }
 
-        ~ShaderProgram() {
+        inline ~ShaderProgram() {
             CMW_TRACE("Destructing shader program object\n");
             glDeleteProgram(get_handle());
         }
 
         template <typename ...Shaders>
-        void attach_shaders(Shaders &&...shaders) const {
+        inline void attach_shaders(Shaders &&...shaders) const {
             (glAttachShader(get_handle(), shaders.get_handle()), ...);
         }
 
         template <typename ...Shaders>
-        void detach_shaders(Shaders &&...shaders) const {
+        inline void detach_shaders(Shaders &&...shaders) const {
             (glDetachShader(get_handle(), shaders.get_handle()), ...);
         }
 
-        GLint link() const {
+        inline GLint link() const {
             GLint rc;
             glLinkProgram(get_handle());
             glGetProgramiv(get_handle(), GL_LINK_STATUS, &rc);
-            if (rc); // delete shaders
+            if (rc); // TODO: delete shaders
             return rc;
         }
 
-        void use() const {
+        inline void use() const {
             glUseProgram(get_handle());
         }
 
-        static void unuse() {
+        static inline void unuse() {
             glUseProgram(0);
         }
 
         inline void bind() const { use(); }
-        inline static void unbind() { unuse(); }
+        static inline void unbind() { unuse(); }
 
         inline GLint get_uniform_loc(const std::string &name) {
             auto it = this->uniform_loc_cache.find(name);
@@ -98,7 +98,7 @@ class ShaderProgram: public GlObject {
         }
 
         template <typename T>
-        void set_value(GLint loc, T &&val) const {
+        inline void set_value(GLint loc, T &&val) const {
             using Type = std::remove_cv_t<std::remove_reference_t<T>>;
             if constexpr (std::is_same_v<Type, GLboolean> || std::is_same_v<Type, GLint>)
                 glUniform1i(loc, (int)val);
@@ -120,20 +120,20 @@ class ShaderProgram: public GlObject {
                 throw std::invalid_argument("Invalid argument for ShaderProgram::set_value");
         }
 
-        void set_value(GLint loc, float val_1, float val_2) const {
+        inline void set_value(GLint loc, float val_1, float val_2) const {
             glUniform2f(loc, val_1, val_2);
         }
 
-        void set_value(GLint loc, float val_1, float val_2, float val_3) const {
+        inline void set_value(GLint loc, float val_1, float val_2, float val_3) const {
             glUniform3f(loc, val_1, val_2, val_3);
         }
 
-        void set_value(GLint loc, float val_1, float val_2, float val_3, float val_4) const {
+        inline void set_value(GLint loc, float val_1, float val_2, float val_3, float val_4) const {
             glUniform4f(loc, val_1, val_2, val_3, val_4);
         }
 
         template <typename ...Args>
-        void set_value(const std::string &name, Args &&...args) {
+        inline void set_value(const std::string &name, Args &&...args) {
             set_value(get_uniform_loc(name), std::forward<Args>(args)...);
         }
 
@@ -149,8 +149,8 @@ class ShaderProgram: public GlObject {
 
     private:
         struct Comp {
-            bool operator()(const std::string &s1, const std::string &s2) const {
-                return strcmp(s1.c_str(), s2.c_str()) < 0;
+            inline bool operator()(const std::string &s1, const std::string &s2) const {
+                return std::strcmp(s1.c_str(), s2.c_str()) < 0;
             }
         };
         std::map<std::string, GLint, Comp> uniform_loc_cache;

@@ -222,12 +222,12 @@ enum class EventType: uint8_t {
 #define DECL_EVENT_TYPE_GETTERS(type)                                                   \
     public:                                                                             \
         inline EventType get_type() const override { return EventType::type; }          \
-        static inline constexpr EventType get_static_type() { return EventType::type; }
+        static constexpr inline EventType get_static_type() { return EventType::type; }
 
 struct Event {
     virtual ~Event() = default;
     virtual inline EventType get_type() const { return EventType::Invalid; }
-    static inline constexpr EventType get_static_type() { return EventType::Invalid; }
+    static constexpr inline EventType get_static_type() { return EventType::Invalid; }
 };
 
 struct KeyEvent: public Event {

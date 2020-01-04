@@ -29,9 +29,9 @@ struct ColorX {
     T b = std::numeric_limits<T>::max();
     T a = std::numeric_limits<T>::max();
 
-    inline constexpr ColorX() = default;
-    inline constexpr ColorX(T r, T g, T b):      r(r), g(g), b(b)       { }
-    inline constexpr ColorX(T r, T g, T b, T a): r(r), g(g), b(b), a(a) { }
+    constexpr inline ColorX() = default;
+    constexpr inline ColorX(T r, T g, T b):      r(r), g(g), b(b)       { }
+    constexpr inline ColorX(T r, T g, T b, T a): r(r), g(g), b(b), a(a) { }
 
     inline bool operator==(const ColorX<T>& rhs) {
         return ((r == rhs.r) && (g == rhs.g) && (b == rhs.b) && (a == rhs.a));

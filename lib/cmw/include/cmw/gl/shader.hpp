@@ -32,12 +32,12 @@ namespace cmw::gl {
 template <GLenum Type>
 class Shader: public GlObject {
     public:
-        Shader(): GlObject(glCreateShader(get_type())) {
+        inline Shader(): GlObject(glCreateShader(get_type())) {
             CMW_TRACE("Creating shader object\n");
             CMW_TRY_THROW(get_handle(), std::runtime_error("Could not create shader object"));
         }
 
-        Shader(const std::string &path): Shader() {
+        inline Shader(const std::string &path): Shader() {
             auto src = read_asset<std::string>(path);
             set_source(src);
             if (!compile()) {
@@ -46,17 +46,17 @@ class Shader: public GlObject {
             }
         }
 
-        ~Shader() {
+        inline ~Shader() {
             CMW_TRACE("Destructing shader object\n");
             glDeleteShader(get_handle());
         }
 
-        void set_source(const std::string &src) const {
+        inline void set_source(const std::string &src) const {
             const char *dat = src.c_str();
             glShaderSource(get_handle(), 1, &dat, NULL);
         }
 
-        GLint compile() const {
+        inline GLint compile() const {
             GLint rc;
             glCompileShader(get_handle());
             glGetShaderiv(get_handle(), GL_COMPILE_STATUS, &rc);
@@ -69,7 +69,7 @@ class Shader: public GlObject {
             return str;
         }
 
-        void print_log() const {
+        inline void print_log() const {
             CMW_ERROR("Failed to compile shader:\n%s", get_log().c_str());
         }
 
@@ -78,14 +78,14 @@ class Shader: public GlObject {
 
 class VertexShader: public Shader<GL_VERTEX_SHADER> {
     public:
-        VertexShader() = default;
-        VertexShader(const std::string &src): Shader(src) { }
+        inline VertexShader() = default;
+        inline VertexShader(const std::string &src): Shader(src) { }
 };
 
 class FragmentShader: public Shader<GL_FRAGMENT_SHADER> {
     public:
-        FragmentShader() = default;
-        FragmentShader(const std::string &src): Shader(src) { }
+        inline FragmentShader() = default;
+        inline FragmentShader(const std::string &src): Shader(src) { }
 };
 
 } // namespace cmw::gl

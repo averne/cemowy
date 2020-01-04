@@ -28,14 +28,14 @@ class GlObject {
     CMW_NON_MOVEABLE(GlObject);
 
     public:
-        GlObject() = default;
-        GlObject(GLuint handle): handle(handle) { }
+        inline GlObject() = default;
+        inline GlObject(GLuint handle): handle(handle) { }
 
-        virtual ~GlObject() = default;
+        inline virtual ~GlObject() = default;
 
         inline GLuint get_handle() const { return this->handle; }
 
-        explicit operator bool() const {
+        inline explicit operator bool() const {
             return this->handle != 0;
         }
 

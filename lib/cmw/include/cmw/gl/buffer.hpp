@@ -49,21 +49,21 @@ struct BufferElement {
     std::size_t nb, size;
     bool normalized;
 
-    constexpr BufferElement(): type(Type::Invalid), gl_type(0), nb(0), size(0), normalized(0) { }
-    constexpr BufferElement(Type type, bool normalized = false):
+    constexpr inline BufferElement(): type(Type::Invalid), gl_type(0), nb(0), size(0), normalized(0) { }
+    constexpr inline BufferElement(Type type, bool normalized = false):
         type(type), gl_type(get_gl_type(type)), nb(get_nb(type)), size(get_size(type)), normalized(normalized) { }
 
-    static constexpr std::size_t get_size(Type type) {
+    static constexpr inline std::size_t get_size(Type type) {
         return ((type & (Type::_bool | Type::_Byte | Type::_Ubyte)) ? 1 : 4) * get_nb(type);
     }
 
-    static constexpr std::size_t get_nb(Type type) {
+    static constexpr inline std::size_t get_nb(Type type) {
         if (type & Type::_Mat)
             return __builtin_ffs(type & Type::_Nb) * __builtin_ffs(type & Type::_Nb);
         return __builtin_ffs(type & Type::_Nb);
     }
 
-    static constexpr GLenum get_gl_type(Type type) {
+    static constexpr inline GLenum get_gl_type(Type type) {
         if      (type & Type::_bool)  return GL_BOOL;
         else if (type & Type::_Byte)  return GL_BYTE;
         else if (type & Type::_Ubyte) return GL_UNSIGNED_BYTE;
@@ -74,10 +74,10 @@ struct BufferElement {
 };
 
 struct BufferLayout {
-    constexpr BufferLayout(std::initializer_list<BufferElement> &&elements):
+    constexpr inline BufferLayout(std::initializer_list<BufferElement> &&elements):
         elements(elements), stride(get_stride(std::forward<std::initializer_list<BufferElement>>(elements))) { }
 
-    static constexpr std::size_t get_stride(std::initializer_list<BufferElement> &&elements) {
+    static constexpr inline std::size_t get_stride(std::initializer_list<BufferElement> &&elements) {
         std::size_t stride = 0;
         for (const auto &element: elements)
             stride += element.size;
@@ -91,42 +91,42 @@ struct BufferLayout {
 template <GLenum Type, std::size_t N = 1>
 class BufferN: public GlObject {
     public:
-        BufferN() {
+        inline BufferN() {
             CMW_TRACE("Creating buffer object\n");
             glGenBuffers(get_nb(), &this->handle);
             CMW_TRY_THROW(get_handle(), std::runtime_error("Could not create buffer object"));
             bind();
         }
 
-        ~BufferN() {
+        inline ~BufferN() {
             CMW_TRACE("Destructing buffer object\n");
             glDeleteBuffers(get_nb(), &this->handle);
         }
 
-        void set_data(const void *data, std::size_t size, GLenum draw_type = GL_STATIC_DRAW) {
+        inline void set_data(const void *data, std::size_t size, GLenum draw_type = GL_STATIC_DRAW) {
             this->size = size;
             glBufferData(get_type(), size, data, draw_type);
         }
 
-        void set_sub_data(const void *data, std::size_t size, void *off = 0) const {
+        inline void set_sub_data(const void *data, std::size_t size, void *off = 0) const {
             glBufferSubData(get_type(), (GLintptr)off, size, data);
         }
 
-        void bind() const {
+        inline void bind() const {
             glBindBuffer(get_type(), get_handle());
         }
 
-        static void bind(GLuint handle) {
+        static inline void bind(GLuint handle) {
             glBindBuffer(get_type(), handle);
         }
 
-        static void unbind() {
+        static inline void unbind() {
             glBindBuffer(get_type(), 0);
         }
 
-        static inline std::size_t get_nb()         { return N; }
-        static inline GLenum      get_type()       { return Type; }
-        inline std::size_t        get_size() const { return this->size; }
+        static constexpr inline std::size_t get_nb()         { return N; }
+        static constexpr inline GLenum      get_type()       { return Type; }
+        inline std::size_t get_size() const { return this->size; }
 
     protected:
         std::size_t size;
@@ -135,7 +135,7 @@ class BufferN: public GlObject {
 template <std::size_t N = 1>
 class VertexBufferN: public BufferN<GL_ARRAY_BUFFER, N> {
     public:
-        static void set_layout(BufferLayout &&layout) {
+        static inline void set_layout(BufferLayout &&layout) {
             std::size_t i = 0, off = 0;
             for (const auto &element: layout.elements) {
                 if (element.type & (BufferElement::_Byte | BufferElement::_Ubyte | BufferElement::_Int | BufferElement::_Uint))
@@ -146,21 +146,21 @@ class VertexBufferN: public BufferN<GL_ARRAY_BUFFER, N> {
             }
         }
 
-        static void set_attrib_ptr(GLuint pos, GLuint size, GLenum type, GLuint stride = 0, GLvoid *off = nullptr, bool normalize = false) {
+        static inline void set_attrib_ptr(GLuint pos, GLuint size, GLenum type, GLuint stride = 0, GLvoid *off = nullptr, bool normalize = false) {
             glVertexAttribPointer(pos, size, type, normalize, stride, off);
             enable_attrib_arr(pos);
         }
 
-        static void set_attrib_iptr(GLuint pos, GLuint size, GLenum type, GLuint stride = 0, GLvoid *off = nullptr) {
+        static inline void set_attrib_iptr(GLuint pos, GLuint size, GLenum type, GLuint stride = 0, GLvoid *off = nullptr) {
             glVertexAttribIPointer(pos, size, type, stride, off);
             enable_attrib_arr(pos);
         }
 
-        static void enable_attrib_arr(GLuint pos) {
+        static inline void enable_attrib_arr(GLuint pos) {
             glEnableVertexAttribArray(pos);
         }
 
-        static void disable_attrib_arr(GLuint pos) {
+        static inline void disable_attrib_arr(GLuint pos) {
             glDisableVertexAttribArray(pos);
         }
 };

@@ -25,7 +25,7 @@ namespace cmw::err {
 
 constexpr uint32_t Module = 420;
 
-#define DECL_ERR(name, desc) inline constexpr Result name = {Module, desc}
+#define DECL_ERR(name, desc) constexpr inline Result name = {Module, desc}
 
 DECL_ERR(FailedFopen,         0);
 DECL_ERR(AlreadyActive,       1);
