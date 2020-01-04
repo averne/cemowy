@@ -34,14 +34,14 @@ struct BufferElement {
         _1    = CMW_BIT(0), _2    = CMW_BIT(1), _3     = CMW_BIT(2), _4   = CMW_BIT(3),
         _bool = CMW_BIT(4), _Byte = CMW_BIT(5), _Ubyte = CMW_BIT(6),
         _Int  = CMW_BIT(7), _Uint = CMW_BIT(8), _Float = CMW_BIT(9), _Mat = CMW_BIT(10),
-        _Nb = _1 | _2 | _3 | _4, _Type = _bool | _Int | _Float | _Mat,
+        _Nb = _1 | _2 | _3 | _4, _Type = _bool | _Byte | _Ubyte | _Int | _Uint | _Float | _Mat,
         Bool  = _bool  | _1,
         Byte  = _Byte  | _1, Byte2  = _Byte  | _2, Byte3  = _Byte  | _3, Byte4  = _Byte  | _4,
         Ubyte = _Ubyte | _1, Ubyte2 = _Ubyte | _2, Ubyte3 = _Ubyte | _3, Ubyte4 = _Ubyte | _4,
         Int   = _Int   | _1, Int2   = _Int   | _2, Int3   = _Int   | _3, Int4   = _Int   | _4,
         Uint  = _Uint  | _1, Uint2  = _Uint  | _2, Uint3  = _Uint  | _3, Uint4  = _Uint  | _4,
         Float = _Float | _1, Float2 = _Float | _2, Float3 = _Float | _3, Float4 = _Float | _4,
-                             Mat2   =  _Mat  | _2, Mat3   = _Mat   | _3, Mat4   = _Mat   | _4,
+                             Mat2   = _Mat   | _2, Mat3   = _Mat   | _3, Mat4   = _Mat   | _4,
     };
 
     Type type;
