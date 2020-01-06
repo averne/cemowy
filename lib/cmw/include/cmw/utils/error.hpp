@@ -23,7 +23,7 @@
 
 namespace cmw::err {
 
-constexpr uint32_t Module = 420;
+constexpr std::uint32_t Module = 420;
 
 #define DECL_ERR(name, desc) constexpr inline Result name = {Module, desc}
 

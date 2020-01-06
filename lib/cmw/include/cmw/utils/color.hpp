@@ -42,8 +42,8 @@ struct ColorX {
     }
 };
 
-using Colori = ColorX<int8_t>;
-using Coloru = ColorX<uint8_t>;
+using Colori = ColorX<std::int8_t>;
+using Coloru = ColorX<std::uint8_t>;
 using Colorf = ColorX<float>;
 using Colord = ColorX<double>;
 using Color  = Colorf;

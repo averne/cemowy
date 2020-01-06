@@ -135,7 +135,7 @@ class Texture2dN: public TextureN<GL_TEXTURE_2D, N> {
 
         inline void set_blank_data(GLuint width, GLint height, GLenum store_fmt = GL_RGB, GLenum load_fmt = GL_RGB,
                 GLenum load_data_fmt = GL_UNSIGNED_BYTE, GLuint mipmap_lvl = 0, GLuint leg = 0) {
-            std::vector<uint8_t> blank_data(width * height * 4, 255);
+            std::vector<std::uint8_t> blank_data(width * height * 4, 255);
             set_data(blank_data.data(), width, height, store_fmt, load_fmt, load_data_fmt, mipmap_lvl, leg);
         }
 };

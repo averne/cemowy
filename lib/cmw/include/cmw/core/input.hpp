@@ -206,7 +206,7 @@ enum Keys: std::uint16_t {
     ModNumLock           = GLFW_MOD_NUM_LOCK,
 };
 
-enum class EventType: uint8_t {
+enum class EventType: std::uint8_t {
     Invalid,
     KeyPressed, KeyHeld, KeyReleased,
     CharTyped,

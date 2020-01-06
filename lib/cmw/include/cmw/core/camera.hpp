@@ -36,7 +36,7 @@ namespace cmw {
 
 class PerspectiveCamera {
     public:
-        enum class Movement: uint8_t {
+        enum class Movement: std::uint8_t {
             Forward,
             Backward,
             Left,

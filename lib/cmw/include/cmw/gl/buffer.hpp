@@ -29,7 +29,7 @@
 namespace cmw::gl {
 
 struct BufferElement {
-    enum Type: uint16_t {
+    enum Type: std::uint16_t {
         Invalid = 0,
         _1    = CMW_BIT(0), _2    = CMW_BIT(1), _3     = CMW_BIT(2), _4   = CMW_BIT(3),
         _bool = CMW_BIT(4), _Byte = CMW_BIT(5), _Ubyte = CMW_BIT(6),

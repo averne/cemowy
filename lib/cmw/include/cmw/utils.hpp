@@ -64,7 +64,7 @@
 #define CMW_TRY_FATAL(x, v)    CMW_TRY_IMPL(x, CMW_FATAL(v))
 #define CMW_TRY_RC(x)          CMW_TRY_RC_IMPL(x, )
 #define CMW_TRY_RC_THROW(x, e) CMW_TRY_RC_IMPL(x, throw e)
-#define CMW_TRY_RC_RETURN(x)   CMW_TRY_RC_IMPL(x, return (uint32_t)rc)
+#define CMW_TRY_RC_RETURN(x)   CMW_TRY_RC_IMPL(x, return (std::uint32_t)rc)
 #define CMW_TRY_RC_FATAL(x)    CMW_TRY_RC_IMPL(x, CMW_FATAL(rc))
 
 #define CMW_ASSERT_SIZE(x, sz)        static_assert(sizeof(x) == (sz), "Wrong size in " CMW_STRING(x))

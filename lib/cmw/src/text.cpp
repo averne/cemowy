@@ -71,7 +71,7 @@ Font::Font(void *data, char16_t first_cached, char16_t last_cached) {
 }
 
 Font::Font(const std::string &path, char16_t first_cached, char16_t last_cached) {
-    this->data = ResourceManager::read_asset<std::vector<uint8_t>>(path);
+    this->data = ResourceManager::read_asset<std::vector<std::uint8_t>>(path);
     INIT_FONT(this->data.data());
 }
 

@@ -35,7 +35,7 @@
 
 namespace cmw::log {
 
-enum class Level: uint8_t {
+enum class Level: std::uint8_t {
     Trace,
     Info,
     Warn,
@@ -99,7 +99,7 @@ static inline std::vector<char> &get_logs() {
 }
 #endif
 
-static inline uint32_t initialize() {
+static inline std::uint32_t initialize() {
     if (is_running())
         return 0x224; // err::AlreadyActve
     impl::start_time = std::chrono::system_clock::now();
@@ -120,7 +120,7 @@ static inline uint32_t initialize() {
     return 0;
 }
 
-static inline uint32_t finalize() {
+static inline std::uint32_t finalize() {
     if (!is_running())
         return 0x2a4; // err::AlreadyInactive
     impl::running = false;
@@ -169,11 +169,11 @@ static inline bool is_running() { return false; }
 static inline void set_log_level(Level lvl) { }
 static inline Level get_log_lvl() { return Level::Fatal; }
 
-static uint32_t initialize() {
+static std::uint32_t initialize() {
     return 0;
 }
 
-static uint32_t finalize() {
+static std::uint32_t finalize() {
     return 0;
 }
 
