@@ -67,7 +67,7 @@ class Font {
         ~Font();
 
         inline bool has_glyph(char16_t chr) const {
-            return (bool)stbtt_FindGlyphIndex(&this->font_ctx, chr);
+            return this->cached_glyphs.count(chr) || stbtt_FindGlyphIndex(&this->font_ctx, chr);
         }
 
         Glyph &cache_glyph(char16_t chr);
