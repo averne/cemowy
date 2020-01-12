@@ -110,18 +110,25 @@ int main() {
         glm::vec3(+1280.0f, +  0.0f, +0.0f)
     );
 
-    cmw::shapes::Triangle triangle = {
-        {
+    auto triangle = cmw::AnimatedObject<cmw::shapes::Triangle>(
+        [](auto elapsed) -> glm::mat4 {
+            return glm::rotate(glm::mat4(1.0f), (float)(elapsed.count() / 1000.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        },
+        std::vector<cmw::Mesh::Vertex>{
             {{+200.0f, +200.0f, +1.0f}, {0.0f, 0.0f}},
             {{+600.0f, +200.0f, +1.0f}, {1.0f, 0.0f}},
             {{+400.0f, +600.0f, +1.0f}, {0.5f, 1.0f}},
         },
         bog_tex,
         cmw::colors::Magenta
-    };
+    );
 
-    cmw::shapes::Rectangle rectangle = {
-        {
+    auto rectangle = cmw::AnimatedObject<cmw::shapes::Rectangle>(
+        [](auto elapsed) -> glm::mat4 {
+            float scale = glm::sin((float)(elapsed.count() / 1000.0f)) / 2.0f + 1.0f;
+            return glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+        },
+        std::vector<cmw::Mesh::Vertex>{
             {{+ 800.0f, +400.0f, -1.0f}, {0.0f, 0.0f}},
             {{+1000.0f, +400.0f, -1.0f}, {1.0f, 0.0f}},
             {{+1000.0f, +600.0f, -1.0f}, {1.0f, 1.0f}},
@@ -129,7 +136,7 @@ int main() {
         },
         white_tex,
         cmw::colors::Green
-    };
+    );
 
     cmw::shapes::Circle circle = {
         {+ 800.0f, +200.0f, +0.0f},
@@ -174,10 +181,17 @@ int main() {
 #endif
     });
 
+    auto anim = cmw::TimedAnimation<void>(1000ms, [](auto elapsed) -> void {
+        CMW_TRACE("Animation: %ldms elapsed\n", elapsed.count());
+    });
+
     float t, dt, last_time = app->get_time<float>();
     cmw::Colorf text_color{cmw::colors::Red};
     while (!app->get_window().get_should_close()) {
         app->get_renderer().clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (anim)
+            anim.update();
 
         t = app->get_time<float>();
         dt = t - last_time, last_time = t;
@@ -203,9 +217,8 @@ int main() {
         app->get_renderer().end(GL_LINES);
 
         app->get_renderer().begin(camera, dt);
-        app->get_renderer().submit(triangle,
-            glm::rotate(glm::mat4(1.0f), app->get_time<float>(), glm::vec3(0.0f, 0.0f, 1.0f)));
-        app->get_renderer().submit(rectangle, glm::mat4(1.0f));
+        app->get_renderer().submit(triangle);
+        app->get_renderer().submit(rectangle);
         app->get_renderer().submit(circle, glm::mat4(1.0f));
         app->get_renderer().draw_string(u"\ue000\ue044\ue122\n", {300.0f, 550.0f, 1.0f}, 0.5f, text_color);
         app->get_renderer().draw_string(u"\ue121 123 Hello world\nBazinga é_è $£€", {100.0f, 300.0f, 1.0f}, 0.5f, text_color);

@@ -19,21 +19,27 @@
 
 #include <chrono>
 
-namespace cmw::time {
+using namespace std::chrono_literals;
 
-template <typename Clock = std::chrono::system_clock>
+namespace cmw {
+
+template <typename C = std::chrono::system_clock, typename U = std::chrono::milliseconds>
 class StopWatch {
     public:
-        StopWatch(): start(Clock::now()) { }
-        virtual ~StopWatch() = default;
+        using Clock = C;
+        using Unit  = U;
 
-        template <typename T, typename Unit = std::chrono::milliseconds>
-        T start_time() const {
+    public:
+        inline StopWatch(): start(Clock::now()) { }
+        inline virtual ~StopWatch() = default;
+
+        template <typename T = Unit>
+        inline T start_time() const {
             return (T)std::chrono::duration_cast<Unit>(this->start).count();
         }
 
-        template <typename T, typename Unit = std::chrono::milliseconds>
-        T elapsed() const {
+        template <typename T = Unit>
+        inline T elapsed() const {
             return (T)std::chrono::duration_cast<Unit>(Clock::now() - this->start).count();
         }
 
@@ -41,17 +47,22 @@ class StopWatch {
         std::chrono::time_point<Clock> start;
 };
 
-template <typename Unit = std::chrono::milliseconds, typename Clock = std::chrono::system_clock>
-class Timer: public StopWatch<Clock> {
+template <typename Clock = std::chrono::system_clock, typename Unit = std::chrono::milliseconds>
+class Timer: public StopWatch<Clock, Unit> {
     public:
-        Timer(Unit timeout): timeout(timeout) { }
+        inline Timer(Unit timeout): timeout(timeout) { }
 
-        operator bool() const {
-            return timeout.count() > this->template elapsed<typename Unit::rep, Unit>();
+        inline operator bool() const {
+            return timeout.count() > this->template elapsed<typename Unit::rep>();
+        }
+
+        template <typename T = Unit>
+        inline T remaining() const {
+            return (T)(timeout - this->template elapsed<Unit>());
         }
 
     protected:
         Unit timeout;
 };
 
-} // namespace cmw::time
+} // namespace cmw

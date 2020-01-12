@@ -22,6 +22,7 @@
 #include <utility>
 #include <glad/glad.h>
 
+#include "cmw/core/animation.hpp"
 #include "cmw/core/mesh.hpp"
 #include "cmw/core/resource_manager.hpp"
 #include "cmw/core/text.hpp"
@@ -70,6 +71,11 @@ class Renderer {
 
         void end(gl::ShaderProgram &program, GLenum mode = GL_TRIANGLES);
         void end(GLenum mode = GL_TRIANGLES) { end(this->get_default_mesh_shader(), mode); }
+
+        template <typename T>
+        inline void submit(AnimatedObject<T> &element, RenderingMode mode = RenderingMode::Default) {
+            submit(element.object, element.update(), mode);
+        }
 
         template <typename T>
         inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
