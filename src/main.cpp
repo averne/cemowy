@@ -208,6 +208,7 @@ int main() {
         app->get_renderer().submit(rectangle, glm::mat4(1.0f));
         app->get_renderer().submit(circle, glm::mat4(1.0f));
         app->get_renderer().draw_string(u"\ue000\ue044\ue122\n", {300.0f, 550.0f, 1.0f}, 0.5f, text_color);
+        app->get_renderer().draw_string(comic_sans, u"Comic \ue000 sans \ue044 best \ue122 sans", {150.0f, 400.0f, 1.0f}, 0.2f, text_color);
         app->get_renderer().draw_string(u"\ue121 123 Hello world\nBazinga é_è $£€", {100.0f, 300.0f, 1.0f}, 0.5f, text_color);
 
         app->get_renderer().submit(my_scene, glm::mat4(1.0f));

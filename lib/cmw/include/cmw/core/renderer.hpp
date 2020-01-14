@@ -88,17 +88,20 @@ class Renderer {
         void draw_glyph(Glyph &glyph, const Position &pos = {0, 0, 0}, float scale = 1.0f,
             const Colorf &color = {1.0f, 1.0f, 1.0f});
 
-        inline void draw_char(Font &font, char16_t chr, const Position &pos = {0, 0, 0}, float scale = 1.0f,
+        inline void draw_char(Font *font, char16_t chr, const Position &pos = {0, 0, 0}, float scale = 1.0f,
                 const Colorf &color = {1.0f, 1.0f, 1.0f}) {
-            if (font.has_glyph(chr))
-                draw_glyph(font.get_glyph(chr), pos, scale, color);
+            if (font->has_glyph(chr))
+                draw_glyph(font->get_glyph(chr), pos, scale, color);
         }
         inline void draw_char(char16_t chr, const Position &pos = {0, 0, 0}, float scale = 1.0f,
                 const Colorf &color = {1.0f, 1.0f, 1.0f}) {
             if (auto *font = find_font(chr); font)
-                draw_char(*font, chr, pos, scale, color);
+                draw_char(font, chr, pos, scale, color);
         }
 
+        // Uses specified font preferentially and falls back to others otherwise
+        void draw_string(Font *font, const std::u16string &str, const Position &pos = {0, 0, 0}, float scale = 1.0f,
+            const Colorf &color = {1.0f, 1.0f, 1.0f});
         void draw_string(const std::u16string &str, const Position &pos = {0, 0, 0}, float scale = 1.0f,
             const Colorf &color = {1.0f, 1.0f, 1.0f});
 

@@ -123,6 +123,36 @@ void Renderer::draw_glyph(Glyph &glyph, const Position &pos, float scale, const 
         add_mesh(mesh, glm::mat4(1.0f), RenderingMode::AlphaMap);
 }
 
+void Renderer::draw_string(Font *font, const std::u16string &str, const Position &pos, float scale, const Colorf &color) {
+    int last_codepoint = 0;
+    Position cur_pos = pos;
+    Font *cur_font = font;
+    int ascender = 0, descender = 0;
+
+    for (char16_t chr: str) {
+        if (chr == u'\n') {
+            cur_pos.y -= (ascender + descender + 40.0f) * scale; // ??? font->linegap == 0
+            cur_pos.x = pos.x;
+            continue;
+        }
+
+        cur_font = font;
+        if (!cur_font->has_glyph(chr) && !(cur_font = find_font(chr)))
+            continue;
+
+        ascender  = std::max(ascender,  cur_font->get_ascender());
+        descender = std::max(descender, cur_font->get_descender());
+
+        auto &glyph = cur_font->get_glyph(chr);
+        draw_glyph(glyph, cur_pos, scale, color);
+
+        cur_pos.x += glyph.get_advance() * scale;
+        if (last_codepoint)
+            cur_pos.x += cur_font->get_kerning(last_codepoint, glyph.get_codepoint()) * scale;
+        last_codepoint = glyph.get_codepoint();
+    }
+}
+
 void Renderer::draw_string(const std::u16string &str, const Position &pos, float scale, const Colorf &color) {
     int last_codepoint = 0;
     Position cur_pos = pos;
