@@ -63,13 +63,22 @@ class Renderer {
         }
 
         template <typename T>
-        void begin(T &&camera, float dt) {
+        void begin(T &&camera, float dt, gl::ShaderProgram &program, GLenum mode = GL_TRIANGLES) {
             this->view_proj = &camera.get_view_proj();
             this->dt = dt;
+            this->cur_program = &program;
+            this->cur_mode = mode;
         }
 
-        void end(gl::ShaderProgram &program, GLenum mode = GL_TRIANGLES);
-        void end(GLenum mode = GL_TRIANGLES) { end(this->get_default_mesh_shader(), mode); }
+        template <typename T>
+        void begin(T &&camera, float dt, GLenum mode = GL_TRIANGLES) {
+            this->view_proj = &camera.get_view_proj();
+            this->dt = dt;
+            this->cur_program = &get_default_mesh_shader();
+            this->cur_mode = mode;
+        }
+
+        void end();
 
         template <typename T>
         inline void submit(T &&element, const glm::mat4 &model, RenderingMode mode = RenderingMode::Default) {
@@ -140,6 +149,9 @@ class Renderer {
         std::vector<Vertex>          vertex_buffer;
         std::vector<Index>           index_buffer;
         std::vector<gl::Texture2d *> textures;
+
+        gl::ShaderProgram *cur_program = &this->mesh_program;
+        std::uint8_t       cur_mode    = GL_TRIANGLES;
 };
 
 } // namespace cmw

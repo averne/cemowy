@@ -79,6 +79,7 @@ int main() {
     app->get_resource_manager().load_font("fonts/FontStandard.ttf");
     app->get_resource_manager().load_font("fonts/FontNintendoExtended.ttf");
 #endif
+    auto *comic_sans = app->get_resource_manager().load_font("fonts/comic.ttf");
 
     app->get_renderer().set_clear_color({0.18f, 0.20f, 0.25f, 1.0f});
 
@@ -194,13 +195,13 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        app->get_renderer().begin(camera, dt);
+        app->get_renderer().begin(camera, dt, GL_POINTS);
         app->get_renderer().submit(point, glm::mat4(1.0f));
-        app->get_renderer().end(GL_POINTS);
+        app->get_renderer().end();
 
-        app->get_renderer().begin(camera, dt);
+        app->get_renderer().begin(camera, dt, GL_LINES);
         app->get_renderer().submit(line, glm::mat4(1.0f));
-        app->get_renderer().end(GL_LINES);
+        app->get_renderer().end();
 
         app->get_renderer().begin(camera, dt);
         app->get_renderer().submit(triangle,

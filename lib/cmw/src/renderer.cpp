@@ -55,8 +55,8 @@ Renderer::Renderer(ResourceManager &resource_man): resource_man(resource_man),
     this->textures.reserve(this->max_textures);
 }
 
-void Renderer::end(gl::ShaderProgram &program, GLenum mode) {
-    bind_all(this->vao, this->ebo, this->vbo, program);
+void Renderer::end() {
+    bind_all(this->vao, this->ebo, this->vbo, *this->cur_program);
     this->vbo.set_sub_data(this->vertex_buffer.data(), this->vertex_buffer.size() * sizeof(Vertex));
     this->ebo.set_sub_data(this->index_buffer.data(),  this->index_buffer.size()  * sizeof(Index));
 
@@ -66,8 +66,8 @@ void Renderer::end(gl::ShaderProgram &program, GLenum mode) {
         this->textures[i]->bind();
     }
 
-    program.set_value("u_view_proj", *this->view_proj);
-    glDrawElements(mode, this->index_buffer.size(), GL_UNSIGNED_INT, 0);
+    this->cur_program->set_value("u_view_proj", *this->view_proj);
+    glDrawElements(this->cur_mode, this->index_buffer.size(), GL_UNSIGNED_INT, 0);
 
     this->vertex_buffer.clear();
     this->index_buffer.clear();
@@ -77,8 +77,10 @@ void Renderer::end(gl::ShaderProgram &program, GLenum mode) {
 void Renderer::add_mesh(Mesh &mesh, const glm::mat4 &model, RenderingMode mode) {
     if ((this->textures.size() >= this->max_textures)
             || (this->vertex_buffer.size() >= this->max_vertices)
-            || (this->index_buffer.size() >= this->max_indices)) // Don't accept new data
-        return;
+            || (this->index_buffer.size() >= this->max_indices)) { // Flush collected draw data
+        // CMW_INFO("Resource exhaustion triggered draw event\n");
+        end(); // Don't need to use begin() as the same values are kept for the rest of the operation
+    }
 
     int tex_idx;
     auto it = std::find(this->textures.begin(), this->textures.end(), &mesh.get_texture());
