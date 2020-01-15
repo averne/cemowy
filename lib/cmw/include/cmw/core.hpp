@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "cmw/core/animation.hpp"
 #include "cmw/core/application.hpp"
 #include "cmw/core/camera.hpp"
 #include "cmw/core/imgui.hpp"
