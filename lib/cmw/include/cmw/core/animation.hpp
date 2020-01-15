@@ -99,8 +99,8 @@ class AnimatedObject {
 
     public:
         template <typename F, typename ...Args>
-        inline AnimatedObject(F f, Args &&...args):
-            object(std::forward<Args>(args)...), animation(std::move(f)) { }
+        inline AnimatedObject(F &&f, Args &&...args):
+            object(std::forward<Args>(args)...), animation(std::forward<F>(f)) { }
 
         inline glm::mat4 update() const {
             return this->animation.update();
@@ -110,25 +110,25 @@ class AnimatedObject {
         GeometricAnimation animation;
 };
 
-// template <typename T>
-// class TimedAnimatedObject {
-//     public:
-//         template <typename F, typename ...Args>
-//         inline TimedAnimatedObject(TimedGeometricAnimation::Unit timeout, F &&f, Args &&...args):
-//             animation(timeout, std::forward<F>(f)), object(std::forward<Args>(args)...) { }
+template <typename T>
+class TimedAnimatedObject {
+    public:
+        template <typename F, typename ...Args>
+        inline TimedAnimatedObject(TimedGeometricAnimation::Unit timeout, F &&f, Args &&...args):
+            animation(timeout, std::forward<F>(f)), object(std::forward<Args>(args)...) { }
 
-//         inline glm::mat4 &update() {
-//             if (this->animation)
-//                 return this->model = this->animation.update();
-//             return this->model;
-//         }
+        inline glm::mat4 &update() {
+            if (this->animation)
+                return this->model = this->animation.update();
+            return this->model;
+        }
 
-//     public:
-//         T object;
+    public:
+        T object;
 
-//     protected:
-//         TimedGeometricAnimation animation;
-//         glm::mat4 model;
-// };
+    protected:
+        TimedGeometricAnimation animation;
+        glm::mat4 model;
+};
 
 } // namespace cmw
