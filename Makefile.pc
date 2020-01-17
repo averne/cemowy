@@ -47,7 +47,7 @@ RELEASE_OFILES    =    $(CFILES:%=$(BUILD)/%.pc-rel.o) $(CPPFILES:%=$(BUILD)/%.p
 DEBUG_OFILES      =    $(CFILES:%=$(BUILD)/%.pc-dbg.o) $(CPPFILES:%=$(BUILD)/%.pc-dbg.o) $(SFILES:%=$(BUILD)/%.pc-dbg.o)
 DFILES            =    $(RELEASE_OFILES:.o=.d) $(DEBUG_OFILES:.o=.d)
 
-LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS)/lib -name "*-pc.a")
+LIBS_TARGET       =    $(shell find $(addsuffix /lib,$(CUSTOM_LIBS)) -name "*.a" 2>/dev/null)
 RELEASE_TARGET    =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc.$(EXTENSION), .$(OUT)/$(TARGET)-pc.$(EXTENSION))
 DEBUG_TARGET      =    $(if $(OUT:=), $(OUT)/$(TARGET)-pc-dbg.$(EXTENSION), .$(OUT)/$(TARGET)-pc-dbg.$(EXTENSION))
 

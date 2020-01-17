@@ -52,7 +52,7 @@ SFILES            =    $(shell find $(SOURCES) -name *.s -or -name *.S)
 OFILES            =    $(CFILES:%=$(BUILD)/%.nx.o) $(CPPFILES:%=$(BUILD)/%.nx.o) $(SFILES:%=$(BUILD)/%.nx.o)
 DFILES            =    $(OFILES:.o=.d)
 
-LIBS_TARGET       =    $(shell find $(CUSTOM_LIBS)/lib -name "*-nx.a")
+LIBS_TARGET       =    $(shell find $(addsuffix /lib,$(CUSTOM_LIBS)) -name "*.a" 2>/dev/null)
 NX_TARGET         =    $(if $(OUT:=), $(OUT)/$(TARGET).$(EXTENSION), .$(OUT)/$(TARGET).$(EXTENSION))
 ELF_TARGET        =    $(if $(OUT:=), $(OUT)/$(TARGET)-nx.elf, .$(OUT)/$(TARGET)-nx.elf)
 NACP_TARGET       =    $(if $(OUT:=), $(OUT)/$(TARGET).nacp, .$(OUT)/$(TARGET).nacp)
